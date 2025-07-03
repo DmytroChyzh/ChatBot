@@ -2,9 +2,14 @@
 module.exports = {
   darkMode: 'class',
   content: [
-    './src/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{js,ts,jsx,tsx,mdx,css}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx,css}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx,css}',
+    './src/contexts/**/*.{js,ts,jsx,tsx,mdx,css}',
+    './src/types/**/*.{js,ts,jsx,tsx,mdx,css}',
+    './src/utils/**/*.{js,ts,jsx,tsx,mdx,css}',
+    './public/**/*.html',
+    './node_modules/lucide-react/**/*.js',
     './src/app/globals.css',
   ],
   theme: {
