@@ -263,17 +263,16 @@ export default function ChatPage() {
   // Показуємо форму контактів, якщо ще не заповнена
   if (!contactSubmitted) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-[#F7F8F9] font-sans px-2">
-        <div className="w-full max-w-md mx-auto bg-white dark:bg-[#23232B] rounded-3xl shadow-2xl p-0 overflow-hidden animate-fade-in">
-          {/* Gradient Header */}
-          <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6030FE] py-8 flex flex-col items-center justify-center">
-            <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-3xl font-extrabold text-[#8B5CF6] shadow-lg mb-2 border-4 border-white">C</div>
-            <h1 className="text-2xl font-bold text-white tracking-tight mb-1">Cieden Асистент</h1>
-            <p className="text-white/80 text-base">AI-консультації та оцінка проєктів</p>
+      <div className="min-h-screen w-full flex items-center justify-center bg-[#18181C] font-sans px-2">
+        <div className="w-full max-w-md mx-auto bg-white rounded-3xl shadow-2xl p-0 overflow-hidden animate-fade-in">
+          {/* Logo/Header */}
+          <div className="flex flex-col items-center justify-center pt-10 pb-4 px-8">
+            <div className="w-14 h-14 rounded-2xl bg-[#8B5CF6] flex items-center justify-center text-3xl font-extrabold text-white shadow-lg mb-4">C</div>
+            <h1 className="text-2xl font-bold text-[#23232B] mb-1">Cieden Асистент</h1>
+            <p className="text-[#6B7280] text-base mb-2">Розкажіть про свій проєкт</p>
           </div>
           {/* Form */}
-          <div className="p-8">
-            <h2 className="text-xl font-semibold text-[#23232B] dark:text-white text-center mb-4">Розкажіть про свій проєкт</h2>
+          <div className="px-8 pb-10">
             <form onSubmit={handleContactSubmit} className="space-y-5">
               <div>
                 <input
@@ -281,7 +280,7 @@ export default function ChatPage() {
                   placeholder="Ваше ім'я"
                   value={contact.name}
                   onChange={(e) => setContact({ ...contact, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#F7F8F9] dark:bg-[#18181C] border border-[#E5E7EB] dark:border-[#3C2780] rounded-xl text-[#23232B] dark:text-white placeholder-[#8B5CF6] dark:placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base transition"
+                  className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-[#23232B] placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base transition shadow-sm"
                   required
                 />
               </div>
@@ -291,7 +290,7 @@ export default function ChatPage() {
                   placeholder="Email"
                   value={contact.email}
                   onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#F7F8F9] dark:bg-[#18181C] border border-[#E5E7EB] dark:border-[#3C2780] rounded-xl text-[#23232B] dark:text-white placeholder-[#8B5CF6] dark:placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base transition"
+                  className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-[#23232B] placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base transition shadow-sm"
                   required
                 />
               </div>
