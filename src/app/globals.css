@@ -236,4 +236,15 @@ html {
 .custom-sidebar-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #8B5CF6 #23232b;
+}
+
+input, button, textarea {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  box-shadow: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
 } 

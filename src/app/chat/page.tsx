@@ -280,7 +280,7 @@ export default function ChatPage() {
                   placeholder="Ваше ім'я"
                   value={contact.name}
                   onChange={(e) => setContact({ ...contact, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-[#23232B] placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base transition shadow-sm"
+                  className="block w-full bg-white border border-[#E5E7EB] px-4 py-3 rounded-xl text-[#23232B] placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base shadow-sm transition"
                   required
                 />
               </div>
@@ -290,13 +290,13 @@ export default function ChatPage() {
                   placeholder="Email"
                   value={contact.email}
                   onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-[#23232B] placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base transition shadow-sm"
+                  className="block w-full bg-white border border-[#E5E7EB] px-4 py-3 rounded-xl text-[#23232B] placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base shadow-sm transition"
                   required
                 />
               </div>
               <button
                 type="submit"
-                className="w-full px-4 py-3 bg-gradient-to-r from-[#8B5CF6] to-[#6030FE] text-white rounded-xl font-semibold text-lg shadow-lg hover:from-[#7C4DFF] hover:to-[#5E35B1] transition"
+                className="block w-full px-4 py-3 bg-gradient-to-r from-[#8B5CF6] to-[#6030FE] text-white rounded-xl font-semibold text-lg shadow-lg hover:from-[#7C4DFF] hover:to-[#5E35B1] transition"
               >
                 Почати діалог
               </button>
