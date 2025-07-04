@@ -71,7 +71,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
           type="button"
           onClick={() => value.trim() && !loading && !disabled && onSend()}
           disabled={loading || disabled}
-          className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-muted/80 transition-colors duration-300 opacity-100 pointer-events-auto"
+          className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-[#E5E7EB] transition-colors duration-300 opacity-100 pointer-events-auto"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -92,7 +92,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
         <button
           type="button"
           disabled
-          className="w-11 h-11 flex items-center justify-center rounded-full text-muted-foreground bg-transparent cursor-not-allowed"
+          className="w-11 h-11 flex items-center justify-center rounded-full text-[#6B7280] bg-transparent cursor-not-allowed"
           tabIndex={-1}
         >
           <svg

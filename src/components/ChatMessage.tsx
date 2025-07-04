@@ -71,7 +71,7 @@ export default function ChatMessage({ message, handleQuickPrompt }: ChatMessageP
               remarkPlugins={[remarkGfm]}
               components={{
                 table: ({node, ...props}) => (
-                  <div className="overflow-x-auto my-2"><table className="min-w-full border border-muted" {...props} /></div>
+                  <div className="overflow-x-auto my-2"><table className="min-w-full border border-[#E5E7EB]" {...props} /></div>
                 ),
                 th: ({node, ...props}) => (
                   <th className="px-3 py-2 border-b border-[#E5E7EB] bg-[#E5E7EB] text-left text-xs font-semibold text-[#23232B]" {...props} />

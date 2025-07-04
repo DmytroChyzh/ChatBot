@@ -3,6 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    border-color: #E5E7EB;
+  }
+  body {
+    background-color: #F7F8F9;
+    color: #23232B;
+  }
+}
+
+@layer base {
   :root {
     --background: 0 0% 100%;
     --header-bg: 220 14% 97%;
@@ -60,8 +70,6 @@
     color: hsl(var(--foreground));
   }
 }
-
-
 
 @keyframes slide-in {
   0% {

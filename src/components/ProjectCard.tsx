@@ -61,7 +61,7 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white/90 dark:bg-[#23232B]/90 rounded-3xl shadow-2xl border border-gray-200/60 dark:border-gray-700/60 p-8 flex flex-col gap-8 transition-colors duration-300 animate-fade-in">
+    <div className="w-full max-w-2xl mx-auto bg-white dark:bg-[#23232B] rounded-3xl shadow-lg border border-[#E5E7EB] dark:border-[#23232B] p-8 flex flex-col gap-8 transition-colors duration-300 animate-fade-in">
       {/* Header */}
       <div className="flex items-center gap-4 mb-4">
         <div className="w-14 h-14 bg-gradient-to-br from-[#8B5CF6] to-[#6030FE] flex items-center justify-center text-white font-bold text-3xl rounded-2xl shadow-lg">
@@ -90,12 +90,12 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
         {FIELD_CONFIG.map(({ key, label, icon }) => {
           const data = projectData[key];
           return (
-            <div key={key} className={`flex flex-col gap-2 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-[#23232B]/70 shadow-sm transition-all duration-300 ${isProjectCardField(data) && data.status === 'draft' ? 'ring-2 ring-yellow-400/60' : ''}`}>
+            <div key={key} className={`flex flex-col gap-2 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#23232B] shadow-sm transition-all duration-300 ${isProjectCardField(data) && data.status === 'draft' ? 'ring-2 ring-[#FFD600]/60' : ''}`}>
               <div className="flex items-center gap-2 mb-1">
                 {icon}
                 <span className="text-sm font-semibold text-[#23232B] dark:text-[#E5E7EB]">{label}</span>
                 {isProjectCardField(data) && data.status === 'draft' && (
-                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">Чернетка</span>
+                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-[#FFD600]/20 text-[#FFD600] dark:bg-[#FFD600]/40 dark:text-[#FFD600]">Чернетка</span>
                 )}
                 {isProjectCardField(data) && data.status === 'final' && (
                   <span className="ml-2 px-2 py-0.5 text-xs rounded bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200">Підтверджено</span>
@@ -110,7 +110,7 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
               </div>
               {isProjectCardField(data) && data.status === 'draft' && onConfirmField && (
                 <button
-                  className="mt-2 px-3 py-1 text-xs rounded bg-accent text-white hover:bg-accent/80 transition"
+                  className="mt-2 px-3 py-1 text-xs rounded bg-[#8B5CF6] text-white hover:bg-[#7C4DFF] transition"
                   onClick={() => onConfirmField(key)}
                 >Підтвердити</button>
               )}
