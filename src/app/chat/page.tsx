@@ -263,48 +263,46 @@ export default function ChatPage() {
   // Показуємо форму контактів, якщо ще не заповнена
   if (!contactSubmitted) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-[#F7F8F9] font-sans pt-20">
-        <div className="w-full max-w-md mx-4">
-          {/* Тестовий блок для перевірки Tailwind кастомних utility-класів */}
-          <div className="bg-[#8B5CF6] text-white rounded-3xl shadow-2xl p-8 text-2xl font-bold mt-8 text-center">
-            Тест: bg-accent, text-accent-foreground, rounded-3xl, shadow-2xl
+      <div className="min-h-screen w-full flex items-center justify-center bg-[#F7F8F9] font-sans px-2">
+        <div className="w-full max-w-md mx-auto bg-white dark:bg-[#23232B] rounded-3xl shadow-2xl p-0 overflow-hidden animate-fade-in">
+          {/* Gradient Header */}
+          <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6030FE] py-8 flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-3xl font-extrabold text-[#8B5CF6] shadow-lg mb-2 border-4 border-white">C</div>
+            <h1 className="text-2xl font-bold text-white tracking-tight mb-1">Cieden Асистент</h1>
+            <p className="text-white/80 text-base">AI-консультації та оцінка проєктів</p>
           </div>
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-[#8B5CF6] text-white flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-              C
-            </div>
-            <h1 className="text-2xl font-bold text-[#23232B] dark:text-white mb-2">Cieden Асистент</h1>
-            <p className="text-[#6B7280] dark:text-[#E5E7EB]">Розкажіть про свій проєкт</p>
+          {/* Form */}
+          <div className="p-8">
+            <h2 className="text-xl font-semibold text-[#23232B] dark:text-white text-center mb-4">Розкажіть про свій проєкт</h2>
+            <form onSubmit={handleContactSubmit} className="space-y-5">
+              <div>
+                <input
+                  type="text"
+                  placeholder="Ваше ім'я"
+                  value={contact.name}
+                  onChange={(e) => setContact({ ...contact, name: e.target.value })}
+                  className="w-full px-4 py-3 bg-[#F7F8F9] dark:bg-[#18181C] border border-[#E5E7EB] dark:border-[#3C2780] rounded-xl text-[#23232B] dark:text-white placeholder-[#8B5CF6] dark:placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base transition"
+                  required
+                />
+              </div>
+              <div>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={contact.email}
+                  onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                  className="w-full px-4 py-3 bg-[#F7F8F9] dark:bg-[#18181C] border border-[#E5E7EB] dark:border-[#3C2780] rounded-xl text-[#23232B] dark:text-white placeholder-[#8B5CF6] dark:placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base transition"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full px-4 py-3 bg-gradient-to-r from-[#8B5CF6] to-[#6030FE] text-white rounded-xl font-semibold text-lg shadow-lg hover:from-[#7C4DFF] hover:to-[#5E35B1] transition"
+              >
+                Почати діалог
+              </button>
+            </form>
           </div>
-          
-          <form onSubmit={handleContactSubmit} className="space-y-4">
-            <div>
-              <input
-                type="text"
-                placeholder="Ваше ім'я"
-                value={contact.name}
-                onChange={(e) => setContact({ ...contact, name: e.target.value })}
-                className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
-                required
-              />
-            </div>
-            <div>
-              <input
-                type="email"
-                placeholder="Email"
-                value={contact.email}
-                onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full px-4 py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent/80 transition"
-            >
-              Почати діалог
-            </button>
-          </form>
         </div>
       </div>
     );
