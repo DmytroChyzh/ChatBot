@@ -66,7 +66,7 @@ export default function ChatMessage({ message, handleQuickPrompt }: ChatMessageP
               </>
             )}
           </div>
-          <div className={`rounded-3xl px-5 py-4 shadow-lg border ${isUser ? 'bg-[#6030FE] dark:bg-[#3C2780] text-white border-accent' : 'bg-accent text-gray-900 dark:text-white border-accent'} markdown-body transition-colors duration-300`} style={{wordBreak: 'break-word'}}>
+          <div className={`rounded-3xl px-5 py-4 shadow-lg border ${isUser ? 'bg-[#6030FE] dark:bg-[#3C2780] text-white border-[#8B5CF6]' : 'bg-[#8B5CF6] text-gray-900 dark:text-white border-[#8B5CF6]'} markdown-body transition-colors duration-300`} style={{wordBreak: 'break-word'}}>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -74,16 +74,16 @@ export default function ChatMessage({ message, handleQuickPrompt }: ChatMessageP
                   <div className="overflow-x-auto my-2"><table className="min-w-full border border-muted" {...props} /></div>
                 ),
                 th: ({node, ...props}) => (
-                  <th className="px-3 py-2 border-b border-muted bg-muted text-left text-xs font-semibold text-foreground" {...props} />
+                  <th className="px-3 py-2 border-b border-[#E5E7EB] bg-[#E5E7EB] text-left text-xs font-semibold text-[#23232B]" {...props} />
                 ),
                 td: ({node, ...props}) => (
-                  <td className="px-3 py-2 border-b border-muted text-sm text-foreground" {...props} />
+                  <td className="px-3 py-2 border-b border-[#E5E7EB] text-sm text-[#23232B]" {...props} />
                 ),
                 code: ({node, ...props}) => (
-                  <code className="bg-muted text-accent px-1 py-0.5 rounded text-xs" {...props} />
+                  <code className="bg-[#E5E7EB] text-[#8B5CF6] px-1 py-0.5 rounded text-xs" {...props} />
                 ),
                 pre: ({node, ...props}) => (
-                  <pre className="bg-muted rounded p-3 my-2 overflow-x-auto text-xs" {...props} />
+                  <pre className="bg-[#E5E7EB] rounded p-3 my-2 overflow-x-auto text-xs" {...props} />
                 ),
                 ul: ({node, ...props}) => (
                   <ul className="list-disc list-inside ml-4 my-2" {...props} />
@@ -92,10 +92,10 @@ export default function ChatMessage({ message, handleQuickPrompt }: ChatMessageP
                   <ol className="list-decimal list-inside ml-4 my-2" {...props} />
                 ),
                 blockquote: ({node, ...props}) => (
-                  <blockquote className="border-l-4 border-accent pl-4 italic text-muted-foreground my-2" {...props} />
+                  <blockquote className="border-l-4 border-[#8B5CF6] pl-4 italic text-[#6B7280] my-2" {...props} />
                 ),
                 a: ({node, ...props}) => (
-                  <a className="text-accent underline" target="_blank" rel="noopener noreferrer" {...props} />
+                  <a className="text-[#8B5CF6] underline" target="_blank" rel="noopener noreferrer" {...props} />
                 ),
               }}
             >

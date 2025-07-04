@@ -49,7 +49,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
 
   return (
     <div
-      className="w-full max-w-[900px] mx-auto my-6 bg-[hsl(var(--input-bg))] border-2 border-accent rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-lg focus-within:ring-2 focus-within:ring-accent"
+      className="w-full max-w-[900px] mx-auto my-6 bg-[#F7F8F9] dark:bg-[#18181C] border-2 border-[#8B5CF6] rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-lg focus-within:ring-2 focus-within:ring-[#8B5CF6]"
       style={{ position: 'relative' }}
     >
       <textarea
@@ -59,7 +59,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
         onKeyDown={handleKeyDown}
         placeholder="Запитайте будь-що"
         rows={1}
-        className="bg-transparent border-none outline-none resize-none text-[1.18rem] text-foreground min-h-[48px] max-h-[220px] leading-[1.5] pt-5 pb-0 px-0 w-full box-border placeholder-muted-foreground transition-colors duration-300"
+        className="bg-transparent border-none outline-none resize-none text-[1.18rem] text-[#23232B] dark:text-white min-h-[48px] max-h-[220px] leading-[1.5] pt-5 pb-0 px-0 w-full box-border placeholder-[#6B7280] dark:placeholder-[#E5E7EB] transition-colors duration-300"
         disabled={loading || disabled}
         autoComplete="off"
       />

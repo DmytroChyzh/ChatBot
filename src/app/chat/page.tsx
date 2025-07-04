@@ -263,18 +263,18 @@ export default function ChatPage() {
   // Показуємо форму контактів, якщо ще не заповнена
   if (!contactSubmitted) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-background font-sans pt-20">
+      <div className="h-screen w-full flex items-center justify-center bg-[#F7F8F9] font-sans pt-20">
         <div className="w-full max-w-md mx-4">
           {/* Тестовий блок для перевірки Tailwind кастомних utility-класів */}
-          <div className="bg-accent text-accent-foreground rounded-3xl shadow-2xl p-8 text-2xl font-bold mt-8 text-center">
+          <div className="bg-[#8B5CF6] text-white rounded-3xl shadow-2xl p-8 text-2xl font-bold mt-8 text-center">
             Тест: bg-accent, text-accent-foreground, rounded-3xl, shadow-2xl
           </div>
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-[#8B5CF6] text-white flex items-center justify-center text-2xl font-bold mx-auto mb-4">
               C
             </div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">Cieden Асистент</h1>
-            <p className="text-muted-foreground">Розкажіть про свій проєкт</p>
+            <h1 className="text-2xl font-bold text-[#23232B] dark:text-white mb-2">Cieden Асистент</h1>
+            <p className="text-[#6B7280] dark:text-[#E5E7EB]">Розкажіть про свій проєкт</p>
           </div>
           
           <form onSubmit={handleContactSubmit} className="space-y-4">
@@ -314,7 +314,7 @@ export default function ChatPage() {
   const showProjectSidebar = session?.messages?.some(m => m.role === 'assistant');
 
   return (
-    <div className="h-screen w-full bg-background font-sans">
+    <div className="h-screen w-full bg-[#F7F8F9] font-sans">
       <div className={`flex w-full h-full ${showProjectSidebar ? '' : 'flex-col'}`}> 
         {/* Main Chat Area (Header + ChatWindow + InputBox) */}
         <div className={showProjectSidebar ? 'flex flex-col flex-1 relative h-full' : 'w-full h-full flex flex-col'}>
