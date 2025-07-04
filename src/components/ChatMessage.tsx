@@ -141,7 +141,7 @@ export default function ChatMessage({ message, handleQuickPrompt }: ChatMessageP
                   <button
                     key={idx}
                     onClick={() => handleQuickPrompt(answer)}
-                    className="px-4 py-2 rounded-xl bg-[#EFEFFF] dark:bg-[#2D225A] text-[#6030FE] dark:text-white font-medium shadow hover:bg-[#e0e0ff] dark:hover:bg-[#3C2780] transition-colors duration-200"
+                    className="px-4 py-2 rounded-xl bg-[#EFEFFF] text-[#6030FE] font-medium shadow hover:bg-[#e0e0ff] transition-colors duration-200 mr-2 mb-2"
                   >
                     {answer}
                   </button>

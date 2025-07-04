@@ -59,19 +59,17 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
         onKeyDown={handleKeyDown}
         placeholder="Запитайте будь-що"
         rows={1}
-        className="bg-transparent border-none outline-none resize-none text-[1.18rem] text-[#23232B] dark:text-white min-h-[48px] max-h-[220px] leading-[1.5] pt-5 pb-0 px-0 w-full box-border placeholder-[#6B7280] dark:placeholder-[#E5E7EB] transition-colors duration-300"
+        className="block w-full bg-white border border-[#E5E7EB] rounded-xl px-4 py-3 text-[#23232B] placeholder-[#8B5CF6]/70 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] text-base shadow-sm transition mb-3 resize-none min-h-[48px] max-h-[220px] leading-[1.5] box-border"
         disabled={loading || disabled}
         autoComplete="off"
       />
-      <div
-        className="flex flex-row-reverse items-end gap-2 pb-4 w-full"
-      >
+      <div className="flex flex-row-reverse items-end gap-3 pb-2 w-full">
         {/* Літачок */}
         <button
           type="button"
           onClick={() => value.trim() && !loading && !disabled && onSend()}
           disabled={loading || disabled}
-          className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-[#E5E7EB] transition-colors duration-300 opacity-100 pointer-events-auto"
+          className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#6030FE] text-white shadow-lg text-xl font-bold hover:from-[#7C4DFF] hover:to-[#5E35B1] transition disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -79,11 +77,11 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
             height="28"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#8B8B93"
+            stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-gray-400 transition-colors duration-300"
+            className="text-white"
           >
             <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
           </svg>
@@ -92,7 +90,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
         <button
           type="button"
           disabled
-          className="w-11 h-11 flex items-center justify-center rounded-full text-[#6B7280] bg-transparent cursor-not-allowed"
+          className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#F7F8F9] text-[#8B5CF6] shadow border border-[#E5E7EB] cursor-not-allowed opacity-60"
           tabIndex={-1}
         >
           <svg
@@ -105,7 +103,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-muted-foreground transition-colors duration-300"
+            className="text-[#8B5CF6]"
           >
             <rect x="9" y="2" width="6" height="12" rx="3" />
             <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
