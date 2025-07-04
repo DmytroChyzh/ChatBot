@@ -265,6 +265,10 @@ export default function ChatPage() {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-background font-sans pt-20">
         <div className="w-full max-w-md mx-4">
+          {/* Тестовий блок для перевірки Tailwind кастомних utility-класів */}
+          <div className="bg-accent text-accent-foreground rounded-3xl shadow-2xl p-8 text-2xl font-bold mt-8 text-center">
+            Тест: bg-accent, text-accent-foreground, rounded-3xl, shadow-2xl
+          </div>
           <div className="text-center mb-8">
             <div className="w-16 h-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
               C
