@@ -33,37 +33,23 @@ module.exports = {
       colors: {
         background: '#F7F8F9',
         foreground: '#23232B',
-        accent: {
-          DEFAULT: '#8B5CF6',
-          foreground: '#fff',
-        },
-        primary: {
-          DEFAULT: '#6030FE',
-          foreground: '#fff',
-        },
-        secondary: {
-          DEFAULT: '#EFEFFF',
-          foreground: '#23232B',
-        },
-        muted: {
-          DEFAULT: '#E5E7EB',
-          foreground: '#6B7280',
-        },
-        card: {
-          DEFAULT: '#fff',
-          foreground: '#23232B',
-        },
-        popover: {
-          DEFAULT: '#fff',
-          foreground: '#23232B',
-        },
+        accent: '#8B5CF6',
+        'accent-foreground': '#fff',
+        primary: '#6030FE',
+        'primary-foreground': '#fff',
+        secondary: '#EFEFFF',
+        'secondary-foreground': '#23232B',
+        muted: '#E5E7EB',
+        'muted-foreground': '#6B7280',
+        card: '#fff',
+        'card-foreground': '#23232B',
+        popover: '#fff',
+        'popover-foreground': '#23232B',
         border: '#E5E7EB',
         input: '#EFEFFF',
         ring: '#8B5CF6',
-        destructive: {
-          DEFAULT: '#EF4444',
-          foreground: '#fff',
-        },
+        destructive: '#EF4444',
+        'destructive-foreground': '#fff',
       },
       borderRadius: {
         'xl': '1.25rem',
