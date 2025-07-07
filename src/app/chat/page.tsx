@@ -296,7 +296,7 @@ export default function ChatPage() {
               </div>
               <button
                 type="submit"
-                className="block w-full px-4 py-3 bg-[#393949] text-white rounded-lg font-semibold text-lg transition hover:bg-[#23232B] focus:outline-none"
+                className="block w-full px-4 py-3 bg-[#18181C] border border-[#393949] text-white rounded-lg text-base transition focus:outline-none"
               >
                 Почати діалог
               </button>
