@@ -63,9 +63,7 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
+  plugins: [],
   safelist: [
     'bg-background', 'text-foreground', 'bg-accent', 'text-accent-foreground',
     'bg-primary', 'text-primary-foreground', 'bg-secondary', 'text-secondary-foreground',

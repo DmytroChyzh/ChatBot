@@ -59,7 +59,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
         onKeyDown={handleKeyDown}
         placeholder="Запитайте будь-що"
         rows={1}
-        className="block w-full bg-white border border-[#E5E7EB] rounded-xl px-4 py-3 text-[#23232B] placeholder-[#8B5CF6]/70 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] text-base shadow-sm transition mb-3 resize-none min-h-[48px] max-h-[220px] leading-[1.5] box-border"
+        className="block w-full mb-3 resize-none min-h-[48px] max-h-[220px] shadow-sm transition-all duration-200"
         disabled={loading || disabled}
         autoComplete="off"
       />
