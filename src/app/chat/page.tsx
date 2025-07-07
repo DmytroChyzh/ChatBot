@@ -273,14 +273,14 @@ export default function ChatPage() {
           </div>
           {/* Form */}
           <div className="px-8 pb-10">
-            <form onSubmit={handleContactSubmit} className="space-y-5">
+            <form onSubmit={handleContactSubmit} className="space-y-3">
               <div>
                 <input
                   type="text"
                   placeholder="Ваше ім'я"
                   value={contact.name}
                   onChange={(e) => setContact({ ...contact, name: e.target.value })}
-                  className="block w-full bg-[#18181C] border border-[#393949] px-4 py-3 rounded-lg text-white placeholder-[#A1A1AA] focus:outline-none focus:border-[#8B5CF6] text-base transition"
+                  className="block w-full bg-[#18181C] border border-[#393949] px-3 py-2 rounded-md text-white placeholder-[#A1A1AA] focus:outline-none focus:border-[#8B5CF6] text-sm transition"
                   required
                 />
               </div>
@@ -290,13 +290,13 @@ export default function ChatPage() {
                   placeholder="Email"
                   value={contact.email}
                   onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                  className="block w-full bg-[#18181C] border border-[#393949] px-4 py-3 rounded-lg text-white placeholder-[#A1A1AA] focus:outline-none focus:border-[#8B5CF6] text-base transition"
+                  className="block w-full bg-[#18181C] border border-[#393949] px-3 py-2 rounded-md text-white placeholder-[#A1A1AA] focus:outline-none focus:border-[#8B5CF6] text-sm transition"
                   required
                 />
               </div>
               <button
                 type="submit"
-                className="block w-full px-4 py-3 bg-[#18181C] border border-[#393949] text-white rounded-lg text-base transition focus:outline-none"
+                className="block w-full px-3 py-2 bg-[#23232B] border border-[#393949] text-white rounded-md text-sm transition hover:bg-[#18181C] focus:outline-none cursor-pointer"
               >
                 Почати діалог
               </button>
