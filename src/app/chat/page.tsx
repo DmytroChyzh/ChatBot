@@ -264,12 +264,12 @@ export default function ChatPage() {
   if (!contactSubmitted) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-[#18181C] font-sans px-2">
-        <div className="w-full max-w-md mx-auto bg-white rounded-3xl shadow-2xl p-0 overflow-hidden animate-fade-in">
+        <div className="w-full max-w-md mx-auto bg-[#23232B] rounded-3xl shadow-2xl p-0 overflow-hidden animate-fade-in border border-[#23232B]">
           {/* Logo/Header */}
           <div className="flex flex-col items-center justify-center pt-10 pb-4 px-8">
-            <div className="w-14 h-14 rounded-2xl bg-[#8B5CF6] flex items-center justify-center text-3xl font-extrabold text-white shadow-lg mb-4">C</div>
-            <h1 className="text-2xl font-bold text-[#23232B] mb-1">Cieden Асистент</h1>
-            <p className="text-[#6B7280] text-base mb-2">Розкажіть про свій проєкт</p>
+            <div className="w-14 h-14 rounded-2xl bg-[#393949] flex items-center justify-center text-3xl font-extrabold text-white shadow mb-4">C</div>
+            <h1 className="text-2xl font-bold text-white mb-1">Cieden Асистент</h1>
+            <p className="text-[#A1A1AA] text-base mb-2">Розкажіть про свій проєкт</p>
           </div>
           {/* Form */}
           <div className="px-8 pb-10">
@@ -280,7 +280,7 @@ export default function ChatPage() {
                   placeholder="Ваше ім'я"
                   value={contact.name}
                   onChange={(e) => setContact({ ...contact, name: e.target.value })}
-                  className="block w-full bg-white border border-[#E5E7EB] px-4 py-3 rounded-xl text-[#23232B] placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base shadow-sm transition"
+                  className="block w-full bg-[#18181C] border border-[#393949] px-4 py-3 rounded-lg text-white placeholder-[#A1A1AA] focus:outline-none focus:border-[#8B5CF6] text-base transition"
                   required
                 />
               </div>
@@ -290,13 +290,13 @@ export default function ChatPage() {
                   placeholder="Email"
                   value={contact.email}
                   onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                  className="block w-full bg-white border border-[#E5E7EB] px-4 py-3 rounded-xl text-[#23232B] placeholder-[#8B5CF6] focus:outline-none focus:border-[#8B5CF6] text-base shadow-sm transition"
+                  className="block w-full bg-[#18181C] border border-[#393949] px-4 py-3 rounded-lg text-white placeholder-[#A1A1AA] focus:outline-none focus:border-[#8B5CF6] text-base transition"
                   required
                 />
               </div>
               <button
                 type="submit"
-                className="block w-full px-4 py-3 bg-gradient-to-r from-[#8B5CF6] to-[#6030FE] text-white rounded-xl font-semibold text-lg shadow-lg hover:from-[#7C4DFF] hover:to-[#5E35B1] transition"
+                className="block w-full px-4 py-3 bg-[#393949] text-white rounded-lg font-semibold text-lg transition hover:bg-[#23232B] focus:outline-none"
               >
                 Почати діалог
               </button>
