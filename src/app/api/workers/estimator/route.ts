@@ -61,14 +61,20 @@ export async function POST(request: NextRequest) {
     const messages = session.messages
 
     // Визначаємо тип проєкту
-    let projectType = projectData.projectType?.toLowerCase() || 'web-app'
-    if (projectType.includes('landing')) projectType = 'landing'
-    else if (projectType.includes('dashboard')) projectType = 'dashboard'
-    else if (projectType.includes('mobile')) projectType = 'mobile'
-    else projectType = 'web-app'
+    let projectTypeValue = projectData.projectType?.value;
+    let projectType = 'web-app';
+    if (typeof projectTypeValue === 'string') {
+      projectType = projectTypeValue.toLowerCase();
+    } else if (Array.isArray(projectTypeValue) && typeof projectTypeValue[0] === 'string') {
+      projectType = projectTypeValue[0].toLowerCase();
+    }
+    if (projectType.includes('landing')) projectType = 'landing';
+    else if (projectType.includes('dashboard')) projectType = 'dashboard';
+    else if (projectType.includes('mobile')) projectType = 'mobile';
+    else projectType = 'web-app';
 
     // Отримуємо базовий шаблон
-    const baseTemplate = PROJECT_TEMPLATES[projectType as keyof typeof PROJECT_TEMPLATES] || PROJECT_TEMPLATES['web-app']
+    const baseTemplate = PROJECT_TEMPLATES[projectType as keyof typeof PROJECT_TEMPLATES] || PROJECT_TEMPLATES['web-app'];
 
     // Створюємо промпт для AI для уточнення оцінок
     const prompt = `
@@ -78,7 +84,7 @@ export async function POST(request: NextRequest) {
 ${projectData.projectName ? `Назва: ${projectData.projectName}` : ''}
 ${projectData.projectType ? `Тип: ${projectData.projectType}` : ''}
 ${projectData.description ? `Опис: ${projectData.description}` : ''}
-${projectData.features && projectData.features.length > 0 ? `Функції: ${projectData.features.join(', ')}` : ''}
+${projectData.features && Array.isArray(projectData.features.value) && projectData.features.value.length > 0 ? `Функції: ${projectData.features.value.join(', ')}` : projectData.features && typeof projectData.features.value === 'string' ? `Функції: ${projectData.features.value}` : ''}
 ${projectData.budget ? `Бюджет: ${projectData.budget}` : ''}
 ${projectData.timeline ? `Терміни: ${projectData.timeline}` : ''}
 
@@ -109,7 +115,7 @@ ${Object.entries(baseTemplate).map(([phase, data]) => `${phase}: ${data.hours} �
 - Інтеграції з зовнішніми сервісами
 - Потреби в тестуванні
 - Специфічні вимоги клієнта
-`
+`;
 
     // Викликаємо OpenAI
     const completion = await openai.chat.completions.create({
