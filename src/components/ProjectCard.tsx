@@ -18,15 +18,15 @@ const FIELD_CONFIG: Array<{
   label: string;
   icon: React.ReactNode;
 }> = [
-  { key: 'projectName', label: 'Назва проєкту', icon: <Award className="w-5 h-5 text-[#8B5CF6]" /> },
-  { key: 'projectType', label: 'Тип проєкту', icon: <Info className="w-5 h-5 text-[#8B5CF6]" /> },
-  { key: 'description', label: 'Опис', icon: <List className="w-5 h-5 text-[#8B5CF6]" /> },
-  { key: 'targetAudience', label: 'Цільова аудиторія', icon: <Users className="w-5 h-5 text-[#8B5CF6]" /> },
-  { key: 'features', label: 'Функціонал', icon: <CheckCircle className="w-5 h-5 text-[#8B5CF6]" /> },
-  { key: 'budget', label: 'Бюджет', icon: <DollarSign className="w-5 h-5 text-[#8B5CF6]" /> },
-  { key: 'timeline', label: 'Термін', icon: <Calendar className="w-5 h-5 text-[#8B5CF6]" /> },
-  { key: 'competitors', label: 'Конкуренти', icon: <Users className="w-5 h-5 text-[#8B5CF6]" /> },
-  { key: 'website', label: 'Вебсайт', icon: <Globe className="w-5 h-5 text-[#8B5CF6]" /> },
+  { key: 'projectName', label: 'Назва проєкту', icon: <Award className="w-5 h-5 text-accent" /> },
+  { key: 'projectType', label: 'Тип проєкту', icon: <Info className="w-5 h-5 text-accent" /> },
+  { key: 'description', label: 'Опис', icon: <List className="w-5 h-5 text-accent" /> },
+  { key: 'targetAudience', label: 'Цільова аудиторія', icon: <Users className="w-5 h-5 text-accent" /> },
+  { key: 'features', label: 'Функціонал', icon: <CheckCircle className="w-5 h-5 text-accent" /> },
+  { key: 'budget', label: 'Бюджет', icon: <DollarSign className="w-5 h-5 text-accent" /> },
+  { key: 'timeline', label: 'Термін', icon: <Calendar className="w-5 h-5 text-accent" /> },
+  { key: 'competitors', label: 'Конкуренти', icon: <Users className="w-5 h-5 text-accent" /> },
+  { key: 'website', label: 'Вебсайт', icon: <Globe className="w-5 h-5 text-accent" /> },
 ];
 
 function isProjectCardField(obj: any): obj is ProjectCardField<any> {
@@ -40,7 +40,6 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
     const fields = FIELD_CONFIG.map(f => projectData[f.key]);
     const filledFields = fields.filter((field, idx) => {
       if (!field) return false;
-      if (!isProjectCardField(field)) return false;
       const value = field.value;
       if ((idx === 4 || idx === 7) && Array.isArray(value)) return value.length > 0;
       if (typeof value === 'string') return value.trim() !== '';
@@ -61,7 +60,7 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white dark:bg-[#23232B] rounded-3xl shadow-lg border border-[#E5E7EB] dark:border-[#23232B] p-8 flex flex-col gap-8 transition-colors duration-300 animate-fade-in">
+    <div className="w-full max-w-2xl mx-auto bg-white/90 dark:bg-[#23232B]/90 rounded-3xl shadow-2xl border border-gray-200/60 dark:border-gray-700/60 p-8 flex flex-col gap-8 transition-colors duration-300 animate-fade-in">
       {/* Header */}
       <div className="flex items-center gap-4 mb-4">
         <div className="w-14 h-14 bg-gradient-to-br from-[#8B5CF6] to-[#6030FE] flex items-center justify-center text-white font-bold text-3xl rounded-2xl shadow-lg">
@@ -85,32 +84,47 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
           ></div>
         </div>
       </div>
+      {/* Worker Status */}
+      <div className="flex gap-6 mb-4">
+        <div className="flex items-center gap-2 text-xs">
+          <Clock className="w-4 h-4 text-accent" /> Summary:
+          <span className={getStatusColor(workerStatus.summarizer)}>{workerStatus.summarizer}</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs">
+          <List className="w-4 h-4 text-accent" /> Estimates:
+          <span className={getStatusColor(workerStatus.estimator)}>{workerStatus.estimator}</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs">
+          <Users className="w-4 h-4 text-accent" /> Research:
+          <span className={getStatusColor(workerStatus.researcher)}>{workerStatus.researcher}</span>
+        </div>
+      </div>
       {/* Fields */}
       <div className="flex flex-col gap-4">
         {FIELD_CONFIG.map(({ key, label, icon }) => {
           const data = projectData[key];
           return (
-            <div key={key} className={`flex flex-col gap-2 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#23232B] shadow-sm transition-all duration-300 ${isProjectCardField(data) && data.status === 'draft' ? 'ring-2 ring-[#FFD600]/60' : ''}`}>
+            <div key={key} className={`flex flex-col gap-2 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-[#23232B]/70 shadow-sm transition-all duration-300 ${isProjectCardField(data) && data.status === 'draft' ? 'ring-2 ring-yellow-400/60' : ''}`}>
               <div className="flex items-center gap-2 mb-1">
                 {icon}
-                <span className="text-sm font-semibold text-[#23232B] dark:text-[#E5E7EB]">{label}</span>
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{label}</span>
                 {isProjectCardField(data) && data.status === 'draft' && (
-                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-[#FFD600]/20 text-[#FFD600] dark:bg-[#FFD600]/40 dark:text-[#FFD600]">Чернетка</span>
+                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">Чернетка</span>
                 )}
                 {isProjectCardField(data) && data.status === 'final' && (
                   <span className="ml-2 px-2 py-0.5 text-xs rounded bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200">Підтверджено</span>
                 )}
               </div>
-              <div className="text-base text-[#23232B] dark:text-white min-h-[24px] break-words whitespace-pre-line">
+              <div className="text-base text-gray-900 dark:text-white min-h-[24px] break-words whitespace-pre-line">
                 {isProjectCardField(data) ? (
                   Array.isArray(data.value)
-                    ? (data.value.length > 0 ? data.value.join(', ') : <span className="text-[#6B7280] dark:text-[#E5E7EB] italic">Чекаємо інформацію...</span>)
-                    : (typeof data.value === 'string' && data.value.trim() !== '' ? data.value : <span className="text-[#6B7280] dark:text-[#E5E7EB] italic">Чекаємо інформацію...</span>)
-                ) : <span className="text-[#6B7280] dark:text-[#E5E7EB] italic">Чекаємо інформацію...</span>}
+                    ? (data.value.length > 0 ? data.value.join(', ') : <span className="text-muted-foreground italic">Чекаємо інформацію...</span>)
+                    : (typeof data.value === 'string' && data.value.trim() !== '' ? data.value : <span className="text-muted-foreground italic">Чекаємо інформацію...</span>)
+                ) : <span className="text-muted-foreground italic">Чекаємо інформацію...</span>}
               </div>
               {isProjectCardField(data) && data.status === 'draft' && onConfirmField && (
                 <button
-                  className="mt-2 px-3 py-1 text-xs rounded bg-[#8B5CF6] text-white hover:bg-[#7C4DFF] transition"
+                  className="mt-2 px-3 py-1 text-xs rounded bg-accent text-white hover:bg-accent/80 transition"
                   onClick={() => onConfirmField(key)}
                 >Підтвердити</button>
               )}

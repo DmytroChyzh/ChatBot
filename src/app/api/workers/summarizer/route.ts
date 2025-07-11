@@ -34,15 +34,15 @@ export async function POST(request: NextRequest) {
 Як експерт з аналізу проєктів, створіть короткий, але інформативний опис проєкту на основі наданої інформації.
 
 Дані проєкту:
-${projectData.projectName?.value ? `Назва: ${projectData.projectName.value}` : ''}
-${projectData.projectType?.value ? `Тип: ${projectData.projectType.value}` : ''}
-${projectData.description?.value ? `Опис: ${projectData.description.value}` : ''}
-${projectData.targetAudience?.value ? `Цільова аудиторія: ${projectData.targetAudience.value}` : ''}
-${projectData.features?.value && Array.isArray(projectData.features.value) && projectData.features.value.length > 0 ? `Функції: ${projectData.features.value.join(', ')}` : ''}
-${projectData.budget?.value ? `Бюджет: ${projectData.budget.value}` : ''}
-${projectData.timeline?.value ? `Терміни: ${projectData.timeline.value}` : ''}
-${projectData.competitors?.value && Array.isArray(projectData.competitors.value) && projectData.competitors.value.length > 0 ? `Конкуренти: ${projectData.competitors.value.join(', ')}` : ''}
-${projectData.website?.value ? `Вебсайт: ${projectData.website.value}` : ''}
+${projectData.projectName ? `Назва: ${projectData.projectName}` : ''}
+${projectData.projectType ? `Тип: ${projectData.projectType}` : ''}
+${projectData.description ? `Опис: ${projectData.description}` : ''}
+${projectData.targetAudience ? `Цільова аудиторія: ${projectData.targetAudience}` : ''}
+${projectData.features && projectData.features.length > 0 ? `Функції: ${projectData.features.join(', ')}` : ''}
+${projectData.budget ? `Бюджет: ${projectData.budget}` : ''}
+${projectData.timeline ? `Терміни: ${projectData.timeline}` : ''}
+${projectData.competitors && projectData.competitors.length > 0 ? `Конкуренти: ${projectData.competitors.join(', ')}` : ''}
+${projectData.website ? `Вебсайт: ${projectData.website}` : ''}
 
 Історія діалогу:
 ${messages.map(msg => `${msg.role}: ${msg.content}`).join('\n')}

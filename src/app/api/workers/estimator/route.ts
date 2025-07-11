@@ -61,8 +61,7 @@ export async function POST(request: NextRequest) {
     const messages = session.messages
 
     // Визначаємо тип проєкту
-    const projectTypeValue = projectData.projectType?.value || 'web-app'
-    let projectType = typeof projectTypeValue === 'string' ? projectTypeValue.toLowerCase() : 'web-app'
+    let projectType = projectData.projectType?.toLowerCase() || 'web-app'
     if (projectType.includes('landing')) projectType = 'landing'
     else if (projectType.includes('dashboard')) projectType = 'dashboard'
     else if (projectType.includes('mobile')) projectType = 'mobile'
@@ -76,12 +75,12 @@ export async function POST(request: NextRequest) {
 Як експерт з оцінки проєктів, проаналізуй надану інформацію та створи детальні оцінки за фазами розробки.
 
 Дані проєкту:
-${projectData.projectName?.value ? `Назва: ${projectData.projectName.value}` : ''}
-${projectData.projectType?.value ? `Тип: ${projectData.projectType.value}` : ''}
-${projectData.description?.value ? `Опис: ${projectData.description.value}` : ''}
-${projectData.features?.value && Array.isArray(projectData.features.value) && projectData.features.value.length > 0 ? `Функції: ${projectData.features.value.join(', ')}` : ''}
-${projectData.budget?.value ? `Бюджет: ${projectData.budget.value}` : ''}
-${projectData.timeline?.value ? `Терміни: ${projectData.timeline.value}` : ''}
+${projectData.projectName ? `Назва: ${projectData.projectName}` : ''}
+${projectData.projectType ? `Тип: ${projectData.projectType}` : ''}
+${projectData.description ? `Опис: ${projectData.description}` : ''}
+${projectData.features && projectData.features.length > 0 ? `Функції: ${projectData.features.join(', ')}` : ''}
+${projectData.budget ? `Бюджет: ${projectData.budget}` : ''}
+${projectData.timeline ? `Терміни: ${projectData.timeline}` : ''}
 
 Базові оцінки для типу проєкту "${projectType}":
 ${Object.entries(baseTemplate).map(([phase, data]) => `${phase}: ${data.hours} годин, $${data.cost}`).join('\n')}

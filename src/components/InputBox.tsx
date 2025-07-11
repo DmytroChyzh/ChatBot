@@ -49,7 +49,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
 
   return (
     <div
-      className="w-full max-w-[900px] mx-auto my-6 bg-[#F7F8F9] dark:bg-[#18181C] border-2 border-[#8B5CF6] rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-lg focus-within:ring-2 focus-within:ring-[#8B5CF6]"
+      className="w-full max-w-[900px] mx-auto my-6 bg-[hsl(var(--input-bg))] border-2 border-accent rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-lg focus-within:ring-2 focus-within:ring-accent"
       style={{ position: 'relative' }}
     >
       <textarea
@@ -59,17 +59,19 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
         onKeyDown={handleKeyDown}
         placeholder="Запитайте будь-що"
         rows={1}
-        className="block w-full mb-3 resize-none min-h-[48px] max-h-[220px] shadow-sm transition-all duration-200"
+        className="bg-transparent border-none outline-none resize-none text-[1.18rem] text-foreground min-h-[48px] max-h-[220px] leading-[1.5] pt-5 pb-0 px-0 w-full box-border placeholder-muted-foreground transition-colors duration-300"
         disabled={loading || disabled}
         autoComplete="off"
       />
-      <div className="flex flex-row-reverse items-end gap-3 pb-2 w-full">
+      <div
+        className="flex flex-row-reverse items-end gap-2 pb-4 w-full"
+      >
         {/* Літачок */}
         <button
           type="button"
           onClick={() => value.trim() && !loading && !disabled && onSend()}
           disabled={loading || disabled}
-          className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#6030FE] text-white shadow-lg text-xl font-bold hover:from-[#7C4DFF] hover:to-[#5E35B1] transition disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-muted/80 transition-colors duration-300 opacity-100 pointer-events-auto"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -77,11 +79,11 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
             height="28"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="#8B8B93"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-white"
+            className="text-gray-400 transition-colors duration-300"
           >
             <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
           </svg>
@@ -90,7 +92,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
         <button
           type="button"
           disabled
-          className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#F7F8F9] text-[#8B5CF6] shadow border border-[#E5E7EB] cursor-not-allowed opacity-60"
+          className="w-11 h-11 flex items-center justify-center rounded-full text-muted-foreground bg-transparent cursor-not-allowed"
           tabIndex={-1}
         >
           <svg
@@ -103,7 +105,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-[#8B5CF6]"
+            className="text-muted-foreground transition-colors duration-300"
           >
             <rect x="9" y="2" width="6" height="12" rx="3" />
             <path d="M19 10v2a7 7 0 0 1-14 0v-2" />

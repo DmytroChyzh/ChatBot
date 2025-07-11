@@ -3,16 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    border-color: #E5E7EB;
-  }
-  body {
-    background-color: #F7F8F9;
-    color: #23232B;
-  }
-}
-
-@layer base {
   :root {
     --background: 0 0% 100%;
     --header-bg: 220 14% 97%;
@@ -63,12 +53,30 @@
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
+    @apply border-border;
   }
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    @apply bg-background text-foreground;
   }
+}
+
+.prose-invert {
+  --tw-prose-body: theme('colors.gray.300');
+  --tw-prose-headings: theme('colors.white');
+  --tw-prose-lead: theme('colors.gray.400');
+  --tw-prose-links: theme('colors.white');
+  --tw-prose-bold: theme('colors.white');
+  --tw-prose-counters: theme('colors.gray.400');
+  --tw-prose-bullets: theme('colors.gray.600');
+  --tw-prose-hr: theme('colors.gray.700');
+  --tw-prose-quotes: theme('colors.gray.100');
+  --tw-prose-quote-borders: theme('colors.gray.700');
+  --tw-prose-captions: theme('colors.gray.400');
+  --tw-prose-code: theme('colors.white');
+  --tw-prose-pre-code: theme('colors.gray.300');
+  --tw-prose-pre-bg: theme('colors.gray.800');
+  --tw-prose-th-borders: theme('colors.gray.600');
+  --tw-prose-td-borders: theme('colors.gray.700');
 }
 
 @keyframes slide-in {
@@ -195,123 +203,6 @@ html {
 .overflow-y-auto {
   scrollbar-width: thin;
   scrollbar-color: #6d6d8f #23232b;
-}
-
-/* Стилі для форм (заміна @tailwindcss/forms) */
-@layer base {
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="url"],
-  textarea,
-  select {
-    appearance: none;
-    background-color: #fff;
-    border-color: #E5E7EB;
-    border-width: 1px;
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    color: #23232B;
-  }
-
-  input[type="text"]:focus,
-  input[type="email"]:focus,
-  input[type="password"]:focus,
-  input[type="number"]:focus,
-  input[type="search"]:focus,
-  input[type="tel"]:focus,
-  input[type="url"]:focus,
-  textarea:focus,
-  select:focus {
-    outline: 2px solid transparent;
-    outline-offset: 2px;
-    box-shadow: 0 0 0 2px #8B5CF6;
-    border-color: #8B5CF6;
-  }
-
-  input[type="text"]::placeholder,
-  input[type="email"]::placeholder,
-  input[type="password"]::placeholder,
-  input[type="number"]::placeholder,
-  input[type="search"]::placeholder,
-  input[type="tel"]::placeholder,
-  input[type="url"]::placeholder,
-  textarea::placeholder {
-    color: #8B5CF6;
-    opacity: 0.7;
-  }
-
-  input[type="text"]:disabled,
-  input[type="email"]:disabled,
-  input[type="password"]:disabled,
-  input[type="number"]:disabled,
-  input[type="search"]:disabled,
-  input[type="tel"]:disabled,
-  input[type="url"]:disabled,
-  textarea:disabled,
-  select:disabled {
-    background-color: #F3F4F6;
-    color: #9CA3AF;
-    cursor: not-allowed;
-  }
-
-  /* Dark mode styles */
-  .dark input[type="text"],
-  .dark input[type="email"],
-  .dark input[type="password"],
-  .dark input[type="number"],
-  .dark input[type="search"],
-  .dark input[type="tel"],
-  .dark input[type="url"],
-  .dark textarea,
-  .dark select {
-    background-color: #374151;
-    border-color: #4B5563;
-    color: #F9FAFB;
-  }
-
-  .dark input[type="text"]:focus,
-  .dark input[type="email"]:focus,
-  .dark input[type="password"]:focus,
-  .dark input[type="number"]:focus,
-  .dark input[type="search"]:focus,
-  .dark input[type="tel"]:focus,
-  .dark input[type="url"]:focus,
-  .dark textarea:focus,
-  .dark select:focus {
-    border-color: #8B5CF6;
-    box-shadow: 0 0 0 2px #8B5CF6;
-  }
-
-  .dark input[type="text"]::placeholder,
-  .dark input[type="email"]::placeholder,
-  .dark input[type="password"]::placeholder,
-  .dark input[type="number"]::placeholder,
-  .dark input[type="search"]::placeholder,
-  .dark input[type="tel"]::placeholder,
-  .dark input[type="url"]::placeholder,
-  .dark textarea::placeholder {
-    color: #A78BFA;
-    opacity: 0.7;
-  }
-
-  .dark input[type="text"]:disabled,
-  .dark input[type="email"]:disabled,
-  .dark input[type="password"]:disabled,
-  .dark input[type="number"]:disabled,
-  .dark input[type="search"]:disabled,
-  .dark input[type="tel"]:disabled,
-  .dark input[type="url"]:disabled,
-  .dark textarea:disabled,
-  .dark select:disabled {
-    background-color: #1F2937;
-    color: #6B7280;
-  }
 }
 
 /* Додаткові утиліти */

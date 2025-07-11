@@ -62,18 +62,13 @@ export async function POST(request: NextRequest) {
     const sources: string[] = []
     
     // Додаємо вебсайт клієнта, якщо є
-    if (projectData.website?.value) {
-      const websiteValue = projectData.website.value
-      if (typeof websiteValue === 'string') {
-        sources.push(websiteValue)
-      } else if (Array.isArray(websiteValue)) {
-        sources.push(...websiteValue.filter(url => typeof url === 'string'))
-      }
+    if (projectData.website) {
+      sources.push(projectData.website)
     }
     
     // Додаємо конкурентів, якщо є
-    if (projectData.competitors?.value && Array.isArray(projectData.competitors.value)) {
-      sources.push(...projectData.competitors.value.filter(comp => comp.startsWith('http')))
+    if (projectData.competitors) {
+      sources.push(...projectData.competitors.filter(comp => comp.startsWith('http')))
     }
 
     if (sources.length === 0) {

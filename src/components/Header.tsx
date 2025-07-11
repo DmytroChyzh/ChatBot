@@ -9,20 +9,20 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, className }) => (
-  <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[#F7F8F9] dark:bg-[#18181C] h-16 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''}`}>
+  <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] h-16 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''}`}>
     <div className="relative w-full">
       {/* Logo */}
       <div className={`fixed left-8 top-3 flex items-center gap-2 z-10 ${small ? 'h-8' : 'h-10'}`}>
-        <div className={`${small ? 'w-7 h-7 text-base' : 'w-8 h-8 text-lg'} rounded-lg bg-[#8B5CF6] text-white flex items-center justify-center font-semibold`}>
+        <div className={`${small ? 'w-7 h-7 text-base' : 'w-8 h-8 text-lg'} rounded-lg bg-accent text-accent-foreground flex items-center justify-center font-semibold`}>
           C
         </div>
-        <h1 className={`${small ? 'text-base' : 'text-lg'} font-medium text-[#23232B] dark:text-white`}>Cieden Асистент</h1>
+        <h1 className={`${small ? 'text-base' : 'text-lg'} font-medium text-foreground`}>Cieden Асистент</h1>
       </div>
       {/* Theme Toggle */}
       <div className="absolute right-8 top-3">
         <button
           onClick={toggleTheme}
-          className="p-2 text-[#6B7280] hover:text-[#23232B] dark:text-[#E5E7EB] dark:hover:text-white transition"
+          className="p-2 text-muted-foreground hover:text-foreground transition"
           title={theme === 'dark' ? 'Світла тема' : 'Темна тема'}
         >
           {mounted ? (theme === 'dark' ? (

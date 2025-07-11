@@ -263,45 +263,44 @@ export default function ChatPage() {
   // Показуємо форму контактів, якщо ще не заповнена
   if (!contactSubmitted) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-[#18181C] font-sans px-2">
-        <div className="w-full max-w-md mx-auto bg-[#23232B] rounded-3xl shadow-2xl p-0 overflow-hidden animate-fade-in border border-[#23232B]">
-          {/* Logo/Header */}
-          <div className="flex flex-col items-center justify-center pt-10 pb-4 px-8">
-            <div className="w-14 h-14 rounded-2xl bg-[#393949] flex items-center justify-center text-3xl font-extrabold text-white shadow mb-4">C</div>
-            <h1 className="text-2xl font-bold text-white mb-1">Cieden Асистент</h1>
-            <p className="text-[#A1A1AA] text-base mb-2">Розкажіть про свій проєкт</p>
+      <div className="h-screen w-full flex items-center justify-center bg-background font-sans pt-20">
+        <div className="w-full max-w-md mx-4">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+              C
+            </div>
+            <h1 className="text-2xl font-bold text-foreground mb-2">Cieden Асистент</h1>
+            <p className="text-muted-foreground">Розкажіть про свій проєкт</p>
           </div>
-          {/* Form */}
-          <div className="px-8 pb-10">
-            <form onSubmit={handleContactSubmit} className="space-y-3">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Ваше ім'я"
-                  value={contact.name}
-                  onChange={(e) => setContact({ ...contact, name: e.target.value })}
-                  className="block w-full bg-[#18181C] border border-[#393949] px-3 py-2 rounded-md text-white placeholder-[#A1A1AA] focus:outline-none focus:border-[#8B5CF6] text-sm transition"
-                  required
-                />
-              </div>
-              <div>
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={contact.email}
-                  onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                  className="block w-full bg-[#18181C] border border-[#393949] px-3 py-2 rounded-md text-white placeholder-[#A1A1AA] focus:outline-none focus:border-[#8B5CF6] text-sm transition"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                className="block w-full px-3 py-2 bg-[#23232B] border border-[#393949] text-white rounded-md text-sm transition hover:bg-[#18181C] focus:outline-none cursor-pointer"
-              >
-                Почати діалог
-              </button>
-            </form>
-          </div>
+          
+          <form onSubmit={handleContactSubmit} className="space-y-4">
+            <div>
+              <input
+                type="text"
+                placeholder="Ваше ім'я"
+                value={contact.name}
+                onChange={(e) => setContact({ ...contact, name: e.target.value })}
+                className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="email"
+                placeholder="Email"
+                value={contact.email}
+                onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full px-4 py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent/80 transition"
+            >
+              Почати діалог
+            </button>
+          </form>
         </div>
       </div>
     );
@@ -311,7 +310,7 @@ export default function ChatPage() {
   const showProjectSidebar = session?.messages?.some(m => m.role === 'assistant');
 
   return (
-    <div className="h-screen w-full bg-[#F7F8F9] font-sans">
+    <div className="h-screen w-full bg-background font-sans">
       <div className={`flex w-full h-full ${showProjectSidebar ? '' : 'flex-col'}`}> 
         {/* Main Chat Area (Header + ChatWindow + InputBox) */}
         <div className={showProjectSidebar ? 'flex flex-col flex-1 relative h-full' : 'w-full h-full flex flex-col'}>

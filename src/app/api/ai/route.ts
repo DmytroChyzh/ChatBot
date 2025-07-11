@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { getChatSession, updateProjectCard } from '../../../lib/firestore';
+import { ProjectCardState } from '../../../types/chat';
+import { parseProjectInfoFromText } from '../../../utils/parseProjectInfo';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -62,7 +65,34 @@ function parseSuggestedAnswers(text: string): string[] {
   return Array.from(new Set(arr.filter(Boolean)));
 }
 
-
+// Очищення та мапінг під ProjectCardState
+function cleanProjectInfo(raw: any, prevCard?: ProjectCardState): Partial<ProjectCardState> {
+  const allowed = [
+    'projectName',
+    'projectType',
+    'description',
+    'targetAudience',
+    'features',
+    'budget',
+    'timeline',
+    'competitors',
+    'website',
+  ];
+  const cleaned: any = {};
+  for (const key of allowed) {
+    const prev = prevCard?.[key];
+    const value = raw[key];
+    if (value && typeof value === 'object' && 'value' in value) {
+      // Якщо вже є final — не перезаписуємо
+      if (prev && prev.status === 'final') {
+        cleaned[key] = prev;
+      } else {
+        cleaned[key] = { value: value.value, status: 'draft' };
+      }
+    }
+  }
+  return cleaned;
+}
 
 export async function POST(req: NextRequest) {
   const { message, conversationHistory = [], sessionId } = await req.json();
@@ -113,4 +143,17 @@ export async function POST(req: NextRequest) {
   }
 }
 
- 
+export async function POST_PARSE_USER(req: NextRequest) {
+  const { message, sessionId } = await req.json();
+  if (!message || !sessionId) return NextResponse.json({ error: 'Missing message or sessionId' }, { status: 400 });
+  const projectInfoRaw = parseProjectInfoFromText(message);
+  const projectInfo = cleanProjectInfo(projectInfoRaw);
+  if (Object.keys(projectInfo).length > 0) {
+    try {
+      await updateProjectCard(sessionId, projectInfo);
+    } catch (error) {
+      console.error('Error updating project card from user message:', error);
+    }
+  }
+  return NextResponse.json({ projectInfo });
+} 
