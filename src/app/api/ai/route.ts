@@ -141,19 +141,4 @@ export async function POST(req: NextRequest) {
       suggestedAnswers: []
     });
   }
-}
-
-export async function POST_PARSE_USER(req: NextRequest) {
-  const { message, sessionId } = await req.json();
-  if (!message || !sessionId) return NextResponse.json({ error: 'Missing message or sessionId' }, { status: 400 });
-  const projectInfoRaw = parseProjectInfoFromText(message);
-  const projectInfo = cleanProjectInfo(projectInfoRaw);
-  if (Object.keys(projectInfo).length > 0) {
-    try {
-      await updateProjectCard(sessionId, projectInfo);
-    } catch (error) {
-      console.error('Error updating project card from user message:', error);
-    }
-  }
-  return NextResponse.json({ projectInfo });
 } 
