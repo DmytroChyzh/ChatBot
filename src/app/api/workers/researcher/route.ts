@@ -62,8 +62,8 @@ export async function POST(request: NextRequest) {
     const sources: string[] = []
     
     // Додаємо вебсайт клієнта, якщо є
-    if (projectData.website) {
-      sources.push(projectData.website)
+    if (projectData.website && typeof projectData.website.value === 'string') {
+      sources.push(projectData.website.value)
     }
     
     // Додаємо конкурентів, якщо є
