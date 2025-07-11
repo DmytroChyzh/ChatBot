@@ -40,9 +40,13 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
     const fields = FIELD_CONFIG.map(f => projectData[f.key]);
     const filledFields = fields.filter((field, idx) => {
       if (!field) return false;
-      const value = field.value;
-      if ((idx === 4 || idx === 7) && Array.isArray(value)) return value.length > 0;
-      if (typeof value === 'string') return value.trim() !== '';
+      if (isProjectCardField(field)) {
+        const value = field.value;
+        if ((idx === 4 || idx === 7) && Array.isArray(value)) return value.length > 0;
+        if (typeof value === 'string') return value.trim() !== '';
+        return false;
+      }
+      if (typeof field === 'string') return field.trim() !== '';
       return false;
     }).length;
     const percentage = Math.round((filledFields / fields.length) * 100);
