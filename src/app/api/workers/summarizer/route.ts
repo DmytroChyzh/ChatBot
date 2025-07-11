@@ -38,10 +38,10 @@ ${projectData.projectName ? `Назва: ${projectData.projectName}` : ''}
 ${projectData.projectType ? `Тип: ${projectData.projectType}` : ''}
 ${projectData.description ? `Опис: ${projectData.description}` : ''}
 ${projectData.targetAudience ? `Цільова аудиторія: ${projectData.targetAudience}` : ''}
-${projectData.features && projectData.features.length > 0 ? `Функції: ${projectData.features.join(', ')}` : ''}
+${projectData.features && Array.isArray(projectData.features.value) && projectData.features.value.length > 0 ? `Функції: ${projectData.features.value.join(', ')}` : projectData.features && typeof projectData.features.value === 'string' ? `Функції: ${projectData.features.value}` : ''}
 ${projectData.budget ? `Бюджет: ${projectData.budget}` : ''}
 ${projectData.timeline ? `Терміни: ${projectData.timeline}` : ''}
-${projectData.competitors && projectData.competitors.length > 0 ? `Конкуренти: ${projectData.competitors.join(', ')}` : ''}
+${projectData.competitors && Array.isArray(projectData.competitors.value) && projectData.competitors.value.length > 0 ? `Конкуренти: ${projectData.competitors.value.join(', ')}` : ''}
 ${projectData.website ? `Вебсайт: ${projectData.website}` : ''}
 
 Історія діалогу:
