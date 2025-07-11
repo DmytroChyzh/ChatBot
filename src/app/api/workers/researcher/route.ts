@@ -67,8 +67,8 @@ export async function POST(request: NextRequest) {
     }
     
     // Додаємо конкурентів, якщо є
-    if (projectData.competitors) {
-      sources.push(...projectData.competitors.filter(comp => comp.startsWith('http')))
+    if (projectData.competitors && Array.isArray(projectData.competitors.value)) {
+      sources.push(...projectData.competitors.value.filter(comp => typeof comp === 'string' && comp.startsWith('http')))
     }
 
     if (sources.length === 0) {
