@@ -399,7 +399,6 @@ export default function ChatPage() {
           <div className="h-full flex flex-col">
             <ProjectSidebar
               projectData={session.projectCard}
-              workerStatus={session.projectCard.workerStatus}
               onComplete={handleProjectComplete}
               wide
             />

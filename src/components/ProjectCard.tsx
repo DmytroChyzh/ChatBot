@@ -1,14 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ProjectCardState, ProjectCardField } from '../types/chat';
-import { CheckCircle, Clock, Info, Users, Globe, DollarSign, Calendar, List, Award, Link2 } from 'lucide-react';
+import { CheckCircle, Info, Users, Globe, DollarSign, Calendar, List, Award } from 'lucide-react';
 
 interface ProjectCardProps {
   projectData: ProjectCardState;
-  workerStatus: {
-    summarizer: 'idle' | 'running' | 'completed' | 'error';
-    estimator: 'idle' | 'running' | 'completed' | 'error';
-    researcher: 'idle' | 'running' | 'completed' | 'error';
-  };
   onComplete: () => void;
   onConfirmField?: (field: keyof ProjectCardState) => void;
 }
@@ -33,7 +28,7 @@ function isProjectCardField(obj: any): obj is ProjectCardField<any> {
   return obj && typeof obj === 'object' && 'value' in obj && 'status' in obj;
 }
 
-export default function ProjectCard({ projectData, workerStatus, onComplete, onConfirmField }: ProjectCardProps) {
+export default function ProjectCard({ projectData, onComplete, onConfirmField }: ProjectCardProps) {
   const [completionPercentage, setCompletionPercentage] = useState(0);
 
   useEffect(() => {
@@ -63,14 +58,7 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
     return field.status === 'draft';
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'running': return 'text-blue-400';
-      case 'completed': return 'text-green-400';
-      case 'error': return 'text-red-400';
-      default: return 'text-gray-400';
-    }
-  };
+
 
   return (
     <div className="w-full max-w-2xl mx-auto bg-white/90 dark:bg-[#23232B]/90 rounded-3xl shadow-2xl border border-gray-200/60 dark:border-gray-700/60 p-8 flex flex-col gap-8 transition-colors duration-300 animate-fade-in">
@@ -97,21 +85,7 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
           ></div>
         </div>
       </div>
-      {/* Worker Status */}
-      <div className="flex gap-6 mb-4">
-        <div className="flex items-center gap-2 text-xs">
-          <Clock className="w-4 h-4 text-accent" /> Summary:
-          <span className={getStatusColor(workerStatus.summarizer)}>{workerStatus.summarizer}</span>
-        </div>
-        <div className="flex items-center gap-2 text-xs">
-          <List className="w-4 h-4 text-accent" /> Estimates:
-          <span className={getStatusColor(workerStatus.estimator)}>{workerStatus.estimator}</span>
-        </div>
-        <div className="flex items-center gap-2 text-xs">
-          <Users className="w-4 h-4 text-accent" /> Research:
-          <span className={getStatusColor(workerStatus.researcher)}>{workerStatus.researcher}</span>
-        </div>
-      </div>
+
       {/* Fields */}
       <div className="flex flex-col gap-4">
         {FIELD_CONFIG.map(({ key, label, icon }) => {
