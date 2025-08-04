@@ -29,32 +29,38 @@ const quickPrompts = [
   {
     title: 'newProject',
     desc: 'Start from scratch',
-    value: 'I want to start a new project. What information do you need from me to begin?'
+    valueEn: 'I want to start a new project. What information do you need from me to begin?',
+    valueUk: 'Я хочу почати новий проєкт. Яку інформацію вам потрібно від мене для початку?'
   },
   {
     title: 'redesign',
     desc: 'Improve an existing product',
-    value: 'I have an existing product that needs a redesign. How can we start?'
+    valueEn: 'I have an existing product that needs a redesign. How can we start?',
+    valueUk: 'У мене є існуючий продукт, який потребує редизайну. Як ми можемо почати?'
   },
   {
     title: 'consultation',
     desc: 'Get expert advice',
-    value: 'I need a consultation about the UX/UI of my product. What questions would you like to discuss?'
+    valueEn: 'I need a consultation about the UX/UI of my product. What questions would you like to discuss?',
+    valueUk: 'Мені потрібна консультація щодо UX/UI мого продукту. Які питання ви хотіли б обговорити?'
   },
   {
     title: 'estimate',
     desc: 'Find out cost and timeline',
-    value: 'I want a detailed estimate for my project. What information do you need for the calculation?'
+    valueEn: 'I want a detailed estimate for my project. What information do you need for the calculation?',
+    valueUk: 'Я хочу детальну оцінку для мого проєкту. Яку інформацію вам потрібно для розрахунку?'
   },
   {
     title: 'team',
     desc: 'Learn about Cieden',
-    value: 'Tell me about your team and experience in similar projects.'
+    valueEn: 'Tell me about your team and experience in similar projects.',
+    valueUk: 'Розкажіть мені про вашу команду та досвід у подібних проєктах.'
   },
   {
     title: 'portfolio',
     desc: 'See work examples',
-    value: 'Please show examples of your successful projects in my field.'
+    valueEn: 'Please show examples of your successful projects in my field.',
+    valueUk: 'Будь ласка, покажіть приклади ваших успішних проєктів у моїй галузі.'
   }
 ];
 

@@ -18,7 +18,7 @@ const MESSAGE_CONTAINER_PADDING = 32; // padding like in InputBox
 const MAX_WIDTH = 900;
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, quickPrompts, handleQuickPrompt, messagesEndRef, paddingBottom }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { theme } = useTheme();
   
   return (
@@ -41,7 +41,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, qu
             {quickPrompts.map((prompt, index) => (
               <button
                 key={index}
-                onClick={() => handleQuickPrompt(prompt.value)}
+                onClick={() => handleQuickPrompt(language === 'uk' ? prompt.valueUk : prompt.valueEn)}
                 className="p-4 bg-muted rounded-lg text-left hover:bg-accent/10 transition-colors duration-300 group"
               >
                 <h3 className="font-medium text-foreground mb-1 group-hover:text-foreground transition-colors duration-300">
