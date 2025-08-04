@@ -37,13 +37,13 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
   <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] h-16 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''}`}>
     <div className="relative w-full">
       {/* Logo */}
-              <div className={`fixed left-8 top-3 flex items-center gap-3 z-10 ${small ? 'h-8' : 'h-10'}`}>
-          <div className={`${small ? 'w-8 h-8' : 'w-10 h-10'} relative flex items-center justify-center`}>
+              <div className={`fixed left-8 top-3 flex items-center gap-3 z-10 ${small ? 'h-8' : 'h-12'}`}>
+          <div className={`${small ? 'w-8 h-8' : 'w-16 h-16'} relative flex items-center justify-center`}>
             <Image
               src={theme === 'dark' ? '/images/logoDark.svg' : '/images/logoWhite.svg'}
               alt="Cieden Logo"
-              width={small ? 32 : 40}
-              height={small ? 32 : 40}
+              width={small ? 32 : 64}
+              height={small ? 32 : 64}
               className="w-full h-full"
               priority
             />
