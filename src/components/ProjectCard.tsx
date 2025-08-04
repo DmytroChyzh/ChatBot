@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ProjectCardState, ProjectCardField } from '../types/chat';
 import { CheckCircle, Info, Users, Globe, DollarSign, Calendar, List, Award } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ProjectCardProps {
   projectData: ProjectCardState;
@@ -10,18 +11,18 @@ interface ProjectCardProps {
 
 const FIELD_CONFIG: Array<{
   key: keyof ProjectCardState;
-  label: string;
+  labelKey: string;
   icon: React.ReactNode;
 }> = [
-  { key: 'projectName', label: 'Project Name', icon: <Award className="w-5 h-5 text-accent" /> },
-  { key: 'projectType', label: 'Project Type', icon: <Info className="w-5 h-5 text-accent" /> },
-  { key: 'description', label: 'Description', icon: <List className="w-5 h-5 text-accent" /> },
-  { key: 'targetAudience', label: 'Target Audience', icon: <Users className="w-5 h-5 text-accent" /> },
-  { key: 'features', label: 'Features', icon: <CheckCircle className="w-5 h-5 text-accent" /> },
-  { key: 'budget', label: 'Budget', icon: <DollarSign className="w-5 h-5 text-accent" /> },
-  { key: 'timeline', label: 'Timeline', icon: <Calendar className="w-5 h-5 text-accent" /> },
-  { key: 'competitors', label: 'Competitors', icon: <Users className="w-5 h-5 text-accent" /> },
-  { key: 'website', label: 'Website', icon: <Globe className="w-5 h-5 text-accent" /> },
+  { key: 'projectName', labelKey: 'projectCard.projectName', icon: <Award className="w-5 h-5 text-accent" /> },
+  { key: 'projectType', labelKey: 'projectCard.projectType', icon: <Info className="w-5 h-5 text-accent" /> },
+  { key: 'description', labelKey: 'projectCard.description', icon: <List className="w-5 h-5 text-accent" /> },
+  { key: 'targetAudience', labelKey: 'projectCard.targetAudience', icon: <Users className="w-5 h-5 text-accent" /> },
+  { key: 'features', labelKey: 'projectCard.features', icon: <CheckCircle className="w-5 h-5 text-accent" /> },
+  { key: 'budget', labelKey: 'projectCard.budget', icon: <DollarSign className="w-5 h-5 text-accent" /> },
+  { key: 'timeline', labelKey: 'projectCard.timeline', icon: <Calendar className="w-5 h-5 text-accent" /> },
+  { key: 'competitors', labelKey: 'projectCard.competitors', icon: <Users className="w-5 h-5 text-accent" /> },
+  { key: 'website', labelKey: 'projectCard.website', icon: <Globe className="w-5 h-5 text-accent" /> },
 ];
 
 function isProjectCardField(obj: any): obj is ProjectCardField<any> {
@@ -30,6 +31,7 @@ function isProjectCardField(obj: any): obj is ProjectCardField<any> {
 
 export default function ProjectCard({ projectData, onComplete, onConfirmField }: ProjectCardProps) {
   const [completionPercentage, setCompletionPercentage] = useState(0);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fields = FIELD_CONFIG.map(f => projectData[f.key]);
@@ -61,21 +63,21 @@ export default function ProjectCard({ projectData, onComplete, onConfirmField }:
 
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white/90 dark:bg-[#23232B]/90 rounded-3xl shadow-2xl border border-gray-200/60 dark:border-gray-700/60 p-8 flex flex-col gap-8 transition-colors duration-300 animate-fade-in">
+    <div className="w-full max-w-2xl mx-auto bg-white/90 dark:bg-[#23232B]/90 rounded-3xl shadow-lg border border-gray-200/60 dark:border-gray-700/60 p-8 flex flex-col gap-8 transition-colors duration-300 animate-fade-in">
       {/* Header */}
       <div className="flex items-center gap-4 mb-4">
-        <div className="w-14 h-14 bg-gradient-to-br from-[#8B5CF6] to-[#6030FE] flex items-center justify-center text-white font-bold text-3xl rounded-2xl shadow-lg">
+        <div className="w-14 h-14 bg-gradient-to-br from-[#8B5CF6] to-[#6030FE] flex items-center justify-center text-white font-bold text-3xl rounded-2xl shadow-md">
           <Award className="w-8 h-8" />
         </div>
         <div>
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-1">Project</h2>
-          <p className="text-base text-[#8B5CF6] font-medium">Live Project Card</p>
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-1">{t('projectCard.title')}</h2>
+          <p className="text-base text-[#8B5CF6] font-medium">{t('projectCard.subtitle')}</p>
         </div>
       </div>
       {/* Progress Bar */}
       <div className="mb-2">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-base font-semibold text-gray-700 dark:text-gray-200">Completion</span>
+          <span className="text-base font-semibold text-gray-700 dark:text-gray-200">{t('projectCard.completion')}</span>
           <span className="text-base font-bold text-[#8B5CF6]">{completionPercentage}%</span>
         </div>
         <div className="w-full bg-gray-200 dark:bg-gray-800 h-3 rounded-full overflow-hidden">
@@ -88,32 +90,32 @@ export default function ProjectCard({ projectData, onComplete, onConfirmField }:
 
       {/* Fields */}
       <div className="flex flex-col gap-4">
-        {FIELD_CONFIG.map(({ key, label, icon }) => {
+        {FIELD_CONFIG.map(({ key, labelKey, icon }) => {
           const data = projectData[key];
           return (
             <div key={key} className={`flex flex-col gap-2 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-[#23232B]/70 shadow-sm transition-all duration-300 ${shouldHighlight(key) ? 'ring-2 ring-yellow-400/60 bg-yellow-50/50 dark:bg-yellow-900/20' : ''}`}>
               <div className="flex items-center gap-2 mb-1">
                 {icon}
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{label}</span>
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{t(labelKey)}</span>
                 {isProjectCardField(data) && data.status === 'draft' && (
-                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">Draft</span>
+                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">{t('projectCard.draft')}</span>
                 )}
                 {isProjectCardField(data) && data.status === 'final' && (
-                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200">Confirmed</span>
+                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200">{t('projectCard.confirmed')}</span>
                 )}
               </div>
               <div className="text-base text-gray-900 dark:text-white min-h-[24px] break-words whitespace-pre-line">
                 {isProjectCardField(data) ? (
                   Array.isArray(data.value)
-                    ? (data.value.length > 0 ? data.value.join(', ') : <span className="text-muted-foreground italic">Waiting for information...</span>)
-                    : (typeof data.value === 'string' && data.value.trim() !== '' ? data.value : <span className="text-muted-foreground italic">Waiting for information...</span>)
-                ) : <span className="text-muted-foreground italic">Waiting for information...</span>}
+                    ? (data.value.length > 0 ? data.value.join(', ') : <span className="text-muted-foreground italic">{t('projectCard.waitingForInfo')}</span>)
+                    : (typeof data.value === 'string' && data.value.trim() !== '' ? data.value : <span className="text-muted-foreground italic">{t('projectCard.waitingForInfo')}</span>)
+                ) : <span className="text-muted-foreground italic">{t('projectCard.waitingForInfo')}</span>}
               </div>
               {isProjectCardField(data) && data.status === 'draft' && onConfirmField && (
                 <button
                   className="mt-2 px-3 py-1 text-xs rounded bg-accent text-white hover:bg-accent/80 transition"
                   onClick={() => onConfirmField(key)}
-                >Confirm</button>
+                >{t('projectCard.confirm')}</button>
               )}
             </div>
           );

@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface InputBoxProps {
   value: string;
@@ -11,6 +12,7 @@ interface InputBoxProps {
 
 const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, disabled, projectComplete }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { t } = useLanguage();
 
   // Auto-grow textarea
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -38,10 +40,10 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">Project completed!</h3>
+          <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">{t('chat.projectCompleted')}</h3>
         </div>
         <p className="text-green-700 dark:text-green-300">
-          Thank you for the information! Our team will analyze your project and contact you soon.
+          {t('chat.projectCompletedMessage')}
         </p>
       </div>
     );
@@ -57,9 +59,9 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
         value={value}
         onChange={handleInput}
         onKeyDown={handleKeyDown}
-        placeholder="Ask anything about your project..."
+        placeholder={t('chat.inputPlaceholder')}
         rows={1}
-        className="bg-transparent border-none outline-none resize-none text-[1.18rem] text-foreground min-h-[48px] max-h-[220px] leading-[1.5] pt-5 pb-0 px-0 w-full box-border placeholder-muted-foreground transition-colors duration-300"
+        className="bg-transparent border-none outline-none resize-none text-base text-foreground min-h-[48px] max-h-[220px] leading-[1.5] pt-5 pb-0 px-0 w-full box-border placeholder-muted-foreground transition-colors duration-300"
         disabled={loading || disabled}
         autoComplete="off"
       />

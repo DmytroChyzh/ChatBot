@@ -12,6 +12,7 @@ import {
 import ChatMessage from '../../components/ChatMessage';
 import ProjectCard from '../../components/ProjectCard';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import ProjectSidebar from '../../components/ProjectSidebar';
@@ -25,32 +26,32 @@ interface ContactInfo {
 
 const quickPrompts = [
   {
-    title: 'New Project',
+    title: 'newproject',
     desc: 'Start from scratch',
     value: 'I want to start a new project. What information do you need from me to begin?'
   },
   {
-    title: 'Redesign',
+    title: 'redesign',
     desc: 'Improve an existing product',
     value: 'I have an existing product that needs a redesign. How can we start?'
   },
   {
-    title: 'Consultation',
+    title: 'consultation',
     desc: 'Get expert advice',
     value: 'I need a consultation about the UX/UI of my product. What questions would you like to discuss?'
   },
   {
-    title: 'Project Estimate',
+    title: 'estimate',
     desc: 'Find out cost and timeline',
     value: 'I want a detailed estimate for my project. What information do you need for the calculation?'
   },
   {
-    title: 'Team',
+    title: 'team',
     desc: 'Learn about Cieden',
     value: 'Tell me about your team and experience in similar projects.'
   },
   {
-    title: 'Portfolio',
+    title: 'portfolio',
     desc: 'See work examples',
     value: 'Please show examples of your successful projects in my field.'
   }
@@ -84,6 +85,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme, mounted } = useTheme();
+  const { t } = useLanguage();
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // Підписка на оновлення сесії в реальному часі
@@ -316,15 +318,15 @@ export default function ChatPage() {
             <div className="w-16 h-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
               C
             </div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">Cieden Assistant</h1>
-            <p className="text-muted-foreground">Tell us about your project</p>
+            <h1 className="text-2xl font-bold text-foreground mb-2">{t('contact.title')}</h1>
+            <p className="text-muted-foreground">{t('contact.subtitle')}</p>
           </div>
           
           <form onSubmit={handleContactSubmit} className="space-y-4">
             <div>
               <input
                 type="text"
-                placeholder="Your name"
+                placeholder={t('contact.namePlaceholder')}
                 value={contact.name}
                 onChange={(e) => setContact({ ...contact, name: e.target.value })}
                 className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
@@ -334,7 +336,7 @@ export default function ChatPage() {
             <div>
               <input
                 type="email"
-                placeholder="Email"
+                placeholder={t('contact.emailPlaceholder')}
                 value={contact.email}
                 onChange={(e) => setContact({ ...contact, email: e.target.value })}
                 className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
@@ -345,7 +347,7 @@ export default function ChatPage() {
               type="submit"
               className="w-full px-4 py-3 bg-[#651FFF] text-white rounded-lg font-medium hover:bg-[#5a1ee0] transition-colors duration-300 shadow-lg"
             >
-              Start Conversation
+              {t('contact.startButton')}
             </button>
           </form>
         </div>

@@ -1,5 +1,6 @@
 import React, { RefObject } from 'react';
 import ChatMessage from './ChatMessage';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ChatWindowProps {
   session: any;
@@ -14,7 +15,10 @@ interface ChatWindowProps {
 const MESSAGE_CONTAINER_PADDING = 32; // padding like in InputBox
 const MAX_WIDTH = 900;
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, quickPrompts, handleQuickPrompt, messagesEndRef, paddingBottom }) => (
+const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, quickPrompts, handleQuickPrompt, messagesEndRef, paddingBottom }) => {
+  const { t } = useLanguage();
+  
+  return (
   <div
     className="flex-1 overflow-y-auto w-full px-0 py-8 transition-colors duration-300"
     style={{
@@ -30,8 +34,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, qu
           <div className="w-16 h-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
             C
           </div>
-          <h2 className="text-xl font-semibold text-foreground mb-2">Hello, {contact.name}! 👋</h2>
-          <p className="text-muted-foreground mb-6">Tell us about your project or choose one of the options below</p>
+          <h2 className="text-xl font-semibold text-foreground mb-2">{t('chat.welcome').replace('{name}', contact.name)}</h2>
+          <p className="text-muted-foreground mb-6">{t('chat.subtitle')}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-w-4xl mx-auto">
             {quickPrompts.map((prompt, index) => (
               <button
@@ -40,9 +44,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, qu
                 className="p-4 bg-muted rounded-lg text-left hover:bg-accent/10 transition-colors duration-300 group"
               >
                 <h3 className="font-medium text-foreground mb-1 group-hover:text-foreground transition-colors duration-300">
-                  {prompt.title}
+                  {t(`prompts.${prompt.title}.title`)}
                 </h3>
-                <p className="text-sm text-muted-foreground">{prompt.desc}</p>
+                <p className="text-sm text-muted-foreground">{t(`prompts.${prompt.title}.desc`)}</p>
               </button>
             ))}
           </div>
@@ -59,7 +63,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, qu
             {/* Label */}
             <div className="flex items-center mb-1 text-xs text-muted-foreground justify-start transition-colors duration-300" style={{ minHeight: 18 }}>
               <svg className="mr-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="4"/><circle cx="7.5" cy="16" r="1.5"/><circle cx="16.5" cy="16" r="1.5"/><path d="M12 2v4m-6 4V6m12 4V6"/></svg>
-              <span>Assistant</span>
+              <span>{t('chat.assistant')}</span>
             </div>
             <div className="rounded-3xl px-5 py-4 shadow-md bg-card text-foreground flex items-center justify-center gap-2 transition-colors duration-300" style={{ minHeight: 40 }}>
               <div className="flex space-x-1 items-center">
@@ -74,6 +78,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, qu
       <div ref={messagesEndRef} />
     </div>
   </div>
-);
+  );
+};
 
 export default ChatWindow; 

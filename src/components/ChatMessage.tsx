@@ -6,6 +6,7 @@ import { useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ChatMessageProps {
   message: Message;
@@ -17,6 +18,7 @@ export default function ChatMessage({ message, handleQuickPrompt, userName }: Ch
   const isUser = message.role === 'user';
   const [copied, setCopied] = useState(false);
   const { theme } = useTheme();
+  const { t } = useLanguage();
 
   // Fallback: parse suggestions from text if GPT inserted them at the end
   const { cleanContent, fallbackAnswers } = useMemo(() => {
@@ -57,13 +59,13 @@ export default function ChatMessage({ message, handleQuickPrompt, userName }: Ch
           >
             {isUser ? (
               <>
-                <span>{userName || 'Client'}</span>
+                <span>{userName || t('chat.client')}</span>
                 <svg className="ml-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
               </>
             ) : (
               <>
                 <svg className="mr-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="4"/><circle cx="7.5" cy="16" r="1.5"/><circle cx="16.5" cy="16" r="1.5"/><path d="M12 2v4m-6 4V6m12 4V6"/></svg>
-                <span>Assistant</span>
+                <span>{t('chat.assistant')}</span>
               </>
             )}
           </div>
@@ -119,7 +121,7 @@ export default function ChatMessage({ message, handleQuickPrompt, userName }: Ch
               <button
                 onClick={handleCopy}
                 className="hover:text-gray-300 transition"
-                title="Copy message"
+                title={t('chat.copyMessage')}
               >
                 {copied ? (
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
