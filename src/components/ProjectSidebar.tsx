@@ -4,10 +4,12 @@ import ProjectCard from './ProjectCard';
 interface ProjectSidebarProps {
   projectData: any;
   onComplete: () => void;
+  onUpdateField?: (field: keyof any, value: any) => void;
+  onSaveProject?: () => void;
   wide?: boolean;
 }
 
-const ProjectSidebar: React.FC<ProjectSidebarProps> = ({ projectData, onComplete, wide }) => (
+const ProjectSidebar: React.FC<ProjectSidebarProps> = ({ projectData, onComplete, onUpdateField, onSaveProject, wide }) => (
   <div
     className={
       `${wide ? 'w-[440px] min-w-[360px] max-w-[440px]' : 'w-80'} h-screen flex-shrink-0 transition-all duration-300 bg-[#F7F8F9] dark:bg-[#18181C] shadow-2xl border-l border-gray-600/50 flex flex-col`
@@ -20,6 +22,8 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({ projectData, onComplete
       <ProjectCard 
         projectData={projectData}
         onComplete={onComplete}
+        onUpdateField={onUpdateField}
+        onSaveProject={onSaveProject}
       />
     </div>
   </div>

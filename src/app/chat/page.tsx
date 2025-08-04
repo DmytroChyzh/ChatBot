@@ -301,6 +301,71 @@ export default function ChatPage() {
     setIsProjectComplete(false);
   };
 
+  // Handle field updates in project card
+  const handleUpdateField = async (field: keyof ProjectCardState, value: any) => {
+    if (!sessionId) return;
+    
+    try {
+      await updateProjectCard(sessionId, { [field]: value });
+      // Update local session state
+      if (session) {
+        setSession({
+          ...session,
+          projectCard: {
+            ...session.projectCard,
+            [field]: value
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error updating field:', error);
+    }
+  };
+
+  // Handle project save
+  const handleSaveProject = async () => {
+    if (!sessionId || !session) return;
+    
+    try {
+      // Send project data to backend
+      const response = await fetch('/api/projects/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          projectData: session.projectCard,
+          contact: contact,
+          messages: session.messages
+        }),
+      });
+      
+      if (response.ok) {
+        // Show success message
+        const successMessage: Omit<Message, 'id'> = {
+          role: 'assistant',
+          content: t('projectCard.saveSuccessMessage'),
+          timestamp: new Date(),
+        };
+        await addMessageToSession(sessionId, successMessage);
+        
+        // Update session
+        if (session) {
+          setSession({
+            ...session,
+            messages: [...session.messages, { ...successMessage, id: Date.now().toString() }]
+          });
+        }
+        
+        // Mark project as complete
+        setIsProjectComplete(true);
+      }
+    } catch (error) {
+      console.error('Error saving project:', error);
+    }
+  };
+
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
@@ -415,6 +480,8 @@ export default function ChatPage() {
             <ProjectSidebar
               projectData={session.projectCard}
               onComplete={handleProjectComplete}
+              onUpdateField={handleUpdateField}
+              onSaveProject={handleSaveProject}
               wide
             />
           </div>

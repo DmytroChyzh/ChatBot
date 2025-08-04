@@ -7,6 +7,8 @@ interface ProjectCardProps {
   projectData: ProjectCardState;
   onComplete: () => void;
   onConfirmField?: (field: keyof ProjectCardState) => void;
+  onUpdateField?: (field: keyof ProjectCardState, value: any) => void;
+  onSaveProject?: () => void;
 }
 
 const FIELD_CONFIG: Array<{
@@ -29,8 +31,10 @@ function isProjectCardField(obj: any): obj is ProjectCardField<any> {
   return obj && typeof obj === 'object' && 'value' in obj && 'status' in obj;
 }
 
-export default function ProjectCard({ projectData, onComplete, onConfirmField }: ProjectCardProps) {
+export default function ProjectCard({ projectData, onComplete, onConfirmField, onUpdateField, onSaveProject }: ProjectCardProps) {
   const [completionPercentage, setCompletionPercentage] = useState(0);
+  const [editingField, setEditingField] = useState<keyof ProjectCardState | null>(null);
+  const [editValue, setEditValue] = useState<string>('');
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -67,6 +71,47 @@ export default function ProjectCard({ projectData, onComplete, onConfirmField }:
     }
     
     return false;
+  };
+
+  // Start editing a field
+  const startEditing = (fieldKey: keyof ProjectCardState) => {
+    const field = projectData[fieldKey];
+    if (isProjectCardField(field)) {
+      setEditingField(fieldKey);
+      if (Array.isArray(field.value)) {
+        setEditValue(field.value.join(', '));
+      } else {
+        setEditValue(field.value.toString());
+      }
+    }
+  };
+
+  // Save edited field
+  const saveEdit = () => {
+    if (editingField && onUpdateField) {
+      const field = projectData[editingField];
+      if (isProjectCardField(field)) {
+        let newValue: any;
+        if (editingField === 'features' || editingField === 'competitors') {
+          newValue = editValue.split(',').map(s => s.trim()).filter(Boolean);
+        } else {
+          newValue = editValue.trim();
+        }
+        
+        onUpdateField(editingField, {
+          value: newValue,
+          status: 'final'
+        });
+      }
+    }
+    setEditingField(null);
+    setEditValue('');
+  };
+
+  // Cancel editing
+  const cancelEdit = () => {
+    setEditingField(null);
+    setEditValue('');
   };
 
 
@@ -114,11 +159,52 @@ export default function ProjectCard({ projectData, onComplete, onConfirmField }:
                 )}
               </div>
               <div className="text-base text-gray-900 dark:text-white min-h-[24px] break-words whitespace-pre-line">
-                {isProjectCardField(data) ? (
-                  Array.isArray(data.value)
-                    ? (data.value.length > 0 ? data.value.join(', ') : <span className="text-muted-foreground italic">{t('projectCard.waitingForInfo')}</span>)
-                    : (typeof data.value === 'string' && data.value.trim() !== '' ? data.value : <span className="text-muted-foreground italic">{t('projectCard.waitingForInfo')}</span>)
-                ) : <span className="text-muted-foreground italic">{t('projectCard.waitingForInfo')}</span>}
+                {editingField === key ? (
+                  <div className="flex flex-col gap-2">
+                    <textarea
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white resize-none"
+                      rows={3}
+                      placeholder={t('projectCard.editPlaceholder')}
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={saveEdit}
+                        className="px-3 py-1 text-xs rounded bg-green-600 text-white hover:bg-green-700 transition"
+                      >
+                        {t('projectCard.save')}
+                      </button>
+                      <button
+                        onClick={cancelEdit}
+                        className="px-3 py-1 text-xs rounded bg-gray-500 text-white hover:bg-gray-600 transition"
+                      >
+                        {t('projectCard.cancel')}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between group">
+                    <div className="flex-1">
+                      {isProjectCardField(data) ? (
+                        Array.isArray(data.value)
+                          ? (data.value.length > 0 ? data.value.join(', ') : <span className="text-muted-foreground italic">{t('projectCard.waitingForInfo')}</span>)
+                          : (typeof data.value === 'string' && data.value.trim() !== '' ? data.value : <span className="text-muted-foreground italic">{t('projectCard.waitingForInfo')}</span>)
+                      ) : <span className="text-muted-foreground italic">{t('projectCard.waitingForInfo')}</span>}
+                    </div>
+                    {isProjectCardField(data) && data.value && (
+                      <button
+                        onClick={() => startEditing(key)}
+                        className="ml-2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title={t('projectCard.edit')}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
               {isProjectCardField(data) && data.status === 'draft' && onConfirmField && (
                 <div className="mt-2 flex gap-2">
@@ -146,6 +232,29 @@ export default function ProjectCard({ projectData, onComplete, onConfirmField }:
           );
         })}
       </div>
+
+      {/* Save Project Button */}
+      {completionPercentage >= 80 && onSaveProject && (
+        <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">
+              {t('projectCard.completionMessage')}
+            </h3>
+            <p className="text-sm text-green-600 dark:text-green-300 mb-4">
+              {t('projectCard.completionDescription')}
+            </p>
+            <button
+              onClick={onSaveProject}
+              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center gap-2 mx-auto"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+              {t('projectCard.sendProject')}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
