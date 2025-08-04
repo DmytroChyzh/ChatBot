@@ -325,7 +325,7 @@ export default function ChatPage() {
             <div className="text-center mb-8">
               <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
                 <Image
-                  src={theme === 'dark' ? '/images/logoDark.svg' : '/images/logoWhite.svg'}
+                  src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
                   alt="Cieden Logo"
                   width={64}
                   height={64}
