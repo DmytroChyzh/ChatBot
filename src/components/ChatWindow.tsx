@@ -34,13 +34,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, qu
     <div style={{ width: '100%', maxWidth: MAX_WIDTH, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
       {session?.messages.length === 0 && (
         <div className="text-center py-12 w-full">
-          <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
+          <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
             <Image
               src={theme === 'dark' ? '/images/logoDark.svg' : '/images/logoWhite.svg'}
               alt="Cieden Logo"
-              width={48}
-              height={48}
-              className="w-12 h-12"
+              width={64}
+              height={64}
+              className="w-16 h-16"
               priority
             />
           </div>

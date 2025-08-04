@@ -323,13 +323,13 @@ export default function ChatPage() {
         <div className="flex items-center justify-center h-full" style={{ marginTop: '64px' }}>
           <div className="w-full max-w-md mx-4">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
+              <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
                 <Image
                   src={theme === 'dark' ? '/images/logoDark.svg' : '/images/logoWhite.svg'}
                   alt="Cieden Logo"
-                  width={48}
-                  height={48}
-                  className="w-12 h-12"
+                  width={64}
+                  height={64}
+                  className="w-16 h-16"
                   priority
                 />
               </div>
