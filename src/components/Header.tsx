@@ -34,23 +34,20 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
   }, [showLanguageDropdown]);
   
   return (
-  <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] h-32 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''}`}>
+  <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] h-24 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''}`}>
     <div className="relative w-full">
       {/* Logo */}
       
       {/* Header Content */}
       <div className="absolute left-16 right-16 top-8 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Image
-            src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
-            alt="Cieden Logo"
-            width={96}
-            height={96}
-            className="object-contain"
-            priority
-          />
-          <h1 className="text-lg font-medium text-foreground">Assistant</h1>
-        </div>
+        <Image
+          src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
+          alt="Cieden Logo"
+          width={96}
+          height={96}
+          className="object-contain"
+          priority
+        />
         <div className="flex items-center gap-3">
           {/* Language Switcher */}
           <div className="relative language-dropdown">

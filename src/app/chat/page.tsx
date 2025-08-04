@@ -323,16 +323,7 @@ export default function ChatPage() {
         <div className="flex items-center justify-center h-full" style={{ marginTop: '64px' }}>
           <div className="w-full max-w-md mx-4">
             <div className="text-center mb-8">
-              <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
-                <Image
-                  src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
-                  alt="Cieden Logo"
-                  width={64}
-                  height={64}
-                  className="w-16 h-16"
-                  priority
-                />
-              </div>
+
               <h1 className="text-2xl font-bold text-foreground mb-2">{t('contact.title')}</h1>
               <p className="text-muted-foreground">{t('contact.subtitle')}</p>
             </div>
