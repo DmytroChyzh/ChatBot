@@ -38,8 +38,8 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
     <div className="relative w-full">
       {/* Logo */}
       
-      {/* Theme Toggle */}
-      <div className="absolute right-8 top-8 flex items-center gap-3">
+      {/* Header Content */}
+      <div className="absolute left-16 right-16 top-8 flex items-center justify-between">
         <Image
           src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
           alt="Cieden Logo"
@@ -48,8 +48,9 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
           className="object-contain"
           priority
         />
-        {/* Language Switcher */}
-        <div className="relative language-dropdown">
+        <div className="flex items-center gap-3">
+          {/* Language Switcher */}
+          <div className="relative language-dropdown">
           <button
             onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
             className="flex items-center gap-1 px-2 py-1 text-xs bg-muted rounded-lg hover:bg-muted/80 transition-colors"
@@ -115,6 +116,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
             </svg>
           )) : null}
         </button>
+        </div>
       </div>
     </div>
   </header>
