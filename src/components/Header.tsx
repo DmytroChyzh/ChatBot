@@ -37,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
   <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] h-32 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''}`}>
     <div className="relative w-full">
       {/* Logo */}
-              <div className={`absolute left-16 top-1/2 transform -translate-y-1/2 flex items-center gap-3 z-10`}>
+              <div className={`absolute left-16 top-8 flex items-center gap-3 z-10`}>
           <div className={`${small ? 'w-8 h-8' : 'w-24 h-24'} relative flex items-center justify-center`}>
             <Image
               src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
           <h1 className={`${small ? 'text-base' : 'text-lg'} font-medium text-foreground`}>Асистент</h1>
         </div>
       {/* Theme Toggle */}
-      <div className="absolute right-8 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+      <div className="absolute right-8 top-8 flex items-center gap-2">
         {/* Language Switcher */}
         <div className="relative language-dropdown">
           <button
