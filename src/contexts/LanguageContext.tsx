@@ -65,7 +65,8 @@ const translations = {
     'projectCard.waitingForInfo': 'Waiting for information...',
     'projectCard.draft': 'Draft',
     'projectCard.confirmed': 'Confirmed',
-    'projectCard.confirm': 'Confirm',
+          'projectCard.confirm': 'Confirm',
+      'projectCard.reject': 'Reject',
     
     // Chat Messages
     'chat.client': 'Client',
@@ -127,7 +128,8 @@ const translations = {
     'projectCard.waitingForInfo': 'Очікуємо інформацію...',
     'projectCard.draft': 'Чернетка',
     'projectCard.confirmed': 'Підтверджено',
-    'projectCard.confirm': 'Підтвердити',
+          'projectCard.confirm': 'Підтвердити',
+      'projectCard.reject': 'Відхилити',
     
     // Chat Messages
     'chat.client': 'Клієнт',

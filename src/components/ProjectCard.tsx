@@ -51,13 +51,22 @@ export default function ProjectCard({ projectData, onComplete, onConfirmField }:
     if (percentage >= 80) onComplete();
   }, [projectData, onComplete]);
 
-  // Show highlight only for new or updated fields
+  // Show highlight for new or updated fields with smart logic
   const shouldHighlight = (fieldKey: keyof ProjectCardState) => {
     const field = projectData[fieldKey];
     if (!isProjectCardField(field)) return false;
     
-    // Show highlight only for draft status (new data)
-    return field.status === 'draft';
+    // Show highlight for draft status (new data)
+    if (field.status === 'draft') {
+      // Additional check: only highlight if the field has meaningful content
+      if (Array.isArray(field.value)) {
+        return field.value.length > 0 && field.value.some(item => item.trim().length > 0);
+      } else if (typeof field.value === 'string') {
+        return field.value.trim().length > 0;
+      }
+    }
+    
+    return false;
   };
 
 
@@ -112,10 +121,26 @@ export default function ProjectCard({ projectData, onComplete, onConfirmField }:
                 ) : <span className="text-muted-foreground italic">{t('projectCard.waitingForInfo')}</span>}
               </div>
               {isProjectCardField(data) && data.status === 'draft' && onConfirmField && (
-                <button
-                  className="mt-2 px-3 py-1 text-xs rounded bg-accent text-white hover:bg-accent/80 transition"
-                  onClick={() => onConfirmField(key)}
-                >{t('projectCard.confirm')}</button>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    className="px-3 py-1 text-xs rounded bg-green-600 text-white hover:bg-green-700 transition"
+                    onClick={() => onConfirmField(key)}
+                  >
+                    {t('projectCard.confirm')}
+                  </button>
+                  <button
+                    className="px-3 py-1 text-xs rounded bg-gray-500 text-white hover:bg-gray-600 transition"
+                    onClick={() => {
+                      // Remove the field if user doesn't confirm it
+                      if (onConfirmField) {
+                        // We'll need to add a remove function to props
+                        console.log('Field rejected:', key);
+                      }
+                    }}
+                  >
+                    {t('projectCard.reject')}
+                  </button>
+                </div>
               )}
             </div>
           );

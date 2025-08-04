@@ -1,5 +1,89 @@
-// Parser for extracting key data from text (user input)
-export function parseProjectInfoFromText(text: string): any {
+// Smart parser using GPT for better field recognition
+export async function parseProjectInfoFromText(text: string): Promise<any> {
+  try {
+    const response = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: `Analyze the following user input and extract project information. Return ONLY a JSON object with the following structure:
+
+{
+  "projectName": { "value": "extracted name", "status": "draft" },
+  "projectType": { "value": "extracted type", "status": "draft" },
+  "description": { "value": "extracted description", "status": "draft" },
+  "targetAudience": { "value": "extracted audience", "status": "draft" },
+  "features": { "value": ["feature1", "feature2"], "status": "draft" },
+  "budget": { "value": "extracted budget", "status": "draft" },
+  "timeline": { "value": "extracted timeline", "status": "draft" },
+  "competitors": { "value": ["competitor1", "competitor2"], "status": "draft" },
+  "website": { "value": "extracted website", "status": "draft" }
+}
+
+Rules:
+1. Only include fields that are clearly mentioned in the text
+2. For arrays (features, competitors), split by commas or list items
+3. If a field is not mentioned, don't include it in the response
+4. Be smart about context - if someone says "budget is $5000", extract it as budget
+5. If someone says "we need login and payment", extract as features array
+6. Support both Ukrainian and English text
+
+User input: "${text}"
+
+Return ONLY the JSON object, no additional text or explanations.`,
+        conversationHistory: [],
+        sessionId: null
+      }),
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      try {
+        const parsedInfo = JSON.parse(data.content);
+        
+        // Validate and clean the parsed data
+        const cleanedInfo: any = {};
+        const validFields = ['projectName', 'projectType', 'description', 'targetAudience', 'features', 'budget', 'timeline', 'competitors', 'website'];
+        
+        for (const field of validFields) {
+          if (parsedInfo[field] && parsedInfo[field].value) {
+            // Ensure arrays are properly formatted
+            if (field === 'features' || field === 'competitors') {
+              if (Array.isArray(parsedInfo[field].value)) {
+                cleanedInfo[field] = {
+                  value: parsedInfo[field].value.filter((item: string) => item && item.trim()),
+                  status: 'draft'
+                };
+              } else if (typeof parsedInfo[field].value === 'string') {
+                cleanedInfo[field] = {
+                  value: parsedInfo[field].value.split(',').map((s: string) => s.trim()).filter(Boolean),
+                  status: 'draft'
+                };
+              }
+            } else {
+              cleanedInfo[field] = {
+                value: parsedInfo[field].value.toString().trim(),
+                status: 'draft'
+              };
+            }
+          }
+        }
+        
+        return cleanedInfo;
+      } catch (parseError) {
+        console.error('Error parsing GPT response:', parseError);
+        return fallbackParse(text);
+      }
+    }
+  } catch (error) {
+    console.error('Error in smart parsing:', error);
+  }
+  
+  // Fallback to simple parsing if GPT fails
+  return fallbackParse(text);
+}
+
+// Fallback parser for when GPT is not available
+function fallbackParse(text: string): any {
   const info: any = {};
   const fields = [
     { key: 'projectType', patterns: [/Тип:?\s*([\w\s\-&.,:;()\[\]{}!?@#$%^*+=/\\'"|<>~`А-Яа-яёЁЇїІіЄєҐґA-Za-z0-9]+)(?=\n|$)/i, /-\s*Тип:?\s*([\w\s\-&.,:;()\[\]{}!?@#$%^*+=/\\'"|<>~`А-Яа-яёЁЇїІіЄєҐґA-Za-z0-9]+)(?=\n|$)/i] },
@@ -28,26 +112,6 @@ export function parseProjectInfoFromText(text: string): any {
     }
   }
   
-  // Heuristic for short answers (1-2 words)
-  const trimmed = text.trim();
-  if (Object.keys(info).length === 0 && trimmed.length > 0 && trimmed.length < 64) {
-    if (/\d+\s*(тиж|міс|днів|день|weeks?|months?|days?)/i.test(trimmed)) {
-      info.timeline = { value: trimmed, status: 'draft' };
-    } else if (/\$|\d+\s*\-\s*\d+|до \$?\d+/i.test(trimmed)) {
-      info.budget = { value: trimmed, status: 'draft' };
-    } else if (/^(автомобілісти|студенти|дилери|бізнес|широка аудиторія|бізнес|business|dealers|students|drivers)$/i.test(trimmed)) {
-      info.targetAudience = { value: trimmed, status: 'draft' };
-    } else if (/^(мобільний додаток|мобільний|додаток|mobile app|app|saas|веб-сайт|сайт|web|website)$/i.test(trimmed)) {
-      info.projectType = { value: trimmed, status: 'draft' };
-    } else if (/^(olx|auto\.ria|amazon|ebay|booking|інше|немає|none)$/i.test(trimmed)) {
-      info.competitors = { value: [trimmed], status: 'draft' };
-    } else if (/^(пошук|реєстрація|авторизація|оплата|чат|замовлення|services?|registration|login|payment|order)$/i.test(trimmed)) {
-      info.features = { value: [trimmed], status: 'draft' };
-    } else {
-      info.description = { value: trimmed, status: 'draft' };
-    }
-  }
-  
   return info;
 }
 
@@ -58,18 +122,20 @@ export async function enhanceProjectInfoWithGPT(rawInfo: any, originalText: stri
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        message: `Please enhance and summarize the following project information extracted from user input. Make it more professional and concise while preserving all key details:
+        message: `Enhance the following project information to make it more professional and structured. Return ONLY a JSON object with the same structure:
 
 Original text: "${originalText}"
-Extracted info: ${JSON.stringify(rawInfo)}
+Current extracted info: ${JSON.stringify(rawInfo)}
 
-Please return a JSON object with enhanced values for each field. Focus on:
-1. Making descriptions more professional and clear
-2. Summarizing long text into key points
-3. Standardizing formats (budget, timeline, etc.)
-4. Improving readability while keeping all important information
+Enhancement rules:
+1. Make descriptions more professional and clear
+2. Standardize budget format (e.g., "$5,000 - $10,000" or "€5000")
+3. Standardize timeline format (e.g., "3-4 months" or "6-8 weeks")
+4. For arrays (features, competitors), ensure proper formatting
+5. Keep all important information but make it more concise
+6. If a field is empty or unclear, don't include it
 
-Return only the JSON object, no additional text.`,
+Return ONLY the JSON object with enhanced values, no additional text.`,
         conversationHistory: [],
         sessionId: null
       }),
@@ -80,7 +146,30 @@ Return only the JSON object, no additional text.`,
       try {
         // Try to parse JSON from GPT response
         const enhancedInfo = JSON.parse(data.content);
-        return enhancedInfo;
+        
+        // Validate the enhanced data
+        const validatedInfo: any = {};
+        for (const key in enhancedInfo) {
+          if (rawInfo[key]) { // Only enhance fields that were originally found
+            if (key === 'features' || key === 'competitors') {
+              if (Array.isArray(enhancedInfo[key].value)) {
+                validatedInfo[key] = {
+                  value: enhancedInfo[key].value.filter((item: string) => item && item.trim()),
+                  status: 'draft'
+                };
+              } else {
+                validatedInfo[key] = rawInfo[key]; // Keep original if enhancement failed
+              }
+            } else {
+              validatedInfo[key] = {
+                value: enhancedInfo[key].value?.toString().trim() || rawInfo[key].value,
+                status: 'draft'
+              };
+            }
+          }
+        }
+        
+        return validatedInfo;
       } catch {
         // If parsing failed, return original data
         return rawInfo;

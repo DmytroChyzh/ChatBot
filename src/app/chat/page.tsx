@@ -191,7 +191,7 @@ export default function ChatPage() {
     try {
       await addMessageToSession(sessionId, userMessage);
       // Update card only if there are new draft data
-      const projectInfo = parseProjectInfoFromText(input);
+      const projectInfo = await parseProjectInfoFromText(input);
       const prevCard: ProjectCardState | undefined = session?.projectCard;
       const updates: Partial<ProjectCardState> = {};
       
@@ -242,7 +242,7 @@ export default function ChatPage() {
     (async () => {
       try {
         await addMessageToSession(sessionId, userMessage);
-        const projectInfo = parseProjectInfoFromText(value);
+        const projectInfo = await parseProjectInfoFromText(value);
         const prevCard: ProjectCardState | undefined = session?.projectCard;
         const updates: Partial<ProjectCardState> = {};
         
