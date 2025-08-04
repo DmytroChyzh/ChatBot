@@ -18,15 +18,15 @@ const FIELD_CONFIG: Array<{
   label: string;
   icon: React.ReactNode;
 }> = [
-  { key: 'projectName', label: 'Назва проєкту', icon: <Award className="w-5 h-5 text-accent" /> },
-  { key: 'projectType', label: 'Тип проєкту', icon: <Info className="w-5 h-5 text-accent" /> },
-  { key: 'description', label: 'Опис', icon: <List className="w-5 h-5 text-accent" /> },
-  { key: 'targetAudience', label: 'Цільова аудиторія', icon: <Users className="w-5 h-5 text-accent" /> },
-  { key: 'features', label: 'Функціонал', icon: <CheckCircle className="w-5 h-5 text-accent" /> },
-  { key: 'budget', label: 'Бюджет', icon: <DollarSign className="w-5 h-5 text-accent" /> },
-  { key: 'timeline', label: 'Термін', icon: <Calendar className="w-5 h-5 text-accent" /> },
-  { key: 'competitors', label: 'Конкуренти', icon: <Users className="w-5 h-5 text-accent" /> },
-  { key: 'website', label: 'Вебсайт', icon: <Globe className="w-5 h-5 text-accent" /> },
+  { key: 'projectName', label: 'Project Name', icon: <Award className="w-5 h-5 text-accent" /> },
+  { key: 'projectType', label: 'Project Type', icon: <Info className="w-5 h-5 text-accent" /> },
+  { key: 'description', label: 'Description', icon: <List className="w-5 h-5 text-accent" /> },
+  { key: 'targetAudience', label: 'Target Audience', icon: <Users className="w-5 h-5 text-accent" /> },
+  { key: 'features', label: 'Features', icon: <CheckCircle className="w-5 h-5 text-accent" /> },
+  { key: 'budget', label: 'Budget', icon: <DollarSign className="w-5 h-5 text-accent" /> },
+  { key: 'timeline', label: 'Timeline', icon: <Calendar className="w-5 h-5 text-accent" /> },
+  { key: 'competitors', label: 'Competitors', icon: <Users className="w-5 h-5 text-accent" /> },
+  { key: 'website', label: 'Website', icon: <Globe className="w-5 h-5 text-accent" /> },
 ];
 
 function isProjectCardField(obj: any): obj is ProjectCardField<any> {
@@ -54,6 +54,15 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
     if (percentage >= 80) onComplete();
   }, [projectData, onComplete]);
 
+  // Show highlight only for new or updated fields
+  const shouldHighlight = (fieldKey: keyof ProjectCardState) => {
+    const field = projectData[fieldKey];
+    if (!isProjectCardField(field)) return false;
+    
+    // Show highlight only for draft status (new data)
+    return field.status === 'draft';
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'running': return 'text-blue-400';
@@ -71,14 +80,14 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
           <Award className="w-8 h-8" />
         </div>
         <div>
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-1">Проєкт</h2>
-          <p className="text-base text-[#8B5CF6] font-medium">Live-картка</p>
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-1">Project</h2>
+          <p className="text-base text-[#8B5CF6] font-medium">Live Project Card</p>
         </div>
       </div>
       {/* Progress Bar */}
       <div className="mb-2">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-base font-semibold text-gray-700 dark:text-gray-200">Заповненість</span>
+          <span className="text-base font-semibold text-gray-700 dark:text-gray-200">Completion</span>
           <span className="text-base font-bold text-[#8B5CF6]">{completionPercentage}%</span>
         </div>
         <div className="w-full bg-gray-200 dark:bg-gray-800 h-3 rounded-full overflow-hidden">
@@ -108,29 +117,29 @@ export default function ProjectCard({ projectData, workerStatus, onComplete, onC
         {FIELD_CONFIG.map(({ key, label, icon }) => {
           const data = projectData[key];
           return (
-            <div key={key} className={`flex flex-col gap-2 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-[#23232B]/70 shadow-sm transition-all duration-300 ${isProjectCardField(data) && data.status === 'draft' ? 'ring-2 ring-yellow-400/60' : ''}`}>
+            <div key={key} className={`flex flex-col gap-2 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-[#23232B]/70 shadow-sm transition-all duration-300 ${shouldHighlight(key) ? 'ring-2 ring-yellow-400/60 bg-yellow-50/50 dark:bg-yellow-900/20' : ''}`}>
               <div className="flex items-center gap-2 mb-1">
                 {icon}
                 <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{label}</span>
                 {isProjectCardField(data) && data.status === 'draft' && (
-                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">Чернетка</span>
+                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">Draft</span>
                 )}
                 {isProjectCardField(data) && data.status === 'final' && (
-                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200">Підтверджено</span>
+                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200">Confirmed</span>
                 )}
               </div>
               <div className="text-base text-gray-900 dark:text-white min-h-[24px] break-words whitespace-pre-line">
                 {isProjectCardField(data) ? (
                   Array.isArray(data.value)
-                    ? (data.value.length > 0 ? data.value.join(', ') : <span className="text-muted-foreground italic">Чекаємо інформацію...</span>)
-                    : (typeof data.value === 'string' && data.value.trim() !== '' ? data.value : <span className="text-muted-foreground italic">Чекаємо інформацію...</span>)
-                ) : <span className="text-muted-foreground italic">Чекаємо інформацію...</span>}
+                    ? (data.value.length > 0 ? data.value.join(', ') : <span className="text-muted-foreground italic">Waiting for information...</span>)
+                    : (typeof data.value === 'string' && data.value.trim() !== '' ? data.value : <span className="text-muted-foreground italic">Waiting for information...</span>)
+                ) : <span className="text-muted-foreground italic">Waiting for information...</span>}
               </div>
               {isProjectCardField(data) && data.status === 'draft' && onConfirmField && (
                 <button
                   className="mt-2 px-3 py-1 text-xs rounded bg-accent text-white hover:bg-accent/80 transition"
                   onClick={() => onConfirmField(key)}
-                >Підтвердити</button>
+                >Confirm</button>
               )}
             </div>
           );

@@ -17,15 +17,15 @@ export default function ChatMessage({ message, handleQuickPrompt }: ChatMessageP
   const [copied, setCopied] = useState(false);
   const { theme } = useTheme();
 
-  // Fallback: парсимо підказки з тексту, якщо GPT вставив їх у кінець
+  // Fallback: parse suggestions from text if GPT inserted them at the end
   const { cleanContent, fallbackAnswers } = useMemo(() => {
     let cleanContent = message.content;
     let fallbackAnswers: string[] = [];
-    // Шукаємо масив у квадратних дужках наприкінці
+    // Look for array in square brackets at the end
     const match = cleanContent.match(/\[([\s\S]*?)\]\s*$/);
     if (match) {
       try {
-        // Пробуємо розпарсити як JSON масив
+        // Try to parse as JSON array
         const arr = JSON.parse(match[0].replace(/'/g, '"'));
         if (Array.isArray(arr)) {
           fallbackAnswers = arr.map((s: any) => String(s).trim()).filter(Boolean);
@@ -56,13 +56,13 @@ export default function ChatMessage({ message, handleQuickPrompt }: ChatMessageP
           >
             {isUser ? (
               <>
-                <span>Клієнт</span>
+                <span>Client</span>
                 <svg className="ml-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
               </>
             ) : (
               <>
                 <svg className="mr-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="4"/><circle cx="7.5" cy="16" r="1.5"/><circle cx="16.5" cy="16" r="1.5"/><path d="M12 2v4m-6 4V6m12 4V6"/></svg>
-                <span>Асистент</span>
+                <span>Assistant</span>
               </>
             )}
           </div>
@@ -118,7 +118,7 @@ export default function ChatMessage({ message, handleQuickPrompt }: ChatMessageP
               <button
                 onClick={handleCopy}
                 className="hover:text-gray-300 transition"
-                title="Копіювати повідомлення"
+                title="Copy message"
               >
                 {copied ? (
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

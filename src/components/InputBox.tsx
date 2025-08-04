@@ -28,7 +28,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
     }
   };
 
-  // Якщо проєкт завершено, показуємо повідомлення замість input
+  // If project is completed, show message instead of input
   if (projectComplete) {
     return (
       <div className="w-full max-w-[900px] mx-auto my-6 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-3xl px-8 py-6 transition-colors duration-300 shadow-lg">
@@ -38,10 +38,10 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">Проєкт завершено!</h3>
+          <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">Project completed!</h3>
         </div>
         <p className="text-green-700 dark:text-green-300">
-          Дякуємо за інформацію! Наша команда проаналізує ваш проєкт та зв'яжеться з вами найближчим часом.
+          Thank you for the information! Our team will analyze your project and contact you soon.
         </p>
       </div>
     );
@@ -49,7 +49,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
 
   return (
     <div
-      className="w-full max-w-[900px] mx-auto my-6 bg-[hsl(var(--input-bg))] border-2 border-accent rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-lg focus-within:ring-2 focus-within:ring-accent"
+      className="w-full max-w-[900px] mx-auto my-6 bg-[hsl(var(--input-bg))] border-2 border-accent rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-md focus-within:ring-2 focus-within:ring-accent"
       style={{ position: 'relative' }}
     >
       <textarea
@@ -57,7 +57,7 @@ const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, loading, d
         value={value}
         onChange={handleInput}
         onKeyDown={handleKeyDown}
-        placeholder="Запитайте будь-що"
+        placeholder="Ask anything about your project..."
         rows={1}
         className="bg-transparent border-none outline-none resize-none text-[1.18rem] text-foreground min-h-[48px] max-h-[220px] leading-[1.5] pt-5 pb-0 px-0 w-full box-border placeholder-muted-foreground transition-colors duration-300"
         disabled={loading || disabled}

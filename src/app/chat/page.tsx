@@ -16,7 +16,7 @@ import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import ProjectSidebar from '../../components/ProjectSidebar';
 import ChatWindow from '../../components/ChatWindow';
-import { parseProjectInfoFromText } from '../../utils/parseProjectInfo';
+import { parseProjectInfoFromText, enhanceProjectInfoWithGPT } from '../../utils/parseProjectInfo';
 
 interface ContactInfo {
   name: string;
@@ -25,34 +25,34 @@ interface ContactInfo {
 
 const quickPrompts = [
   {
-    title: 'Новий проєкт',
-    desc: 'Розпочати з нуля',
-    value: 'Я хочу створити новий проєкт. Розкажіть, яку інформацію вам потрібно від мене для початку?'
+    title: 'New Project',
+    desc: 'Start from scratch',
+    value: 'I want to start a new project. What information do you need from me to begin?'
   },
   {
-    title: 'Редизайн',
-    desc: 'Покращити існуючий продукт',
-    value: 'У мене є існуючий продукт, який потребує редизайну. Як ми можемо почати?'
+    title: 'Redesign',
+    desc: 'Improve an existing product',
+    value: 'I have an existing product that needs a redesign. How can we start?'
   },
   {
-    title: 'Консультація',
-    desc: 'Отримати експертну пораду',
-    value: 'Мені потрібна консультація щодо UX/UI мого продукту. Які питання ви б хотіли обговорити?'
+    title: 'Consultation',
+    desc: 'Get expert advice',
+    value: 'I need a consultation about the UX/UI of my product. What questions would you like to discuss?'
   },
   {
-    title: 'Оцінка проєкту',
-    desc: 'Дізнатись вартість та терміни',
-    value: 'Я хочу отримати детальну оцінку мого проєкту. Яку інформацію вам потрібно для розрахунку?'
+    title: 'Project Estimate',
+    desc: 'Find out cost and timeline',
+    value: 'I want a detailed estimate for my project. What information do you need for the calculation?'
   },
   {
-    title: 'Команда',
-    desc: 'Дізнатись про Cieden',
-    value: 'Розкажіть про вашу команду та досвід у подібних проєктах.'
+    title: 'Team',
+    desc: 'Learn about Cieden',
+    value: 'Tell me about your team and experience in similar projects.'
   },
   {
-    title: 'Кейси',
-    desc: 'Подивитись приклади робіт',
-    value: 'Покажіть, будь ласка, приклади ваших успішних проєктів у моїй сфері.'
+    title: 'Portfolio',
+    desc: 'See work examples',
+    value: 'Please show examples of your successful projects in my field.'
   }
 ];
 
@@ -63,6 +63,23 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [contact, setContact] = useState<ContactInfo>({ name: '', email: '' });
   const [contactSubmitted, setContactSubmitted] = useState(false);
+
+  // Restore session from localStorage
+  useEffect(() => {
+    const savedSessionId = localStorage.getItem('chatSessionId');
+    const savedContact = localStorage.getItem('chatContact');
+    
+    if (savedSessionId && savedContact) {
+      try {
+        const contactData = JSON.parse(savedContact);
+        setContact(contactData);
+        setContactSubmitted(true);
+        setSessionId(savedSessionId);
+      } catch (error) {
+        console.error('Error parsing saved contact:', error);
+      }
+    }
+  }, []);
   const [isProjectComplete, setIsProjectComplete] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -95,6 +112,10 @@ export default function ChatPage() {
         const newSessionId = await createChatSession(contact.name, contact.email);
         setSessionId(newSessionId);
         setContactSubmitted(true);
+        
+        // Save to localStorage
+        localStorage.setItem('chatSessionId', newSessionId);
+        localStorage.setItem('chatContact', JSON.stringify(contact));
       } catch (error) {
         console.error('Error creating session:', error);
       }
@@ -160,16 +181,22 @@ export default function ChatPage() {
     };
     try {
       await addMessageToSession(sessionId, userMessage);
-      // Оновлюємо картку лише якщо є нові draft-дані
+      // Update card only if there are new draft data
       const projectInfo = parseProjectInfoFromText(input);
       const prevCard: ProjectCardState | undefined = session?.projectCard;
       const updates: Partial<ProjectCardState> = {};
-      for (const key in projectInfo) {
-        const prev = prevCard?.[key];
-        if (!prev || prev.status !== 'final') {
-          updates[key] = projectInfo[key];
+      
+      // If there are new data, enhance them through GPT
+      if (Object.keys(projectInfo).length > 0) {
+        const enhancedInfo = await enhanceProjectInfoWithGPT(projectInfo, input);
+        for (const key in enhancedInfo) {
+          const prev = prevCard?.[key];
+          if (!prev || prev.status !== 'final') {
+            updates[key] = enhancedInfo[key];
+          }
         }
       }
+      
       if (Object.keys(updates).length > 0) {
         await updateProjectCard(sessionId, updates);
       }
@@ -209,12 +236,18 @@ export default function ChatPage() {
         const projectInfo = parseProjectInfoFromText(value);
         const prevCard: ProjectCardState | undefined = session?.projectCard;
         const updates: Partial<ProjectCardState> = {};
-        for (const key in projectInfo) {
-          const prev = prevCard?.[key];
-          if (!prev || prev.status !== 'final') {
-            updates[key] = projectInfo[key];
+        
+        // If there are new data, enhance them through GPT
+        if (Object.keys(projectInfo).length > 0) {
+          const enhancedInfo = await enhanceProjectInfoWithGPT(projectInfo, value);
+          for (const key in enhancedInfo) {
+            const prev = prevCard?.[key];
+            if (!prev || prev.status !== 'final') {
+              updates[key] = enhancedInfo[key];
+            }
           }
         }
+        
         if (Object.keys(updates).length > 0) {
           await updateProjectCard(sessionId, updates);
         }
@@ -243,6 +276,20 @@ export default function ChatPage() {
 
   const handleProjectComplete = () => {
     setIsProjectComplete(true);
+    // Clear localStorage when project is completed
+    localStorage.removeItem('chatSessionId');
+    localStorage.removeItem('chatContact');
+  };
+
+  const handleClearSession = () => {
+    // Clear localStorage and reset state
+    localStorage.removeItem('chatSessionId');
+    localStorage.removeItem('chatContact');
+    setSessionId(null);
+    setSession(null);
+    setContactSubmitted(false);
+    setContact({ name: '', email: '' });
+    setIsProjectComplete(false);
   };
 
   // Auto-resize textarea
@@ -260,7 +307,7 @@ export default function ChatPage() {
     setInput(''); // Очищуємо інпут одразу після відправки
   };
 
-  // Показуємо форму контактів, якщо ще не заповнена
+  // Show contact form if not yet filled
   if (!contactSubmitted) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-background font-sans pt-20">
@@ -269,15 +316,15 @@ export default function ChatPage() {
             <div className="w-16 h-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
               C
             </div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">Cieden Асистент</h1>
-            <p className="text-muted-foreground">Розкажіть про свій проєкт</p>
+            <h1 className="text-2xl font-bold text-foreground mb-2">Cieden Assistant</h1>
+            <p className="text-muted-foreground">Tell us about your project</p>
           </div>
           
           <form onSubmit={handleContactSubmit} className="space-y-4">
             <div>
               <input
                 type="text"
-                placeholder="Ваше ім'я"
+                placeholder="Your name"
                 value={contact.name}
                 onChange={(e) => setContact({ ...contact, name: e.target.value })}
                 className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
@@ -296,9 +343,9 @@ export default function ChatPage() {
             </div>
             <button
               type="submit"
-              className="w-full px-4 py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent/80 transition"
+              className="w-full px-4 py-3 bg-[#651FFF] text-white rounded-lg font-medium hover:bg-[#5a1ee0] transition-colors duration-300 shadow-lg"
             >
-              Почати діалог
+              Start Conversation
             </button>
           </form>
         </div>
@@ -306,7 +353,7 @@ export default function ChatPage() {
     );
   }
 
-  // Визначаємо, чи показувати картку: є хоча б одне повідомлення від асистента
+  // Determine whether to show card: there is at least one message from assistant
   const showProjectSidebar = session?.messages?.some(m => m.role === 'assistant');
 
   return (
@@ -320,6 +367,7 @@ export default function ChatPage() {
             mounted={mounted} 
             small={showProjectSidebar} 
             className={showProjectSidebar ? 'max-w-[calc(100vw-440px)]' : ''}
+            onClearSession={handleClearSession}
           />
           <div className="flex-1 flex flex-col" style={{ marginTop: showProjectSidebar ? (showProjectSidebar ? '48px' : '64px') : '64px', minHeight: 0 }}>
             <div className="flex-1 overflow-y-auto w-full flex flex-col items-center" style={{ minHeight: 0 }}>

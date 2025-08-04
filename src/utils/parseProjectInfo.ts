@@ -1,4 +1,4 @@
-// Парсер для витягування ключових даних із тексту (user input)
+// Parser for extracting key data from text (user input)
 export function parseProjectInfoFromText(text: string): any {
   const info: any = {};
   const fields = [
@@ -11,6 +11,7 @@ export function parseProjectInfoFromText(text: string): any {
     { key: 'competitors', patterns: [/Конкурент[и]?:?\s*([\w\s\-&.,:;()\[\]{}!?@#$%^*+=/\\'"|<>~`А-Яа-яёЁЇїІіЄєҐґA-Za-z0-9,]+)(?=\n|$)/i, /-\s*Конкурент[и]?:?\s*([\w\s\-&.,:;()\[\]{}!?@#$%^*+=/\\'"|<>~`А-Яа-яёЁЇїІіЄєҐґA-Za-z0-9,]+)(?=\n|$)/i] },
     { key: 'features', patterns: [/Функці[яї]:?\s*([\w\s\-&.,:;()\[\]{}!?@#$%^*+=/\\'"|<>~`А-Яа-яёЁЇїІіЄєҐґA-Za-z0-9,]+)(?=\n|$)/i, /-\s*Функці[яї]:?\s*([\w\s\-&.,:;()\[\]{}!?@#$%^*+=/\\'"|<>~`А-Яа-яёЁЇїІіЄєҐґA-Za-z0-9,]+)(?=\n|$)/i] },
   ];
+  
   for (const field of fields) {
     for (const pattern of field.patterns) {
       const match = text.match(pattern);
@@ -26,7 +27,8 @@ export function parseProjectInfoFromText(text: string): any {
       }
     }
   }
-  // Евристика для коротких відповідей (1-2 слова)
+  
+  // Heuristic for short answers (1-2 words)
   const trimmed = text.trim();
   if (Object.keys(info).length === 0 && trimmed.length > 0 && trimmed.length < 64) {
     if (/\d+\s*(тиж|міс|днів|день|weeks?|months?|days?)/i.test(trimmed)) {
@@ -45,5 +47,48 @@ export function parseProjectInfoFromText(text: string): any {
       info.description = { value: trimmed, status: 'draft' };
     }
   }
+  
   return info;
+}
+
+// GPT processing for improving highlight quality
+export async function enhanceProjectInfoWithGPT(rawInfo: any, originalText: string): Promise<any> {
+  try {
+    const response = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: `Please enhance and summarize the following project information extracted from user input. Make it more professional and concise while preserving all key details:
+
+Original text: "${originalText}"
+Extracted info: ${JSON.stringify(rawInfo)}
+
+Please return a JSON object with enhanced values for each field. Focus on:
+1. Making descriptions more professional and clear
+2. Summarizing long text into key points
+3. Standardizing formats (budget, timeline, etc.)
+4. Improving readability while keeping all important information
+
+Return only the JSON object, no additional text.`,
+        conversationHistory: [],
+        sessionId: null
+      }),
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      try {
+        // Try to parse JSON from GPT response
+        const enhancedInfo = JSON.parse(data.content);
+        return enhancedInfo;
+      } catch {
+        // If parsing failed, return original data
+        return rawInfo;
+      }
+    }
+  } catch (error) {
+    console.error('Error enhancing project info with GPT:', error);
+  }
+  
+  return rawInfo;
 } 
