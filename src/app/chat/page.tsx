@@ -27,7 +27,7 @@ interface ContactInfo {
 
 const quickPrompts = [
   {
-    title: 'newproject',
+    title: 'newProject',
     desc: 'Start from scratch',
     value: 'I want to start a new project. What information do you need from me to begin?'
   },
