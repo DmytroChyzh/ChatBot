@@ -154,6 +154,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);
     localStorage.setItem('language', lang);
+    // Force re-render by triggering a state update
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   const t = (key: string): string => {
