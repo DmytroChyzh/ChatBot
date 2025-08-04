@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface HeaderProps {
@@ -12,6 +12,25 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, className, onClearSession }) => {
   const { language, setLanguage, t } = useLanguage();
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.language-dropdown')) {
+        setShowLanguageDropdown(false);
+      }
+    };
+
+    if (showLanguageDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showLanguageDropdown]);
   
   return (
   <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] h-16 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''}`}>
@@ -26,27 +45,43 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
       {/* Theme Toggle */}
       <div className="absolute right-8 top-3 flex items-center gap-2">
         {/* Language Switcher */}
-        <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+        <div className="relative language-dropdown">
           <button
-            onClick={() => setLanguage('en')}
-            className={`px-2 py-1 text-xs rounded transition-colors ${
-              language === 'en' 
-                ? 'bg-accent text-accent-foreground' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+            className="flex items-center gap-1 px-2 py-1 text-xs bg-muted rounded-lg hover:bg-muted/80 transition-colors"
           >
-            {t('language.en')}
+            <span className="text-muted-foreground">{t(`language.${language}`)}</span>
+            <svg className="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
-          <button
-            onClick={() => setLanguage('uk')}
-            className={`px-2 py-1 text-xs rounded transition-colors ${
-              language === 'uk' 
-                ? 'bg-accent text-accent-foreground' 
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {t('language.uk')}
-          </button>
+          
+          {showLanguageDropdown && (
+            <div className="absolute top-full right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-50 min-w-[80px]">
+              <button
+                onClick={() => {
+                  setLanguage('en');
+                  setShowLanguageDropdown(false);
+                }}
+                className={`w-full px-3 py-2 text-xs text-left hover:bg-muted transition-colors ${
+                  language === 'en' ? 'bg-accent text-accent-foreground' : 'text-foreground'
+                }`}
+              >
+                {t('language.en')}
+              </button>
+              <button
+                onClick={() => {
+                  setLanguage('uk');
+                  setShowLanguageDropdown(false);
+                }}
+                className={`w-full px-3 py-2 text-xs text-left hover:bg-muted transition-colors ${
+                  language === 'uk' ? 'bg-accent text-accent-foreground' : 'text-foreground'
+                }`}
+              >
+                {t('language.uk')}
+              </button>
+            </div>
+          )}
         </div>
         
         {onClearSession && (

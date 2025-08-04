@@ -312,44 +312,52 @@ export default function ChatPage() {
   // Show contact form if not yet filled
   if (!contactSubmitted) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-background font-sans pt-20">
-        <div className="w-full max-w-md mx-4">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-              C
+      <div className="h-screen w-full bg-background font-sans">
+        <Header 
+          theme={theme} 
+          toggleTheme={toggleTheme} 
+          mounted={mounted} 
+          className=""
+        />
+        <div className="flex items-center justify-center h-full" style={{ marginTop: '64px' }}>
+          <div className="w-full max-w-md mx-4">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                C
+              </div>
+              <h1 className="text-2xl font-bold text-foreground mb-2">{t('contact.title')}</h1>
+              <p className="text-muted-foreground">{t('contact.subtitle')}</p>
             </div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">{t('contact.title')}</h1>
-            <p className="text-muted-foreground">{t('contact.subtitle')}</p>
+            
+            <form onSubmit={handleContactSubmit} className="space-y-4">
+              <div>
+                <input
+                  type="text"
+                  placeholder={t('contact.namePlaceholder')}
+                  value={contact.name}
+                  onChange={(e) => setContact({ ...contact, name: e.target.value })}
+                  className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
+                  required
+                />
+              </div>
+              <div>
+                <input
+                  type="email"
+                  placeholder={t('contact.emailPlaceholder')}
+                  value={contact.email}
+                  onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                  className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full px-4 py-3 bg-[#651FFF] text-white rounded-lg font-medium hover:bg-[#5a1ee0] transition-colors duration-300 shadow-lg"
+              >
+                {t('contact.startButton')}
+              </button>
+            </form>
           </div>
-          
-          <form onSubmit={handleContactSubmit} className="space-y-4">
-            <div>
-              <input
-                type="text"
-                placeholder={t('contact.namePlaceholder')}
-                value={contact.name}
-                onChange={(e) => setContact({ ...contact, name: e.target.value })}
-                className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
-                required
-              />
-            </div>
-            <div>
-              <input
-                type="email"
-                placeholder={t('contact.emailPlaceholder')}
-                value={contact.email}
-                onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full px-4 py-3 bg-[#651FFF] text-white rounded-lg font-medium hover:bg-[#5a1ee0] transition-colors duration-300 shadow-lg"
-            >
-              {t('contact.startButton')}
-            </button>
-          </form>
         </div>
       </div>
     );
