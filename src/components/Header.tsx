@@ -34,17 +34,17 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
   }, [showLanguageDropdown]);
   
   return (
-  <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] h-16 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''}`}>
+  <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] h-24 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''}`}>
     <div className="relative w-full">
       {/* Logo */}
-              <div className={`fixed left-8 top-3 flex items-center gap-3 z-10 ${small ? 'h-8' : 'h-20'}`}>
+              <div className={`fixed left-8 top-3 flex items-center gap-3 z-10 ${small ? 'h-8' : 'h-24'}`}>
           <div className={`${small ? 'w-8 h-8' : 'w-24 h-24'} relative flex items-center justify-center`}>
             <Image
               src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
               alt="Cieden Logo"
               width={small ? 32 : 96}
               height={small ? 32 : 96}
-              className="w-full h-full"
+              className="w-full h-full object-contain"
               priority
             />
           </div>
