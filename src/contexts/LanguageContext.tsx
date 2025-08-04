@@ -22,7 +22,7 @@ const translations = {
     'header.darkTheme': 'Dark theme',
     
     // Contact Form
-    'contact.title': 'Cieden Assistant',
+    'contact.title': 'Assistant',
     'contact.subtitle': 'Tell us about your project',
     'contact.namePlaceholder': 'Your name',
     'contact.emailPlaceholder': 'Email',
@@ -78,13 +78,13 @@ const translations = {
   },
   uk: {
     // Header
-    'header.title': 'Cieden Асистент',
+    'header.title': 'Асистент',
     'header.clearSession': 'Очистити сесію',
     'header.lightTheme': 'Світла тема',
     'header.darkTheme': 'Темна тема',
     
     // Contact Form
-    'contact.title': 'Cieden Асистент',
+    'contact.title': 'Асистент',
     'contact.subtitle': 'Розкажіть нам про ваш проєкт',
     'contact.namePlaceholder': 'Ваше ім\'я',
     'contact.emailPlaceholder': 'Email',
