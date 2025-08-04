@@ -44,8 +44,8 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
           <Image
             src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
             alt="Cieden Logo"
-            width={48}
-            height={48}
+            width={96}
+            height={96}
             className="object-contain"
             priority
           />
