@@ -38,12 +38,12 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
     <div className="relative w-full">
       {/* Logo */}
               <div className={`fixed left-8 top-3 flex items-center gap-3 z-10 ${small ? 'h-8' : 'h-24'}`}>
-          <div className={`${small ? 'w-8 h-8' : 'w-24 h-24'} relative flex items-center justify-center`}>
+          <div className={`${small ? 'w-8 h-8' : 'w-32 h-32'} relative flex items-center justify-center`}>
             <Image
               src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
               alt="Cieden Logo"
-              width={small ? 32 : 96}
-              height={small ? 32 : 96}
+              width={small ? 32 : 128}
+              height={small ? 32 : 128}
               className="w-full h-full object-contain"
               priority
             />
