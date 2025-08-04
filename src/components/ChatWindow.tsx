@@ -50,7 +50,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, qu
       )}
       {session?.messages.map((message: any) => (
         <div key={message.id} style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
-          <ChatMessage message={message} handleQuickPrompt={handleQuickPrompt} />
+          <ChatMessage message={message} handleQuickPrompt={handleQuickPrompt} userName={contact.name} />
         </div>
       ))}
       {isLoading && (
