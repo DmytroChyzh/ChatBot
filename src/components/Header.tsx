@@ -40,14 +40,17 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
       
       {/* Header Content */}
       <div className="absolute left-16 right-16 top-8 flex items-center justify-between">
-        <Image
-          src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
-          alt="Cieden Logo"
-          width={48}
-          height={48}
-          className="object-contain"
-          priority
-        />
+        <div className="flex items-center gap-3">
+          <Image
+            src={theme === 'dark' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
+            alt="Cieden Logo"
+            width={48}
+            height={48}
+            className="object-contain"
+            priority
+          />
+          <h1 className="text-lg font-medium text-foreground">Assistant</h1>
+        </div>
         <div className="flex items-center gap-3">
           {/* Language Switcher */}
           <div className="relative language-dropdown">
