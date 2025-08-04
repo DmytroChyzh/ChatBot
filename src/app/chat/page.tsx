@@ -13,6 +13,7 @@ import ChatMessage from '../../components/ChatMessage';
 import ProjectCard from '../../components/ProjectCard';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import Image from 'next/image';
 import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import ProjectSidebar from '../../components/ProjectSidebar';
@@ -322,8 +323,15 @@ export default function ChatPage() {
         <div className="flex items-center justify-center h-full" style={{ marginTop: '64px' }}>
           <div className="w-full max-w-md mx-4">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                C
+              <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
+                <Image
+                  src={theme === 'dark' ? '/images/logoDark.svg' : '/images/logoWhite.svg'}
+                  alt="Cieden Logo"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12"
+                  priority
+                />
               </div>
               <h1 className="text-2xl font-bold text-foreground mb-2">{t('contact.title')}</h1>
               <p className="text-muted-foreground">{t('contact.subtitle')}</p>

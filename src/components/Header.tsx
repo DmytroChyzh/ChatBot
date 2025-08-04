@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface HeaderProps {
@@ -36,12 +37,19 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
   <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] h-16 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''}`}>
     <div className="relative w-full">
       {/* Logo */}
-      <div className={`fixed left-8 top-3 flex items-center gap-2 z-10 ${small ? 'h-8' : 'h-10'}`}>
-        <div className={`${small ? 'w-7 h-7 text-base' : 'w-8 h-8 text-lg'} rounded-lg bg-accent text-accent-foreground flex items-center justify-center font-semibold`}>
-          C
+              <div className={`fixed left-8 top-3 flex items-center gap-2 z-10 ${small ? 'h-8' : 'h-10'}`}>
+          <div className={`${small ? 'w-7 h-7' : 'w-8 h-8'} relative flex items-center justify-center`}>
+            <Image
+              src={theme === 'dark' ? '/images/logoDark.svg' : '/images/logoWhite.svg'}
+              alt="Cieden Logo"
+              width={small ? 28 : 32}
+              height={small ? 28 : 32}
+              className="w-full h-full"
+              priority
+            />
+          </div>
+          <h1 className={`${small ? 'text-base' : 'text-lg'} font-medium text-foreground`}>{t('header.title')}</h1>
         </div>
-        <h1 className={`${small ? 'text-base' : 'text-lg'} font-medium text-foreground`}>{t('header.title')}</h1>
-      </div>
       {/* Theme Toggle */}
       <div className="absolute right-8 top-3 flex items-center gap-2">
         {/* Language Switcher */}

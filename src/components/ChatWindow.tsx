@@ -1,6 +1,8 @@
 import React, { RefObject } from 'react';
+import Image from 'next/image';
 import ChatMessage from './ChatMessage';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface ChatWindowProps {
   session: any;
@@ -17,6 +19,7 @@ const MAX_WIDTH = 900;
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, quickPrompts, handleQuickPrompt, messagesEndRef, paddingBottom }) => {
   const { t } = useLanguage();
+  const { theme } = useTheme();
   
   return (
   <div
@@ -31,8 +34,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, qu
     <div style={{ width: '100%', maxWidth: MAX_WIDTH, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
       {session?.messages.length === 0 && (
         <div className="text-center py-12 w-full">
-          <div className="w-16 h-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-            C
+          <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
+            <Image
+              src={theme === 'dark' ? '/images/logoDark.svg' : '/images/logoWhite.svg'}
+              alt="Cieden Logo"
+              width={48}
+              height={48}
+              className="w-12 h-12"
+              priority
+            />
           </div>
           <h2 className="text-xl font-semibold text-foreground mb-2">{t('chat.welcome').replace('{name}', contact.name)}</h2>
           <p className="text-muted-foreground mb-6">{t('chat.subtitle')}</p>
