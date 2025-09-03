@@ -269,6 +269,9 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
             <div className="font-medium">{estimate.team.contactPerson}</div>
             <div className="text-purple-600 dark:text-purple-400">{estimate.team.contactEmail}</div>
           </div>
+          <div className="text-xs text-purple-500 dark:text-purple-300 mt-2">
+            {language === 'uk' ? 'Ваш менеджер проекту' : 'Your project manager'}
+          </div>
         </div>
 
         {/* CTA кнопка та пояснення - завжди внизу */}
