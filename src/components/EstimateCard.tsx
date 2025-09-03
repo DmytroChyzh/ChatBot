@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import ProgressIndicator from './ProgressIndicator';
 import { 
   DollarSign, 
   Clock, 
@@ -77,18 +76,6 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 
   return (
     <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-      {/* Progress Indicator */}
-      {(conversationType === 'project' || conversationType === 'estimate') && estimateStep > 0 && (
-        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-          <ProgressIndicator
-            currentStep={estimateStep}
-            totalSteps={5}
-            conversationType={conversationType}
-            isVisible={true}
-          />
-        </div>
-      )}
-      
       {/* Заголовок */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-4">
         <div className="flex items-center gap-3">
@@ -117,7 +104,11 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
             </span>
           </div>
           <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-            ${estimate.currentRange.min.toLocaleString()} - ${estimate.currentRange.max.toLocaleString()}
+            {estimate.currentRange.min === 0 && estimate.currentRange.max === 0 ? (
+              <span className="text-gray-500">{language === 'uk' ? 'Визначається...' : 'Determining...'}</span>
+            ) : (
+              `$${estimate.currentRange.min.toLocaleString()} - $${estimate.currentRange.max.toLocaleString()}`
+            )}
           </div>
           <div className="text-sm text-gray-500 dark:text-gray-400">
             {estimate.currency} • {estimate.estimatedAt.toLocaleDateString()}
@@ -125,31 +116,42 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
         </div>
 
         {/* Індикатор звуження */}
-        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {language === 'uk' ? 'Точність естімейту' : 'Estimate Accuracy'}
-            </span>
-            <span className="text-sm font-bold text-purple-600">
-              {narrowingPercentage.toFixed(0)}%
-            </span>
+        {estimate.currentRange.min > 0 && estimate.currentRange.max > 0 ? (
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {language === 'uk' ? 'Точність естімейту' : 'Estimate Accuracy'}
+              </span>
+              <span className="text-sm font-bold text-purple-600">
+                {narrowingPercentage.toFixed(0)}%
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${narrowingPercentage}%` }}
+              />
+            </div>
+            <div className="flex items-center gap-2 mt-2 text-xs text-gray-600 dark:text-gray-400">
+              <TrendingDown className="w-4 h-4" />
+              <span>
+                {language === 'uk' 
+                  ? `Діапазон звужено з $${estimate.initialRange.min.toLocaleString()}K - $${estimate.initialRange.max.toLocaleString()}K`
+                  : `Range narrowed from $${estimate.initialRange.min.toLocaleString()}K - $${estimate.initialRange.max.toLocaleString()}K`
+                }
+              </span>
+            </div>
           </div>
-          <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-            <div 
-              className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-500"
-              style={{ width: `${narrowingPercentage}%` }}
-            />
-          </div>
-          <div className="flex items-center gap-2 mt-2 text-xs text-gray-600 dark:text-gray-400">
-            <TrendingDown className="w-4 h-4" />
-            <span>
+        ) : (
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
               {language === 'uk' 
-                ? `Діапазон звужено з $${estimate.initialRange.min.toLocaleString()}K - $${estimate.initialRange.max.toLocaleString()}K`
-                : `Range narrowed from $${estimate.initialRange.min.toLocaleString()}K - $${estimate.initialRange.max.toLocaleString()}K`
+                ? 'Очікуємо деталі проєкту для розрахунку вартості...'
+                : 'Waiting for project details to calculate cost...'
               }
-            </span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Час та команда */}
         <div className="grid grid-cols-2 gap-4">
@@ -161,7 +163,11 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               </span>
             </div>
             <div className="text-sm text-blue-700 dark:text-blue-300">
-              {estimate.timeline}
+              {estimate.timeline === 'Визначається...' ? (
+                <span className="text-gray-500">{language === 'uk' ? 'Визначається...' : 'Determining...'}</span>
+              ) : (
+                estimate.timeline
+              )}
             </div>
           </div>
           
@@ -173,7 +179,11 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               </span>
             </div>
             <div className="text-sm text-green-700 dark:text-green-300">
-              {estimate.team.designers.length} {language === 'uk' ? 'дизайнерів' : 'designers'}
+              {estimate.team.designers.length === 0 ? (
+                <span className="text-gray-500">{language === 'uk' ? 'Визначається...' : 'Determining...'}</span>
+              ) : (
+                `${estimate.team.designers.length} ${language === 'uk' ? 'дизайнерів' : 'designers'}`
+              )}
             </div>
           </div>
         </div>

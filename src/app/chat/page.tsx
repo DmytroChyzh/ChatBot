@@ -337,7 +337,32 @@ export default function ChatPage() {
   // Generate project estimate based on conversation
   const generateProjectEstimate = async (messages: Message[]) => {
     try {
-      // Створюємо базовий естімейт на основі контексту
+      // На початку показуємо нульовий естімейт
+      if (estimateStep <= 1) {
+        const initialEstimate: ProjectEstimate = {
+          currentRange: { min: 0, max: 0 },
+          initialRange: { min: 0, max: 0 },
+          currency: 'USD',
+          confidence: 'low',
+          estimatedAt: new Date(),
+          timeline: 'Визначається...',
+          team: {
+            designers: [],
+            contactPerson: 'Марія Іваненко',
+            contactEmail: 'maria@cieden.com'
+          },
+          phases: {
+            discovery: 'Очікуємо деталі проєкту...',
+            design: 'Очікуємо деталі проєкту...',
+            development: 'Очікуємо деталі проєкту...',
+            testing: 'Очікуємо деталі проєкту...'
+          }
+        };
+        setProjectEstimate(initialEstimate);
+        return;
+      }
+
+      // Створюємо базовий естімейт на основі контексту після збору інформації
       const projectContext = messages
         .filter(m => m.role === 'user')
         .map(m => m.content)
@@ -396,7 +421,7 @@ export default function ChatPage() {
       };
 
       // Поточний діапазон (звужений на основі кроків)
-      const narrowingFactor = Math.min(estimateStep / 5, 0.8); // Максимум 80% звуження
+      const narrowingFactor = Math.min((estimateStep - 1) / 4, 0.8); // Максимум 80% звуження
       const currentRange = {
         min: Math.round(initialRange.min + (initialRange.max - initialRange.min) * narrowingFactor * 0.3),
         max: Math.round(initialRange.max - (initialRange.max - initialRange.min) * narrowingFactor * 0.7)
@@ -405,11 +430,11 @@ export default function ChatPage() {
       // Визначаємо термін на основі складності
       let timeline = '8-16 тижнів';
       if (complexity === 'high') {
-        timeline = estimateStep >= 3 ? '12-20 тижнів' : '16-24 тижні';
+        timeline = estimateStep >= 4 ? '12-20 тижнів' : '16-24 тижні';
       } else if (complexity === 'medium') {
-        timeline = estimateStep >= 3 ? '8-12 тижнів' : '10-16 тижнів';
+        timeline = estimateStep >= 4 ? '8-12 тижнів' : '10-16 тижнів';
       } else {
-        timeline = estimateStep >= 3 ? '4-8 тижнів' : '6-10 тижнів';
+        timeline = estimateStep >= 4 ? '4-8 тижнів' : '6-10 тижнів';
       }
 
       const estimate: ProjectEstimate = {
