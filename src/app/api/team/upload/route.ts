@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, collection } from 'firebase/firestore';
-import teamData from '../../../../data/team-data.json';
+import teamData from '../../../../data/comprehensive-team-data.json';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     let errors = [];
     
     // Upload each team member
-    for (const member of teamData) {
+    for (const member of teamData.members) {
       try {
         // Use member ID as document ID for consistency
         const memberRef = doc(teamCollection, member.id);
@@ -66,13 +66,13 @@ export async function POST(request: NextRequest) {
       await setDoc(teamMetaRef, {
         collectionName: 'team',
         description: 'Cieden team members database',
-        totalMembers: teamData.length,
+        totalMembers: teamData.totalMembers,
         uploadedMembers: uploadedCount,
         lastUpdated: new Date(),
         version: '1.0',
-        departments: Array.from(new Set(teamData.map(m => m.department))),
-        roles: Array.from(new Set(teamData.map(m => m.role))),
-        seniorityLevels: Array.from(new Set(teamData.map(m => m.seniority)))
+        departments: teamData.departments,
+        roles: teamData.roles,
+        seniorityLevels: teamData.seniorityLevels
       });
       console.log('✅ Team collection metadata created!');
     } catch (error) {
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Team data uploaded successfully',
       data: {
-        totalMembers: teamData.length,
+        totalMembers: teamData.totalMembers,
         uploadedMembers: uploadedCount,
         errors: errors.length,
         errorDetails: errors
@@ -111,11 +111,11 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       data: {
-        totalMembers: teamData.length,
-        departments: Array.from(new Set(teamData.map(m => m.department))),
-        roles: Array.from(new Set(teamData.map(m => m.role))),
-        seniorityLevels: Array.from(new Set(teamData.map(m => m.seniority))),
-        sampleMembers: teamData.slice(0, 3).map(m => ({
+        totalMembers: teamData.totalMembers,
+        departments: teamData.departments,
+        roles: teamData.roles,
+        seniorityLevels: teamData.seniorityLevels,
+        sampleMembers: teamData.members.slice(0, 3).map(m => ({
           id: m.id,
           fullName: m.fullName,
           role: m.role,

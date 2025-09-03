@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, doc, setDoc } from 'firebase/firestore';
-import teamData from '../data/team-data.json';
+import teamData from '../data/comprehensive-team-data.json';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -27,7 +27,7 @@ async function uploadTeamToFirebase() {
     const teamCollection = collection(db, 'team');
     
     // Upload each team member
-    for (const member of teamData) {
+    for (const member of teamData.members) {
       try {
         // Use member ID as document ID for consistency
         const memberRef = doc(teamCollection, member.id);
@@ -49,7 +49,7 @@ async function uploadTeamToFirebase() {
     }
     
     console.log('🎉 Team data upload completed!');
-    console.log(`📊 Total members uploaded: ${teamData.length}`);
+    console.log(`📊 Total members uploaded: ${teamData.totalMembers}`);
     
   } catch (error) {
     console.error('❌ Error during team upload:', error);
@@ -68,12 +68,12 @@ async function createTeamCollection() {
     await setDoc(teamMetaRef, {
       collectionName: 'team',
       description: 'Cieden team members database',
-      totalMembers: teamData.length,
+      totalMembers: teamData.totalMembers,
       lastUpdated: new Date(),
       version: '1.0',
-              departments: Array.from(new Set(teamData.map(m => m.department))),
-        roles: Array.from(new Set(teamData.map(m => m.role))),
-        seniorityLevels: Array.from(new Set(teamData.map(m => m.seniority)))
+      departments: teamData.departments,
+      roles: teamData.roles,
+      seniorityLevels: teamData.seniorityLevels
     });
     
     console.log('✅ Team collection structure created!');

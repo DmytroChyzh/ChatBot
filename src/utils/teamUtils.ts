@@ -1,4 +1,4 @@
-import teamData from '../data/team-data.json';
+import teamData from '../data/comprehensive-team-data.json';
 
 export interface TeamMember {
   id: string;
@@ -32,14 +32,14 @@ export interface TeamMember {
  * Get all team members
  */
 export function getAllTeamMembers(): TeamMember[] {
-  return teamData;
+  return teamData.members;
 }
 
 /**
  * Get team members by department
  */
 export function getTeamMembersByDepartment(department: string): TeamMember[] {
-  return teamData.filter(member => 
+  return teamData.members.filter(member => 
     member.department.toLowerCase() === department.toLowerCase()
   );
 }
@@ -48,7 +48,7 @@ export function getTeamMembersByDepartment(department: string): TeamMember[] {
  * Get team members by role
  */
 export function getTeamMembersByRole(role: string): TeamMember[] {
-  return teamData.filter(member => 
+  return teamData.members.filter(member => 
     member.role.toLowerCase().includes(role.toLowerCase())
   );
 }
@@ -88,13 +88,13 @@ export function getContactPersonForProject(projectType: string): string {
   }
   
   // За замовчуванням - перший менеджер
-  const managers = teamData.filter(m => m.access === 'Manager');
+  const managers = teamData.members.filter(m => m.access === 'Manager');
   if (managers.length > 0) {
     return managers[0].fullName;
   }
   
   // Якщо немає менеджерів - перший Senior
-  const seniors = teamData.filter(m => m.seniority === 'Senior');
+  const seniors = teamData.members.filter(m => m.seniority === 'Senior');
   if (seniors.length > 0) {
     return seniors[0].fullName;
   }
@@ -107,7 +107,7 @@ export function getContactPersonForProject(projectType: string): string {
  */
 export function getContactEmailForProject(projectType: string): string {
   const contactPerson = getContactPersonForProject(projectType);
-  const member = teamData.find(m => m.fullName === contactPerson);
+  const member = teamData.members.find(m => m.fullName === contactPerson);
   return member?.email || 'roman@cieden.com';
 }
 
@@ -117,7 +117,7 @@ export function getContactEmailForProject(projectType: string): string {
 export function searchTeam(query: string): TeamMember[] {
   const lowerQuery = query.toLowerCase();
   
-  return teamData.filter(member => 
+  return teamData.members.filter(member => 
     member.fullName.toLowerCase().includes(lowerQuery) ||
     member.role.toLowerCase().includes(lowerQuery) ||
     member.department.toLowerCase().includes(lowerQuery) ||
@@ -131,7 +131,7 @@ export function searchTeam(query: string): TeamMember[] {
  * Get team member by name
  */
 export function getTeamMember(name: string): TeamMember | null {
-  return teamData.find(member => 
+  return teamData.members.find(member => 
     member.fullName.toLowerCase().includes(name.toLowerCase())
   ) || null;
 }
@@ -140,7 +140,7 @@ export function getTeamMember(name: string): TeamMember | null {
  * Get team members by seniority level
  */
 export function getTeamMembersBySeniority(level: string): TeamMember[] {
-  return teamData.filter(member => 
+  return teamData.members.filter(member => 
     member.seniority.toLowerCase() === level.toLowerCase()
   );
 }
@@ -149,7 +149,7 @@ export function getTeamMembersBySeniority(level: string): TeamMember[] {
  * Get team members by industry experience
  */
 export function getTeamMembersByIndustry(industry: string): TeamMember[] {
-  return teamData.filter(member => 
+  return teamData.members.filter(member => 
     member.industries.some(ind => 
       ind.toLowerCase().includes(industry.toLowerCase())
     )
