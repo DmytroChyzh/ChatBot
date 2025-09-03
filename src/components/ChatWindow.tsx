@@ -3,7 +3,6 @@ import Image from 'next/image';
 import ChatMessage from './ChatMessage';
 import EstimatePanel from './EstimatePanel';
 import ProgressIndicator from './ProgressIndicator';
-import VoiceInput from './VoiceInput';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -20,12 +19,6 @@ interface ChatWindowProps {
   quickEstimate: any;
   onBookCall: () => void;
   onContinueRefinement: () => void;
-  // Voice props
-  isVoiceActive: boolean;
-  isListening: boolean;
-  isSpeaking: boolean;
-  onVoiceInput: (text: string) => void;
-  onToggleVoice: () => void;
 }
 
 const MESSAGE_CONTAINER_PADDING = 32; // padding like in InputBox
@@ -43,12 +36,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   estimateStep,
   quickEstimate,
   onBookCall,
-  onContinueRefinement,
-  isVoiceActive,
-  isListening,
-  isSpeaking,
-  onVoiceInput,
-  onToggleVoice
+  onContinueRefinement
 }) => {
   const { t, language } = useLanguage();
   const { theme } = useTheme();
@@ -86,16 +74,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         </div>
               )}
 
-        {/* Voice Input - показуємо завжди */}
-        <div style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
-          <VoiceInput
-            onVoiceInput={onVoiceInput}
-            onToggleVoice={onToggleVoice}
-            isVoiceActive={isVoiceActive}
-            isListening={isListening}
-            isSpeaking={isSpeaking}
-          />
-        </div>
+
 
         {/* Progress Indicator - показуємо для проєктних розмов */}
         {(conversationType === 'project' || conversationType === 'estimate') && estimateStep > 0 && (

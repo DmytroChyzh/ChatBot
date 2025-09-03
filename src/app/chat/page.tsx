@@ -583,11 +583,6 @@ export default function ChatPage() {
                 quickEstimate={quickEstimate}
                 onBookCall={handleBookCall}
                 onContinueRefinement={handleContinueRefinement}
-                isVoiceActive={isVoiceActive}
-                isListening={isListening}
-                isSpeaking={isSpeaking}
-                onVoiceInput={handleVoiceInput}
-                onToggleVoice={handleToggleVoice}
               />
             </div>
             <div className="w-full flex justify-center">
@@ -599,6 +594,11 @@ export default function ChatPage() {
                   loading={isLoading}
                   disabled={isProjectComplete}
                   projectComplete={isProjectComplete}
+                  isVoiceActive={isVoiceActive}
+                  isListening={isListening}
+                  isSpeaking={isSpeaking}
+                  onVoiceInput={handleVoiceInput}
+                  onToggleVoice={handleToggleVoice}
                 />
               </div>
             </div>
