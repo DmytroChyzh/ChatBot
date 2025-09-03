@@ -3,6 +3,7 @@ import Image from 'next/image';
 import ChatMessage from './ChatMessage';
 import EstimatePanel from './EstimatePanel';
 import ProgressIndicator from './ProgressIndicator';
+import VoiceInput from './VoiceInput';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -19,12 +20,36 @@ interface ChatWindowProps {
   quickEstimate: any;
   onBookCall: () => void;
   onContinueRefinement: () => void;
+  // Voice props
+  isVoiceActive: boolean;
+  isListening: boolean;
+  isSpeaking: boolean;
+  onVoiceInput: (text: string) => void;
+  onToggleVoice: () => void;
 }
 
 const MESSAGE_CONTAINER_PADDING = 32; // padding like in InputBox
 const MAX_WIDTH = 900;
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, quickPrompts, handleQuickPrompt, messagesEndRef, paddingBottom }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ 
+  session, 
+  contact, 
+  isLoading, 
+  quickPrompts, 
+  handleQuickPrompt, 
+  messagesEndRef, 
+  paddingBottom,
+  conversationType,
+  estimateStep,
+  quickEstimate,
+  onBookCall,
+  onContinueRefinement,
+  isVoiceActive,
+  isListening,
+  isSpeaking,
+  onVoiceInput,
+  onToggleVoice
+}) => {
   const { t, language } = useLanguage();
   const { theme } = useTheme();
   
@@ -59,8 +84,45 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ session, contact, isLoading, qu
             ))}
           </div>
         </div>
-      )}
-      {session?.messages.map((message: any) => (
+              )}
+
+        {/* Voice Input - показуємо завжди */}
+        <div style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
+          <VoiceInput
+            onVoiceInput={onVoiceInput}
+            onToggleVoice={onToggleVoice}
+            isVoiceActive={isVoiceActive}
+            isListening={isListening}
+            isSpeaking={isSpeaking}
+          />
+        </div>
+
+        {/* Progress Indicator - показуємо для проєктних розмов */}
+        {(conversationType === 'project' || conversationType === 'estimate') && estimateStep > 0 && (
+          <div style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
+            <ProgressIndicator
+              currentStep={estimateStep}
+              totalSteps={5}
+              conversationType={conversationType}
+              isVisible={true}
+            />
+          </div>
+        )}
+
+        {/* Estimate Panel - показуємо коли є естімейт */}
+        {quickEstimate && (conversationType === 'project' || conversationType === 'estimate') && (
+          <div style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
+            <EstimatePanel
+              estimate={quickEstimate}
+              isVisible={true}
+              conversationType={conversationType}
+              onBookCall={onBookCall}
+              onContinueRefinement={onContinueRefinement}
+            />
+          </div>
+        )}
+
+        {session?.messages.map((message: any) => (
         <div key={message.id} style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
           <ChatMessage message={message} handleQuickPrompt={handleQuickPrompt} userName={contact.name} />
         </div>

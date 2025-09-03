@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -84,6 +85,18 @@ const translations = {
     // Language Switcher
     'language.en': 'EN',
     'language.uk': 'UK',
+    voice: {
+      active: 'Voice active',
+      inactive: 'Voice inactive',
+      startRecording: 'Start voice recording',
+      stopRecording: 'Stop voice recording',
+      listening: 'Listening...',
+      speak: 'Speak text',
+      stopSpeaking: 'Stop speaking',
+      enable: 'Enable voice',
+      disable: 'Disable voice',
+      notSupported: 'Voice features not supported in this browser'
+    }
   },
   uk: {
     // Header
@@ -155,6 +168,18 @@ const translations = {
     // Language Switcher
     'language.en': 'EN',
     'language.uk': 'UK',
+    
+    // Voice Features
+    'voice.active': 'Voice active',
+    'voice.inactive': 'Voice inactive',
+    'voice.startRecording': 'Start voice recording',
+    'voice.stopRecording': 'Stop voice recording',
+    'voice.listening': 'Listening...',
+    'voice.speak': 'Speak text',
+    'voice.stopSpeaking': 'Stop speaking',
+    'voice.enable': 'Enable voice',
+    'voice.disable': 'Disable voice',
+    'voice.notSupported': 'Voice features not supported in this browser'
   }
 };
 
