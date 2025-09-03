@@ -554,7 +554,7 @@ export default function ChatPage() {
   }
 
   // Determine whether to show card: only for project-related conversations
-  const showProjectSidebar = shouldShowProjectCard(conversationType);
+  const showProjectSidebar = session && shouldShowProjectCard(conversationType);
 
   return (
     <div className="h-screen w-full bg-background font-sans">
@@ -572,7 +572,7 @@ export default function ChatPage() {
           <div className="flex-1 flex flex-col" style={{ marginTop: showProjectSidebar ? (showProjectSidebar ? '48px' : '64px') : '64px', minHeight: 0 }}>
             <div className="flex-1 overflow-y-auto w-full flex flex-col items-center" style={{ minHeight: 0 }}>
               <ChatWindow
-                session={session}
+                session={session || { messages: [], projectCard: null }}
                 contact={contact}
                 isLoading={isLoading}
                 quickPrompts={quickPrompts}
@@ -605,7 +605,7 @@ export default function ChatPage() {
           </div>
         </div>
         {/* Project Card Sidebar */}
-        {showProjectSidebar && (
+        {showProjectSidebar && session?.projectCard && (
           <div className="h-full flex flex-col">
             <ProjectSidebar
               projectData={session.projectCard}

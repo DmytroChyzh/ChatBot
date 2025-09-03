@@ -122,11 +122,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           </div>
         )}
 
-        {session?.messages.map((message: any) => (
-        <div key={message.id} style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
-          <ChatMessage message={message} handleQuickPrompt={handleQuickPrompt} userName={contact.name} />
-        </div>
-      ))}
+        {session?.messages && session.messages.length > 0 && session.messages.map((message: any) => (
+          <div key={message.id} style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
+            <ChatMessage message={message} handleQuickPrompt={handleQuickPrompt} userName={contact.name} />
+          </div>
+        ))}
       {isLoading && (
         <div style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-end' }}>
           <div className="relative max-w-2xl items-start">
