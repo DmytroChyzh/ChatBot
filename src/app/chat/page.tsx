@@ -745,7 +745,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
       />
       
       {/* Main Content Area - під хедером */}
-      <div className="flex w-full h-full" style={{ marginTop: '96px' }}> 
+      <div className="flex w-full h-full" style={{ marginTop: '64px', height: 'calc(100vh - 64px)' }}> 
         {/* Main Chat Area */}
         <div className="flex flex-col flex-1 relative h-full">
           <div className="flex-1 flex flex-col min-h-0">
