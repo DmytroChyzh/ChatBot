@@ -343,19 +343,38 @@ export default function ChatPage() {
         .map(m => m.content)
         .join(' ');
 
-      // Аналізуємо тип проєкту
+      // Аналізуємо тип проєкту на основі контексту
       let projectType = 'website';
       let complexity = 'medium';
+      let features = [];
       
-      if (projectContext.toLowerCase().includes('e-commerce') || projectContext.toLowerCase().includes('інтернет-магазин')) {
+      const context = projectContext.toLowerCase();
+      
+      // Визначаємо тип проекту
+      if (context.includes('e-commerce') || context.includes('інтернет-магазин') || 
+          context.includes('продаж') || context.includes('автомобілі')) {
         projectType = 'e-commerce';
         complexity = 'high';
-      } else if (projectContext.toLowerCase().includes('mobile') || projectContext.toLowerCase().includes('мобільний')) {
+        features.push('Система продажів', 'Каталог товарів', 'Корзина та оплата');
+      } else if (context.includes('mobile') || context.includes('мобільний') || 
+                 context.includes('апка') || context.includes('додаток')) {
         projectType = 'mobile-app';
         complexity = 'high';
-      } else if (projectContext.toLowerCase().includes('landing') || projectContext.toLowerCase().includes('лендінг')) {
+        features.push('Мобільний інтерфейс', 'Push-повідомлення', 'Офлайн режим');
+      } else if (context.includes('landing') || context.includes('лендінг')) {
         projectType = 'landing';
         complexity = 'low';
+        features.push('Односторінковий сайт', 'Форма зворотного зв\'язку');
+      } else if (context.includes('редизайн') || context.includes('переробити')) {
+        projectType = 'redesign';
+        complexity = 'medium';
+        features.push('Новий дизайн', 'Покращення UX', 'Адаптивність');
+      }
+
+      // Додаємо AI функції якщо згадується
+      if (context.includes('ai') || context.includes('аі') || context.includes('асистент')) {
+        features.push('AI асистент', 'Розумний пошук', 'Персоналізація');
+        complexity = complexity === 'low' ? 'medium' : 'high';
       }
 
       // Базові ціни залежно від типу та складності
@@ -363,15 +382,17 @@ export default function ChatPage() {
         'landing': { min: 2000, max: 8000 },
         'website': { min: 5000, max: 25000 },
         'e-commerce': { min: 15000, max: 60000 },
-        'mobile-app': { min: 20000, max: 80000 }
+        'mobile-app': { min: 20000, max: 80000 },
+        'redesign': { min: 8000, max: 35000 }
       };
 
-      const base = basePrices[projectType as keyof typeof basePrices];
+      const base = basePrices[projectType as keyof typeof basePrices] || basePrices.website;
       const complexityMultiplier = complexity === 'high' ? 1.5 : complexity === 'medium' ? 1.0 : 0.7;
+      const featuresMultiplier = 1 + (features.length * 0.1); // +10% за кожну функцію
 
       const initialRange = {
-        min: Math.round(base.min * complexityMultiplier),
-        max: Math.round(base.max * complexityMultiplier)
+        min: Math.round(base.min * complexityMultiplier * featuresMultiplier),
+        max: Math.round(base.max * complexityMultiplier * featuresMultiplier)
       };
 
       // Поточний діапазон (звужений на основі кроків)
@@ -381,13 +402,23 @@ export default function ChatPage() {
         max: Math.round(initialRange.max - (initialRange.max - initialRange.min) * narrowingFactor * 0.7)
       };
 
+      // Визначаємо термін на основі складності
+      let timeline = '8-16 тижнів';
+      if (complexity === 'high') {
+        timeline = estimateStep >= 3 ? '12-20 тижнів' : '16-24 тижні';
+      } else if (complexity === 'medium') {
+        timeline = estimateStep >= 3 ? '8-12 тижнів' : '10-16 тижнів';
+      } else {
+        timeline = estimateStep >= 3 ? '4-8 тижнів' : '6-10 тижнів';
+      }
+
       const estimate: ProjectEstimate = {
         currentRange,
         initialRange,
         currency: 'USD',
         confidence: estimateStep >= 5 ? 'high' : estimateStep >= 3 ? 'medium' : 'low',
         estimatedAt: new Date(),
-        timeline: estimateStep >= 3 ? '6-12 тижнів' : '8-16 тижнів',
+        timeline,
         team: {
           designers: ['Анна Коваленко', 'Максим Петренко', 'Олена Сидоренко'],
           contactPerson: 'Марія Іваненко',
@@ -491,8 +522,8 @@ export default function ChatPage() {
         generateQuickEstimate(session.messages);
       }
       
-      // Генеруємо проектний естімейт після 2-3 кроків
-      if (newStep >= 2 && !projectEstimate) {
+      // Генеруємо проектний естімейт після 1-2 кроків (швидше показуємо)
+      if (newStep >= 1 && !projectEstimate) {
         generateProjectEstimate(session.messages);
       }
     }
