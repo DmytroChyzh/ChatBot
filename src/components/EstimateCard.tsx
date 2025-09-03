@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import ProgressIndicator from './ProgressIndicator';
 import { 
   DollarSign, 
   Clock, 
@@ -31,12 +32,16 @@ interface EstimateCardProps {
       testing: string;
     };
   };
+  estimateStep: number;
+  conversationType: 'general' | 'project' | 'estimate';
   onContactManager: () => void;
   isVisible: boolean;
 }
 
 const EstimateCard: React.FC<EstimateCardProps> = ({ 
   estimate, 
+  estimateStep,
+  conversationType,
   onContactManager, 
   isVisible 
 }) => {
@@ -72,6 +77,18 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 
   return (
     <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+      {/* Progress Indicator */}
+      {(conversationType === 'project' || conversationType === 'estimate') && estimateStep > 0 && (
+        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+          <ProgressIndicator
+            currentStep={estimateStep}
+            totalSteps={5}
+            conversationType={conversationType}
+            isVisible={true}
+          />
+        </div>
+      )}
+      
       {/* Заголовок */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-4">
         <div className="flex items-center gap-3">

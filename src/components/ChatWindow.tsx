@@ -2,7 +2,7 @@ import React, { RefObject } from 'react';
 import Image from 'next/image';
 import ChatMessage from './ChatMessage';
 import EstimatePanel from './EstimatePanel';
-import ProgressIndicator from './ProgressIndicator';
+
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -76,17 +76,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
 
 
-        {/* Progress Indicator - показуємо для проєктних розмов */}
-        {(conversationType === 'project' || conversationType === 'estimate') && estimateStep > 0 && (
-          <div style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
-            <ProgressIndicator
-              currentStep={estimateStep}
-              totalSteps={5}
-              conversationType={conversationType}
-              isVisible={true}
-            />
-          </div>
-        )}
+
 
         {/* Estimate Panel - показуємо коли є естімейт */}
         {quickEstimate && (conversationType === 'project' || conversationType === 'estimate') && (

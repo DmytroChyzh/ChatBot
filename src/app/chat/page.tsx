@@ -231,8 +231,8 @@ export default function ChatPage() {
       if (Object.keys(projectInfo).length > 0) {
         const enhancedInfo = await enhanceProjectInfoWithGPT(projectInfo, input);
         for (const key in enhancedInfo) {
-          const prev = prevCard?.[key];
-          if (!prev || prev.status !== 'final') {
+        const prev = prevCard?.[key];
+        if (!prev || prev.status !== 'final') {
             updates[key] = enhancedInfo[key];
           }
         }
@@ -282,8 +282,8 @@ export default function ChatPage() {
         if (Object.keys(projectInfo).length > 0) {
           const enhancedInfo = await enhanceProjectInfoWithGPT(projectInfo, value);
           for (const key in enhancedInfo) {
-            const prev = prevCard?.[key];
-            if (!prev || prev.status !== 'final') {
+          const prev = prevCard?.[key];
+          if (!prev || prev.status !== 'final') {
               updates[key] = enhancedInfo[key];
             }
           }
@@ -608,41 +608,41 @@ export default function ChatPage() {
           className=""
         />
         <div className="flex items-center justify-center h-full" style={{ marginTop: '64px' }}>
-          <div className="w-full max-w-md mx-4">
-            <div className="text-center mb-8">
+        <div className="w-full max-w-md mx-4">
+          <div className="text-center mb-8">
 
               <h1 className="text-2xl font-bold text-foreground mb-2">{t('contact.title')}</h1>
               <p className="text-muted-foreground">{t('contact.subtitle')}</p>
-            </div>
-            
-            <form onSubmit={handleContactSubmit} className="space-y-4">
-              <div>
-                <input
-                  type="text"
+          </div>
+          
+          <form onSubmit={handleContactSubmit} className="space-y-4">
+            <div>
+              <input
+                type="text"
                   placeholder={t('contact.namePlaceholder')}
-                  value={contact.name}
-                  onChange={(e) => setContact({ ...contact, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
-                  required
-                />
-              </div>
-              <div>
-                <input
-                  type="email"
+                value={contact.name}
+                onChange={(e) => setContact({ ...contact, name: e.target.value })}
+                className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="email"
                   placeholder={t('contact.emailPlaceholder')}
-                  value={contact.email}
-                  onChange={(e) => setContact({ ...contact, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
+                value={contact.email}
+                onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                className="w-full px-4 py-3 bg-muted border border-muted rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent transition"
+                required
+              />
+            </div>
+            <button
+              type="submit"
                 className="w-full px-4 py-3 bg-[#651FFF] text-white rounded-lg font-medium hover:bg-[#5a1ee0] transition-colors duration-300 shadow-lg"
-              >
+            >
                 {t('contact.startButton')}
-              </button>
-            </form>
+            </button>
+          </form>
           </div>
         </div>
       </div>
@@ -706,6 +706,8 @@ export default function ChatPage() {
           <div className="h-full flex flex-col">
             <EstimateCard
               estimate={projectEstimate}
+              estimateStep={estimateStep}
+              conversationType={conversationType}
               onContactManager={handleContactManager}
               isVisible={true}
             />
