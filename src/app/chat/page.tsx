@@ -98,6 +98,17 @@ export default function ChatPage() {
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  
+  // Get last AI response for speech synthesis
+  const getLastAIResponse = () => {
+    if (session?.messages) {
+      const aiMessages = session.messages.filter(msg => msg.role === 'assistant');
+      if (aiMessages.length > 0) {
+        return aiMessages[aiMessages.length - 1].content;
+      }
+    }
+    return null;
+  };
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme, mounted } = useTheme();
@@ -599,6 +610,7 @@ export default function ChatPage() {
                   isSpeaking={isSpeaking}
                   onVoiceInput={handleVoiceInput}
                   onToggleVoice={handleToggleVoice}
+                  lastAIResponse={getLastAIResponse()}
                 />
               </div>
             </div>
