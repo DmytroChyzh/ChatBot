@@ -214,6 +214,12 @@ export default function ChatPage() {
     if (!input.trim() || !contactSubmitted || isProjectComplete || !sessionId) return;
     setIsLoading(true);
     
+    // Автоматично аналізуємо тип розмови для нових повідомлень
+    const newType = analyzeConversationType([...session?.messages || [], { role: 'user', content: input, timestamp: new Date() } as Message]);
+    if (newType !== conversationType) {
+      setConversationType(newType);
+    }
+    
     // Перевіряємо чи питання про команду
     if (isTeamQuestion(input)) {
       const teamAnswer = handleTeamQuestion(input);
@@ -268,6 +274,14 @@ export default function ChatPage() {
   const handleQuickPrompt = (value: string) => {
     if (!contactSubmitted || isProjectComplete || !sessionId) return;
     setIsLoading(true);
+    
+    // Автоматично встановлюємо тип розмови для проектних запитів
+    if (value.includes('new project') || value.includes('новий проєкт') || 
+        value.includes('redesign') || value.includes('редизайн') ||
+        value.includes('estimate') || value.includes('естімейт')) {
+      console.log('Setting conversationType to project for:', value);
+      setConversationType('project');
+    }
     
     // Перевіряємо чи питання про команду
     if (isTeamQuestion(value)) {
@@ -448,6 +462,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
 
   // Generate project estimate based on conversation
   const generateProjectEstimate = async (messages: Message[]) => {
+    console.log('generateProjectEstimate called with estimateStep:', estimateStep);
     try {
       // На початку показуємо нульовий естімейт
       if (estimateStep <= 1) {
@@ -459,7 +474,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           estimatedAt: new Date(),
           timeline: 'Визначається...',
           team: {
-            designers: [],
+            designers: ['Andrii Prokopyshyn (Senior)'],
             contactPerson: 'Roman Kaminechny',
             contactEmail: 'roman@cieden.com'
           },
@@ -470,6 +485,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             testing: 'Очікуємо деталі проєкту...'
           }
         };
+        console.log('Setting initial estimate:', initialEstimate);
         setProjectEstimate(initialEstimate);
         return;
       }
@@ -559,11 +575,11 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         confidence: estimateStep >= 5 ? 'high' : estimateStep >= 3 ? 'medium' : 'low',
         estimatedAt: new Date(),
         timeline,
-        team: {
-          designers: this.getDesignersForProject(complexity, projectType),
-          contactPerson: this.getContactPersonForProject(projectType),
-          contactEmail: this.getContactEmailForProject(projectType)
-        },
+                  team: {
+            designers: getDesignersForProject(complexity, projectType),
+            contactPerson: getContactPersonForProject(projectType),
+            contactEmail: getContactEmailForProject(projectType)
+          },
         phases: {
           discovery: 'Аналіз вимог, дослідження ринку, планування архітектури проєкту',
           design: 'UI/UX дизайн, прототипування, створення дизайн-системи',
@@ -585,15 +601,17 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
     if (session?.messages && (conversationType === 'project' || conversationType === 'estimate')) {
       const newStep = Math.min(Math.ceil(session.messages.length / 2), 5);
       setEstimateStep(newStep);
-      
-
-      
-              // Генеруємо проектний естімейт після 1-2 кроків (швидше показуємо)
-        if (newStep >= 1) {
-          generateProjectEstimate(session.messages);
-        }
     }
-  }, [session?.messages, conversationType, projectEstimate]);
+  }, [session?.messages, conversationType]);
+
+  // Generate estimate when conversation type changes
+  useEffect(() => {
+    console.log('conversationType changed to:', conversationType);
+    if (session?.messages && (conversationType === 'project' || conversationType === 'estimate')) {
+      console.log('Generating project estimate...');
+      generateProjectEstimate(session.messages);
+    }
+  }, [conversationType]);
 
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -664,6 +682,16 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
 
   // Determine whether to show card: only for project-related conversations
   const showProjectSidebar = session && shouldShowProjectCard(conversationType);
+  
+  // Додаємо логування для дебагу
+  console.log('Debug EstimateCard:', {
+    session: !!session,
+    conversationType,
+    shouldShowProjectCard: shouldShowProjectCard(conversationType),
+    showProjectSidebar,
+    projectEstimate: !!projectEstimate,
+    estimateStep
+  });
 
   return (
     <div className="h-screen w-full bg-background font-sans">

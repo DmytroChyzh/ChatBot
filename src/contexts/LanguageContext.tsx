@@ -95,6 +95,8 @@ const translations = {
       stopSpeaking: 'Stop speaking',
       enable: 'Enable voice',
       disable: 'Disable voice',
+      aiSpeak: 'AI Speak',
+      aiStop: 'AI Stop',
       notSupported: 'Voice features not supported in this browser'
     }
   },
