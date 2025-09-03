@@ -75,7 +75,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="w-full max-w-md h-screen bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
       {/* Заголовок */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-4">
         <div className="flex items-center gap-3">
@@ -94,7 +94,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
       </div>
 
       {/* Основна інформація */}
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-6 flex-1 overflow-y-auto">
         {/* Діапазон цін */}
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -103,11 +103,13 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               {language === 'uk' ? 'Діапазон вартості' : 'Cost Range'}
             </span>
           </div>
-          <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+          <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1 transition-all duration-500">
             {estimate.currentRange.min === 0 && estimate.currentRange.max === 0 ? (
               <span className="text-gray-500">{language === 'uk' ? 'Визначається...' : 'Determining...'}</span>
             ) : (
-              `$${estimate.currentRange.min.toLocaleString()} - $${estimate.currentRange.max.toLocaleString()}`
+              <span className="animate-pulse">
+                ${estimate.currentRange.min.toLocaleString()} - ${estimate.currentRange.max.toLocaleString()}
+              </span>
             )}
           </div>
           <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -128,7 +130,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
             </div>
             <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
               <div 
-                className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-700 ease-out"
                 style={{ width: `${narrowingPercentage}%` }}
               />
             </div>
@@ -242,21 +244,23 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
           </div>
         </div>
 
-        {/* CTA кнопка */}
-        <button
-          onClick={onContactManager}
-          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-        >
-          <Phone className="w-4 h-4" />
-          {language === 'uk' ? 'Зв\'язатися з менеджером' : 'Contact Manager'}
-        </button>
+        {/* CTA кнопка та пояснення - завжди внизу */}
+        <div className="p-6 pt-0 space-y-4">
+          <button
+            onClick={onContactManager}
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+          >
+            <Phone className="w-4 h-4" />
+            {language === 'uk' ? 'Зв\'язатися з менеджером' : 'Contact Manager'}
+          </button>
 
-        {/* Пояснення */}
-        <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-          {language === 'uk' 
-            ? 'Це приблизний естімейт. Для точного розрахунку зв\'яжіться з нашим менеджером.'
-            : 'This is an approximate estimate. For accurate calculation, contact our manager.'
-          }
+          {/* Пояснення */}
+          <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+            {language === 'uk' 
+              ? 'Це приблизний естімейт. Для точного розрахунку зв\'яжіться з нашим менеджером.'
+              : 'This is an approximate estimate. For accurate calculation, contact our manager.'
+            }
+          </div>
         </div>
       </div>
     </div>

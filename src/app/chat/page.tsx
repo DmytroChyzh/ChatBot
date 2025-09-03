@@ -421,10 +421,13 @@ export default function ChatPage() {
       };
 
       // Поточний діапазон (звужений на основі кроків)
-      const narrowingFactor = Math.min((estimateStep - 1) / 4, 0.8); // Максимум 80% звуження
+      const narrowingFactor = Math.min((estimateStep - 1) / 4, 0.9); // Максимум 90% звуження
+      
+      // Більш точне звуження з кожною відповіддю
+      const rangeWidth = initialRange.max - initialRange.min;
       const currentRange = {
-        min: Math.round(initialRange.min + (initialRange.max - initialRange.min) * narrowingFactor * 0.3),
-        max: Math.round(initialRange.max - (initialRange.max - initialRange.min) * narrowingFactor * 0.7)
+        min: Math.round(initialRange.min + (rangeWidth * narrowingFactor * 0.15)), // +15% від початку
+        max: Math.round(initialRange.max - (rangeWidth * narrowingFactor * 0.85))  // -85% від кінця
       };
 
       // Визначаємо термін на основі складності
@@ -547,10 +550,10 @@ export default function ChatPage() {
         generateQuickEstimate(session.messages);
       }
       
-      // Генеруємо проектний естімейт після 1-2 кроків (швидше показуємо)
-      if (newStep >= 1 && !projectEstimate) {
-        generateProjectEstimate(session.messages);
-      }
+              // Генеруємо проектний естімейт після 1-2 кроків (швидше показуємо)
+        if (newStep >= 1) {
+          generateProjectEstimate(session.messages);
+        }
     }
   }, [session?.messages, conversationType, quickEstimate, projectEstimate]);
 
