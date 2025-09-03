@@ -1,7 +1,6 @@
 import React, { RefObject } from 'react';
 import Image from 'next/image';
 import ChatMessage from './ChatMessage';
-import EstimatePanel from './EstimatePanel';
 
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -16,9 +15,6 @@ interface ChatWindowProps {
   paddingBottom?: number;
   conversationType: 'general' | 'project' | 'estimate';
   estimateStep: number;
-  quickEstimate: any;
-  onBookCall: () => void;
-  onContinueRefinement: () => void;
 }
 
 const MESSAGE_CONTAINER_PADDING = 32; // padding like in InputBox
@@ -33,10 +29,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   messagesEndRef, 
   paddingBottom,
   conversationType,
-  estimateStep,
-  quickEstimate,
-  onBookCall,
-  onContinueRefinement
+  estimateStep
 }) => {
   const { t, language } = useLanguage();
   const { theme } = useTheme();
@@ -78,18 +71,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
 
 
-        {/* Estimate Panel - показуємо коли є естімейт */}
-        {quickEstimate && (conversationType === 'project' || conversationType === 'estimate') && (
-          <div style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
-            <EstimatePanel
-              estimate={quickEstimate}
-              isVisible={true}
-              conversationType={conversationType}
-              onBookCall={onBookCall}
-              onContinueRefinement={onContinueRefinement}
-            />
-          </div>
-        )}
+
 
         {session?.messages && session.messages.length > 0 && session.messages.map((message: any) => (
           <div key={message.id} style={{ width: '100%', maxWidth: MAX_WIDTH, margin: '0 auto', display: 'flex', justifyContent: 'center' }}>

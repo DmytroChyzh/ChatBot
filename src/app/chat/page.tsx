@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Message, ChatSession, QuickEstimate, ProjectEstimate } from '../../types/chat';
+import { Message, ChatSession, ProjectEstimate } from '../../types/chat';
 import { 
   createChatSession, 
   addMessageToSession, 
@@ -90,7 +90,6 @@ export default function ChatPage() {
   const [isProjectComplete, setIsProjectComplete] = useState(false);
   const [conversationType, setConversationType] = useState<'general' | 'project' | 'estimate'>('general');
   const [estimateStep, setEstimateStep] = useState(0);
-  const [quickEstimate, setQuickEstimate] = useState<QuickEstimate | null>(null);
   const [projectEstimate, setProjectEstimate] = useState<ProjectEstimate | null>(null);
   
   // Voice states
@@ -298,21 +297,10 @@ export default function ChatPage() {
 
 
 
-  // Handle booking call
-  const handleBookCall = () => {
-    // TODO: Implement booking modal
-    console.log('Booking call...');
-  };
-
   // Handle contact manager
   const handleContactManager = () => {
     console.log('Contacting manager...');
     // Тут можна додати логіку для відкриття модального вікна або переходу на сторінку контактів
-  };
-
-  // Handle continue refinement
-  const handleContinueRefinement = () => {
-    setEstimateStep(estimateStep + 1);
   };
 
   // Voice functions
@@ -466,78 +454,7 @@ export default function ChatPage() {
     }
   };
 
-  // Generate quick estimate based on conversation
-  const generateQuickEstimate = async (messages: Message[]) => {
-    try {
-      // Створюємо базовий естімейт на основі контексту
-      const projectContext = messages
-        .filter(m => m.role === 'user')
-        .map(m => m.content)
-        .join(' ');
 
-      // Аналізуємо тип проєкту
-      let projectType = 'website';
-      let complexity = 'medium';
-      
-      if (projectContext.toLowerCase().includes('e-commerce') || projectContext.toLowerCase().includes('інтернет-магазин')) {
-        projectType = 'e-commerce';
-        complexity = 'high';
-      } else if (projectContext.toLowerCase().includes('mobile') || projectContext.toLowerCase().includes('мобільний')) {
-        projectType = 'mobile-app';
-        complexity = 'high';
-      } else if (projectContext.toLowerCase().includes('landing') || projectContext.toLowerCase().includes('лендінг')) {
-        projectType = 'landing';
-        complexity = 'low';
-      }
-
-      // Базові ціни залежно від типу та складності
-      const basePrices = {
-        'landing': { min: 2000, max: 8000 },
-        'website': { min: 5000, max: 25000 },
-        'e-commerce': { min: 15000, max: 60000 },
-        'mobile-app': { min: 20000, max: 80000 }
-      };
-
-      const base = basePrices[projectType as keyof typeof basePrices];
-      const complexityMultiplier = complexity === 'high' ? 1.5 : complexity === 'medium' ? 1.0 : 0.7;
-
-      const estimate: QuickEstimate = {
-        totalRange: {
-          min: Math.round(base.min * complexityMultiplier),
-          max: Math.round(base.max * complexityMultiplier)
-        },
-        phases: {
-          discovery: {
-            min: Math.round(base.min * 0.1 * complexityMultiplier),
-            max: Math.round(base.max * 0.15 * complexityMultiplier),
-            description: 'Аналіз вимог, дослідження ринку, планування архітектури'
-          },
-          design: {
-            min: Math.round(base.min * 0.2 * complexityMultiplier),
-            max: Math.round(base.max * 0.25 * complexityMultiplier),
-            description: 'UI/UX дизайн, прототипування, стилізація'
-          },
-          development: {
-            min: Math.round(base.min * 0.5 * complexityMultiplier),
-            max: Math.round(base.max * 0.6 * complexityMultiplier),
-            description: 'Програмування, інтеграція, налаштування'
-          },
-          testing: {
-            min: Math.round(base.min * 0.2 * complexityMultiplier),
-            max: Math.round(base.max * 0.25 * complexityMultiplier),
-            description: 'Тестування, виправлення помилок, оптимізація'
-          }
-        },
-        currency: 'USD',
-        confidence: estimateStep >= 5 ? 'high' : estimateStep >= 3 ? 'medium' : 'low',
-        estimatedAt: new Date()
-      };
-
-      setQuickEstimate(estimate);
-    } catch (error) {
-      console.error('Error generating estimate:', error);
-    }
-  };
 
   // Update estimate step and generate estimate when needed
   useEffect(() => {
@@ -545,17 +462,14 @@ export default function ChatPage() {
       const newStep = Math.min(Math.ceil(session.messages.length / 2), 5);
       setEstimateStep(newStep);
       
-      // Генеруємо естімейт після 4-5 кроків
-      if (newStep >= 4 && !quickEstimate) {
-        generateQuickEstimate(session.messages);
-      }
+
       
               // Генеруємо проектний естімейт після 1-2 кроків (швидше показуємо)
         if (newStep >= 1) {
           generateProjectEstimate(session.messages);
         }
     }
-  }, [session?.messages, conversationType, quickEstimate, projectEstimate]);
+  }, [session?.messages, conversationType, projectEstimate]);
 
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -651,9 +565,6 @@ export default function ChatPage() {
                 messagesEndRef={messagesEndRef}
                 conversationType={conversationType}
                 estimateStep={estimateStep}
-                quickEstimate={quickEstimate}
-                onBookCall={handleBookCall}
-                onContinueRefinement={handleContinueRefinement}
               />
             </div>
             <div className="w-full flex justify-center">
