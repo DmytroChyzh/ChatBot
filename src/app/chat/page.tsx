@@ -734,19 +734,21 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
 
   return (
     <div className="h-screen w-full bg-background font-sans">
-      <div className={`flex w-full h-full ${showProjectSidebar ? '' : 'flex-col'}`}> 
-        {/* Main Chat Area (Header + ChatWindow + InputBox) */}
-        <div className={showProjectSidebar ? 'flex flex-col flex-1 relative h-full' : 'w-full h-full flex flex-col'}>
-          <Header 
-            theme={theme} 
-            toggleTheme={toggleTheme} 
-            mounted={mounted} 
-            small={showProjectSidebar} 
-            className={showProjectSidebar ? 'max-w-[calc(100vw-440px)]' : ''}
-            onClearSession={handleClearSession}
-
-          />
-          <div className="flex-1 flex flex-col" style={{ marginTop: showProjectSidebar ? (showProjectSidebar ? '48px' : '64px') : '64px', minHeight: 0 }}>
+      {/* Header - на всю ширину екрану */}
+      <Header 
+        theme={theme} 
+        toggleTheme={toggleTheme} 
+        mounted={mounted} 
+        small={false}
+        className="w-full"
+        onClearSession={handleClearSession}
+      />
+      
+      {/* Main Content Area - під хедером */}
+      <div className="flex w-full h-full" style={{ marginTop: '96px' }}> 
+        {/* Main Chat Area */}
+        <div className="flex flex-col flex-1 relative h-full">
+          <div className="flex-1 flex flex-col min-h-0">
             <div className="flex-1 overflow-y-auto w-full flex flex-col items-center" style={{ minHeight: 0 }}>
               <ChatWindow
                 session={session || { messages: [], projectCard: null }}
@@ -781,7 +783,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         </div>
         {/* Estimate Card Sidebar */}
         {showProjectSidebar && projectEstimate && (
-          <div className="flex flex-col" style={{ marginTop: '64px' }}>
+          <div className="flex flex-col flex-shrink-0">
             <EstimateCard
               estimate={projectEstimate}
               estimateStep={estimateStep}
