@@ -749,7 +749,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         {/* Main Chat Area */}
         <div className="flex flex-col flex-1 relative h-full">
           <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex-1 overflow-y-auto w-full flex flex-col items-center" style={{ minHeight: 0 }}>
+            <div className="flex-1 overflow-y-auto w-full flex flex-col items-center custom-sidebar-scrollbar" style={{ minHeight: 0 }}>
               <ChatWindow
                 session={session || { messages: [], projectCard: null }}
                 contact={contact}
