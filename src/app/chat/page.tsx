@@ -1,16 +1,14 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Message, ChatSession, ProjectCardState, QuickEstimate, ProjectEstimate } from '../../types/chat';
+import { Message, ChatSession, QuickEstimate, ProjectEstimate } from '../../types/chat';
 import { 
   createChatSession, 
   addMessageToSession, 
   subscribeToSession,
-  updateProjectCard,
   getChatSession
 } from '../../lib/firestore';
 import ChatMessage from '../../components/ChatMessage';
-import ProjectCard from '../../components/ProjectCard';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import Image from 'next/image';
@@ -18,7 +16,7 @@ import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
 import ChatWindow from '../../components/ChatWindow';
-import { parseProjectInfoFromText, enhanceProjectInfoWithGPT } from '../../utils/parseProjectInfo';
+
 import { analyzeConversationType, shouldShowProjectCard, shouldShowEstimate } from '../../utils/conversationAnalyzer';
 
 interface ContactInfo {
@@ -222,25 +220,6 @@ export default function ChatPage() {
     };
     try {
       await addMessageToSession(sessionId, userMessage);
-      // Update card only if there are new draft data
-      const projectInfo = await parseProjectInfoFromText(input);
-      const prevCard: ProjectCardState | undefined = session?.projectCard;
-      const updates: Partial<ProjectCardState> = {};
-      
-      // If there are new data, enhance them through GPT
-      if (Object.keys(projectInfo).length > 0) {
-        const enhancedInfo = await enhanceProjectInfoWithGPT(projectInfo, input);
-        for (const key in enhancedInfo) {
-        const prev = prevCard?.[key];
-        if (!prev || prev.status !== 'final') {
-            updates[key] = enhancedInfo[key];
-          }
-        }
-      }
-      
-      if (Object.keys(updates).length > 0) {
-        await updateProjectCard(sessionId, updates);
-      }
       const response = await sendToAI(input);
       const assistantMessage: Omit<Message, 'id'> = {
         role: 'assistant',
@@ -274,24 +253,6 @@ export default function ChatPage() {
     (async () => {
       try {
         await addMessageToSession(sessionId, userMessage);
-        const projectInfo = await parseProjectInfoFromText(value);
-        const prevCard: ProjectCardState | undefined = session?.projectCard;
-        const updates: Partial<ProjectCardState> = {};
-        
-        // If there are new data, enhance them through GPT
-        if (Object.keys(projectInfo).length > 0) {
-          const enhancedInfo = await enhanceProjectInfoWithGPT(projectInfo, value);
-          for (const key in enhancedInfo) {
-          const prev = prevCard?.[key];
-          if (!prev || prev.status !== 'final') {
-              updates[key] = enhancedInfo[key];
-            }
-          }
-        }
-        
-        if (Object.keys(updates).length > 0) {
-          await updateProjectCard(sessionId, updates);
-        }
         const response = await sendToAI(value);
         const assistantMessage: Omit<Message, 'id'> = {
           role: 'assistant',
@@ -333,54 +294,9 @@ export default function ChatPage() {
     setIsProjectComplete(false);
   };
 
-  // Handle field updates in project card
-  const handleUpdateField = async (field: keyof ProjectCardState, value: any) => {
-    if (!sessionId) return;
-    
-    try {
-      await updateProjectCard(sessionId, { [field]: value });
-      // Update local session state
-      if (session) {
-        setSession({
-          ...session,
-          projectCard: {
-            ...session.projectCard,
-            [field]: value
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Error updating field:', error);
-    }
-  };
 
-  // Handle project save
-  const handleSaveProject = async () => {
-    if (!sessionId || !session) return;
-    
-    try {
-      // Show success message
-      const successMessage: Omit<Message, 'id'> = {
-        role: 'assistant',
-        content: t('projectCard.saveSuccessMessage'),
-        timestamp: new Date(),
-      };
-      await addMessageToSession(sessionId, successMessage);
-      
-      // Update session
-      if (session) {
-        setSession({
-          ...session,
-          messages: [...session.messages, { ...successMessage, id: Date.now().toString() }]
-        });
-      }
-      
-      // Mark project as complete
-      setIsProjectComplete(true);
-    } catch (error) {
-      console.error('Error saving project:', error);
-    }
-  };
+
+
 
   // Handle booking call
   const handleBookCall = () => {
