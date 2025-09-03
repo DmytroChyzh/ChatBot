@@ -19,6 +19,8 @@ import ChatWindow from '../../components/ChatWindow';
 
 import { analyzeConversationType, shouldShowProjectCard, shouldShowEstimate } from '../../utils/conversationAnalyzer';
 import { searchTeam, getTeamMember, getAllTeamMembers } from '../../utils/teamSearch';
+import { getRealEstimation, calculateAdjustedPrice, getAdjustedTimeline, getAdjustedTeamSize } from '../../utils/realEstimations';
+
 
 interface ContactInfo {
   name: string;
@@ -92,6 +94,7 @@ export default function ChatPage() {
   const [conversationType, setConversationType] = useState<'general' | 'project' | 'estimate'>('general');
   const [estimateStep, setEstimateStep] = useState(0);
   const [projectEstimate, setProjectEstimate] = useState<ProjectEstimate | null>(null);
+
   
   // Voice states
   const [isVoiceActive, setIsVoiceActive] = useState(false);
@@ -365,6 +368,8 @@ export default function ChatPage() {
     // Тут можна додати логіку для відкриття модального вікна або переходу на сторінку контактів
   };
 
+
+
   // Функція для обробки питань про команду
   const handleTeamQuestion = (question: string): string => {
     const searchResult = searchTeam({ query: question });
@@ -490,107 +495,130 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         return;
       }
 
-      // Створюємо базовий естімейт на основі контексту після збору інформації
-      const projectContext = messages
-        .filter(m => m.role === 'user')
-        .map(m => m.content)
-        .join(' ');
+      // Тільки після 2+ кроків показуємо реальний естімейт
+      if (estimateStep >= 2) {
+        // Створюємо базовий естімейт на основі контексту після збору інформації
+        const projectContext = messages
+          .filter(m => m.role === 'user')
+          .map(m => m.content)
+          .join(' ');
 
-      // Аналізуємо тип проєкту на основі контексту
-      let projectType = 'website';
-      let complexity = 'medium';
-      let features = [];
-      
-      const context = projectContext.toLowerCase();
-      
-      // Визначаємо тип проекту
-      if (context.includes('e-commerce') || context.includes('інтернет-магазин') || 
-          context.includes('продаж') || context.includes('автомобілі')) {
-        projectType = 'e-commerce';
-        complexity = 'high';
-        features.push('Система продажів', 'Каталог товарів', 'Корзина та оплата');
-      } else if (context.includes('mobile') || context.includes('мобільний') || 
-                 context.includes('апка') || context.includes('додаток')) {
-        projectType = 'mobile-app';
-        complexity = 'high';
-        features.push('Мобільний інтерфейс', 'Push-повідомлення', 'Офлайн режим');
-      } else if (context.includes('landing') || context.includes('лендінг')) {
-        projectType = 'landing';
-        complexity = 'low';
-        features.push('Односторінковий сайт', 'Форма зворотного зв\'язку');
-      } else if (context.includes('редизайн') || context.includes('переробити')) {
-        projectType = 'redesign';
-        complexity = 'medium';
-        features.push('Новий дизайн', 'Покращення UX', 'Адаптивність');
-      }
+        // Аналізуємо тип проєкту на основі контексту
+        let projectType = 'website';
+        let complexity = 'medium';
+        let features = [];
+        let specialRequirements = [];
+        
+        const context = projectContext.toLowerCase();
+        
+        // Визначаємо тип проекту
+        if (context.includes('e-commerce') || context.includes('інтернет-магазин') || 
+            context.includes('продаж') || context.includes('автомобілі')) {
+          projectType = 'e-commerce';
+          complexity = 'high';
+          features.push('Система продажів', 'Каталог товарів', 'Корзина та оплата');
+        } else if (context.includes('mobile') || context.includes('мобільний') || 
+                   context.includes('апка') || context.includes('додаток')) {
+          projectType = 'mobile-app';
+          complexity = 'high';
+          features.push('Мобільний інтерфейс', 'Push-повідомлення', 'Офлайн режим');
+        } else if (context.includes('landing') || context.includes('лендінг')) {
+          projectType = 'landing';
+          complexity = 'low';
+          features.push('Односторінковий сайт', 'Форма зворотного зв\'язку');
+        } else if (context.includes('редизайн') || context.includes('переробити')) {
+          projectType = 'redesign';
+          complexity = 'medium';
+          features.push('Новий дизайн', 'Покращення UX', 'Адаптивність');
+        }
 
-      // Додаємо AI функції якщо згадується
-      if (context.includes('ai') || context.includes('аі') || context.includes('асистент')) {
-        features.push('AI асистент', 'Розумний пошук', 'Персоналізація');
-        complexity = complexity === 'low' ? 'medium' : 'high';
-      }
+        // Додаємо AI функції якщо згадується
+        if (context.includes('ai') || context.includes('аі') || context.includes('асистент')) {
+          features.push('AI асистент', 'Розумний пошук', 'Персоналізація');
+          complexity = complexity === 'low' ? 'medium' : 'high';
+        }
 
-      // Базові ціни залежно від типу та складності
-      const basePrices = {
-        'landing': { min: 2000, max: 8000 },
-        'website': { min: 5000, max: 25000 },
-        'e-commerce': { min: 15000, max: 60000 },
-        'mobile-app': { min: 20000, max: 80000 },
-        'redesign': { min: 8000, max: 35000 }
-      };
+        // Перевіряємо спеціальні вимоги
+        if (context.includes('терміново') || context.includes('urgent')) {
+          specialRequirements.push('Терміново');
+        }
+        if (context.includes('преміум') || context.includes('premium')) {
+          specialRequirements.push('Преміум');
+        }
 
-      const base = basePrices[projectType as keyof typeof basePrices] || basePrices.website;
-      const complexityMultiplier = complexity === 'high' ? 1.5 : complexity === 'medium' ? 1.0 : 0.7;
-      const featuresMultiplier = 1 + (features.length * 0.1); // +10% за кожну функцію
+        // Отримуємо реальний естімейт з бази даних
+        const realEstimation = getRealEstimation(projectType, complexity);
+        
+        if (realEstimation) {
+          // Розраховуємо скориговану ціну на основі додаткових функцій
+          const adjustedPrice = calculateAdjustedPrice(realEstimation, features, specialRequirements);
+          
+          // Звужуємо діапазон з кожним кроком
+          const narrowingFactor = Math.max(0.1, 1 - (estimateStep * 0.15)); // Звужуємо на 15% за крок
+          const currentRange = {
+            min: Math.round(adjustedPrice.minPrice * (1 - narrowingFactor)),
+            max: Math.round(adjustedPrice.maxPrice * (1 - narrowingFactor))
+          };
 
-      const initialRange = {
-        min: Math.round(base.min * complexityMultiplier * featuresMultiplier),
-        max: Math.round(base.max * complexityMultiplier * featuresMultiplier)
-      };
+          // Отримуємо скоригований timeline та розмір команди
+          const timeline = getAdjustedTimeline(realEstimation, features);
+          const teamSize = getAdjustedTeamSize(realEstimation, features);
 
-      // Поточний діапазон (звужений на основі кроків)
-      const narrowingFactor = Math.min((estimateStep - 1) / 4, 0.9); // Максимум 90% звуження
-      
-      // Більш точне звуження з кожною відповіддю
-      const rangeWidth = initialRange.max - initialRange.min;
-      const currentRange = {
-        min: Math.round(initialRange.min + (rangeWidth * narrowingFactor * 0.15)), // +15% від початку
-        max: Math.round(initialRange.max - (rangeWidth * narrowingFactor * 0.85))  // -85% від кінця
-      };
-
-      // Визначаємо термін на основі складності
-      let timeline = '8-16 тижнів';
-      if (complexity === 'high') {
-        timeline = estimateStep >= 4 ? '12-20 тижнів' : '16-24 тижні';
-      } else if (complexity === 'medium') {
-        timeline = estimateStep >= 4 ? '8-12 тижнів' : '10-16 тижнів';
-      } else {
-        timeline = estimateStep >= 4 ? '4-8 тижнів' : '6-10 тижнів';
-      }
-
-      const estimate: ProjectEstimate = {
-        currentRange,
-        initialRange,
-        currency: 'USD',
-        confidence: estimateStep >= 5 ? 'high' : estimateStep >= 3 ? 'medium' : 'low',
-        estimatedAt: new Date(),
-        timeline,
-                  team: {
+          // Визначаємо команду
+          const team = {
             designers: getDesignersForProject(complexity, projectType),
             contactPerson: getContactPersonForProject(projectType),
             contactEmail: getContactEmailForProject(projectType)
-          },
-        phases: {
-          discovery: 'Аналіз вимог, дослідження ринку, планування архітектури проєкту',
-          design: 'UI/UX дизайн, прототипування, створення дизайн-системи',
-          development: 'Програмування, інтеграція, налаштування та тестування функцій',
-          testing: 'Комплексне тестування, виправлення помилок, оптимізація продуктивності'
-        }
-      };
+          };
 
-      setProjectEstimate(estimate);
+          // Визначаємо фази
+          const phases = {
+            discovery: 'Аналіз вимог, дослідження ринку, планування архітектури проєкту',
+            design: 'UX/UI дизайн, прототипування, тестування з користувачами',
+            development: 'Фронтенд та бекенд розробка, інтеграція з API',
+            testing: 'Тестування, виправлення помилок, оптимізація продуктивності'
+          };
+
+          const estimate: ProjectEstimate = {
+            currentRange,
+            initialRange: { min: adjustedPrice.minHours, max: adjustedPrice.maxHours },
+            currency: 'USD',
+            confidence: estimateStep <= 2 ? 'low' : estimateStep <= 3 ? 'medium' : 'high',
+            estimatedAt: new Date(),
+            timeline,
+            team,
+            phases
+          };
+
+          console.log('Setting real estimate from database:', estimate);
+          setProjectEstimate(estimate);
+        } else {
+          console.log('No real estimation found for:', projectType, complexity);
+          // Fallback to default estimation if no real data found
+          const fallbackEstimate: ProjectEstimate = {
+            currentRange: { min: 100, max: 300 },
+            initialRange: { min: 100, max: 300 },
+            currency: 'USD',
+            confidence: 'low',
+            estimatedAt: new Date(),
+            timeline: '8-12 тижнів',
+            team: {
+              designers: getDesignersForProject(complexity, projectType),
+              contactPerson: getContactPersonForProject(projectType),
+              contactEmail: getContactEmailForProject(projectType)
+            },
+            phases: {
+              discovery: 'Аналіз вимог, дослідження ринку, планування архітектури проєкту',
+              design: 'UX/UI дизайн, прототипування, тестування з користувачами',
+              development: 'Фронтенд та бекенд розробка, інтеграція з API',
+              testing: 'Тестування, виправлення помилок, оптимізація продуктивності'
+            }
+          };
+          setProjectEstimate(fallbackEstimate);
+        }
+      }
     } catch (error) {
-      console.error('Error generating project estimate:', error);
+      console.error('Error generating estimate:', error);
     }
   };
 
@@ -608,10 +636,21 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   useEffect(() => {
     console.log('conversationType changed to:', conversationType);
     if (session?.messages && (conversationType === 'project' || conversationType === 'estimate')) {
-      console.log('Generating project estimate...');
-      generateProjectEstimate(session.messages);
+      console.log('Setting initial estimate state...');
+      // Тільки встановлюємо початковий стан, не генеруємо реальний естімейт
+      if (estimateStep <= 1) {
+        generateProjectEstimate(session.messages);
+      }
     }
   }, [conversationType]);
+
+  // Update estimate when estimateStep changes
+  useEffect(() => {
+    if (session?.messages && (conversationType === 'project' || conversationType === 'estimate') && estimateStep >= 2) {
+      console.log('Updating estimate for step:', estimateStep);
+      generateProjectEstimate(session.messages);
+    }
+  }, [estimateStep, conversationType]);
 
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -705,6 +744,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             small={showProjectSidebar} 
             className={showProjectSidebar ? 'max-w-[calc(100vw-440px)]' : ''}
             onClearSession={handleClearSession}
+
           />
           <div className="flex-1 flex flex-col" style={{ marginTop: showProjectSidebar ? (showProjectSidebar ? '48px' : '64px') : '64px', minHeight: 0 }}>
             <div className="flex-1 overflow-y-auto w-full flex flex-col items-center" style={{ minHeight: 0 }}>
@@ -752,6 +792,8 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           </div>
         )}
       </div>
+
+
     </div>
   );
 } 

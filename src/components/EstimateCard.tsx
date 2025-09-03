@@ -47,6 +47,16 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
   const { t, language } = useLanguage();
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
 
+  // Додаємо логування для дебагу
+  console.log('EstimateCard render:', {
+    estimate,
+    estimateStep,
+    conversationType,
+    isVisible,
+    currentRange: estimate.currentRange,
+    timeline: estimate.timeline
+  });
+
   if (!isVisible) return null;
 
   // Розраховуємо відсоток звуження діапазону
@@ -138,8 +148,8 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               <TrendingDown className="w-4 h-4" />
               <span>
                 {language === 'uk' 
-                  ? `Діапазон звужено з $${estimate.initialRange.min.toLocaleString()}K - $${estimate.initialRange.max.toLocaleString()}K`
-                  : `Range narrowed from $${estimate.initialRange.min.toLocaleString()}K - $${estimate.initialRange.max.toLocaleString()}K`
+                  ? `Діапазон звужено з ${estimate.initialRange.min.toLocaleString()} - ${estimate.initialRange.max.toLocaleString()} годин`
+                  : `Range narrowed from ${estimate.initialRange.min.toLocaleString()} - ${estimate.initialRange.max.toLocaleString()} hours`
                 }
               </span>
             </div>
@@ -148,8 +158,8 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
             <div className="text-sm text-gray-600 dark:text-gray-400">
               {language === 'uk' 
-                ? 'Очікуємо деталі проєкту для розрахунку вартості...'
-                : 'Waiting for project details to calculate cost...'
+                ? 'Очікуємо деталі проєкту для розрахунку часу роботи...'
+                : 'Waiting for project details to calculate work hours...'
               }
             </div>
           </div>
@@ -189,6 +199,23 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Години роботи */}
+        {estimate.initialRange && estimate.initialRange.min > 0 && (
+          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
+                {language === 'uk' ? 'Години роботи' : 'Work Hours'}
+              </span>
+            </div>
+            <div className="text-sm text-purple-700 dark:text-purple-300">
+              {estimate.initialRange.min} - {estimate.initialRange.max} {language === 'uk' ? 'годин' : 'hours'}
+            </div>
+          </div>
+        )}
 
         {/* Фази проекту */}
         <div>
