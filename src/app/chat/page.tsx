@@ -670,7 +670,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   // Show contact form if not yet filled
   if (!contactSubmitted) {
     return (
-      <div className="h-screen w-full bg-background font-sans">
+      <div className="h-screen w-full bg-background font-sans overflow-hidden">
         <Header 
           theme={theme} 
           toggleTheme={toggleTheme} 
@@ -733,7 +733,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   });
 
   return (
-    <div className="h-screen w-full bg-background font-sans">
+    <div className="h-screen w-full bg-background font-sans overflow-hidden">
       {/* Header - на всю ширину екрану */}
       <Header 
         theme={theme} 
@@ -783,7 +783,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         </div>
         {/* Estimate Card Sidebar */}
         {showProjectSidebar && projectEstimate && (
-          <div className="flex flex-col flex-shrink-0">
+          <div className="flex flex-col flex-shrink-0 w-96">
             <EstimateCard
               estimate={projectEstimate}
               estimateStep={estimateStep}
