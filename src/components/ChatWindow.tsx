@@ -1,6 +1,8 @@
 import React, { RefObject } from 'react';
 import Image from 'next/image';
 import ChatMessage from './ChatMessage';
+import EstimatePanel from './EstimatePanel';
+import ProgressIndicator from './ProgressIndicator';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -12,6 +14,11 @@ interface ChatWindowProps {
   handleQuickPrompt: (value: string) => void;
   messagesEndRef: RefObject<HTMLDivElement>;
   paddingBottom?: number;
+  conversationType: 'general' | 'project' | 'estimate';
+  estimateStep: number;
+  quickEstimate: any;
+  onBookCall: () => void;
+  onContinueRefinement: () => void;
 }
 
 const MESSAGE_CONTAINER_PADDING = 32; // padding like in InputBox

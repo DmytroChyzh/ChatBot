@@ -52,6 +52,8 @@ export async function createChatSession(
     metadata,
     messages: [],
     projectCard,
+    conversationType: 'general',
+    estimateStep: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
   }

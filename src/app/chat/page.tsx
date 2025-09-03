@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Message, ChatSession, ProjectCardState } from '../../types/chat';
+import { Message, ChatSession, ProjectCardState, QuickEstimate } from '../../types/chat';
 import { 
   createChatSession, 
   addMessageToSession, 
@@ -19,6 +19,7 @@ import Header from '../../components/Header';
 import ProjectSidebar from '../../components/ProjectSidebar';
 import ChatWindow from '../../components/ChatWindow';
 import { parseProjectInfoFromText, enhanceProjectInfoWithGPT } from '../../utils/parseProjectInfo';
+import { analyzeConversationType, shouldShowProjectCard, shouldShowEstimate } from '../../utils/conversationAnalyzer';
 
 interface ContactInfo {
   name: string;
@@ -89,6 +90,9 @@ export default function ChatPage() {
     }
   }, []);
   const [isProjectComplete, setIsProjectComplete] = useState(false);
+  const [conversationType, setConversationType] = useState<'general' | 'project' | 'estimate'>('general');
+  const [estimateStep, setEstimateStep] = useState(0);
+  const [quickEstimate, setQuickEstimate] = useState<QuickEstimate | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme, mounted } = useTheme();
@@ -100,6 +104,17 @@ export default function ChatPage() {
     if (sessionId) {
       const unsubscribe = subscribeToSession(sessionId, (updatedSession) => {
         setSession(updatedSession);
+        
+        // Аналізуємо тип розмови
+        if (updatedSession?.messages) {
+          const newType = analyzeConversationType(updatedSession.messages);
+          setConversationType(newType);
+          
+          // Оновлюємо крок естімейту
+          if (newType === 'project' || newType === 'estimate') {
+            setEstimateStep(Math.min(updatedSession.messages.length / 2, 5));
+          }
+        }
       });
       return unsubscribe;
     }
@@ -350,6 +365,17 @@ export default function ChatPage() {
     }
   };
 
+  // Handle booking call
+  const handleBookCall = () => {
+    // TODO: Implement booking modal
+    console.log('Booking call...');
+  };
+
+  // Handle continue refinement
+  const handleContinueRefinement = () => {
+    setEstimateStep(estimateStep + 1);
+  };
+
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
@@ -417,8 +443,8 @@ export default function ChatPage() {
     );
   }
 
-  // Determine whether to show card: there is at least one message from assistant
-  const showProjectSidebar = session?.messages?.some(m => m.role === 'assistant');
+  // Determine whether to show card: only for project-related conversations
+  const showProjectSidebar = shouldShowProjectCard(conversationType);
 
   return (
     <div className="h-screen w-full bg-background font-sans">
@@ -442,6 +468,11 @@ export default function ChatPage() {
                 quickPrompts={quickPrompts}
                 handleQuickPrompt={handleQuickPrompt}
                 messagesEndRef={messagesEndRef}
+                conversationType={conversationType}
+                estimateStep={estimateStep}
+                quickEstimate={quickEstimate}
+                onBookCall={handleBookCall}
+                onContinueRefinement={handleContinueRefinement}
               />
             </div>
             <div className="w-full flex justify-center">

@@ -1,5 +1,7 @@
 export type MessageRole = 'user' | 'assistant';
 
+export type ConversationType = 'general' | 'project' | 'estimate';
+
 export interface Message {
   id: string;
   role: MessageRole;
@@ -107,12 +109,29 @@ export interface Chat {
   updatedAt: Date;
 }
 
+// Новий тип для швидкого естімейту
+export interface QuickEstimate {
+  totalRange: { min: number; max: number };
+  phases: {
+    discovery: { min: number; max: number; description: string };
+    design: { min: number; max: number; description: string };
+    development: { min: number; max: number; description: string };
+    testing: { min: number; max: number; description: string };
+  };
+  currency: string;
+  confidence: 'low' | 'medium' | 'high';
+  estimatedAt: Date;
+}
+
 // Новий тип для повної сесії
 export interface ChatSession {
   id: string;
   metadata: SessionMetadata;
   messages: Message[];
   projectCard: ProjectCardState;
+  conversationType: ConversationType; // НОВЕ ПОЛЕ
+  quickEstimate?: QuickEstimate; // НОВЕ ПОЛЕ
+  estimateStep: number; // НОВЕ ПОЛЕ
   createdAt: Date;
   updatedAt: Date;
 } 
