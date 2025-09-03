@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Message, ChatSession, ProjectCardState, QuickEstimate } from '../../types/chat';
+import { Message, ChatSession, ProjectCardState, QuickEstimate, ProjectEstimate } from '../../types/chat';
 import { 
   createChatSession, 
   addMessageToSession, 
@@ -16,7 +16,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import Image from 'next/image';
 import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
-import ProjectSidebar from '../../components/ProjectSidebar';
+import EstimateCard from '../../components/EstimateCard';
 import ChatWindow from '../../components/ChatWindow';
 import { parseProjectInfoFromText, enhanceProjectInfoWithGPT } from '../../utils/parseProjectInfo';
 import { analyzeConversationType, shouldShowProjectCard, shouldShowEstimate } from '../../utils/conversationAnalyzer';
@@ -93,6 +93,7 @@ export default function ChatPage() {
   const [conversationType, setConversationType] = useState<'general' | 'project' | 'estimate'>('general');
   const [estimateStep, setEstimateStep] = useState(0);
   const [quickEstimate, setQuickEstimate] = useState<QuickEstimate | null>(null);
+  const [projectEstimate, setProjectEstimate] = useState<ProjectEstimate | null>(null);
   
   // Voice states
   const [isVoiceActive, setIsVoiceActive] = useState(false);
@@ -387,6 +388,12 @@ export default function ChatPage() {
     console.log('Booking call...');
   };
 
+  // Handle contact manager
+  const handleContactManager = () => {
+    console.log('Contacting manager...');
+    // Тут можна додати логіку для відкриття модального вікна або переходу на сторінку контактів
+  };
+
   // Handle continue refinement
   const handleContinueRefinement = () => {
     setEstimateStep(estimateStep + 1);
@@ -408,6 +415,79 @@ export default function ChatPage() {
     if (isVoiceActive) {
       setIsListening(false);
       setIsSpeaking(false);
+    }
+  };
+
+  // Generate project estimate based on conversation
+  const generateProjectEstimate = async (messages: Message[]) => {
+    try {
+      // Створюємо базовий естімейт на основі контексту
+      const projectContext = messages
+        .filter(m => m.role === 'user')
+        .map(m => m.content)
+        .join(' ');
+
+      // Аналізуємо тип проєкту
+      let projectType = 'website';
+      let complexity = 'medium';
+      
+      if (projectContext.toLowerCase().includes('e-commerce') || projectContext.toLowerCase().includes('інтернет-магазин')) {
+        projectType = 'e-commerce';
+        complexity = 'high';
+      } else if (projectContext.toLowerCase().includes('mobile') || projectContext.toLowerCase().includes('мобільний')) {
+        projectType = 'mobile-app';
+        complexity = 'high';
+      } else if (projectContext.toLowerCase().includes('landing') || projectContext.toLowerCase().includes('лендінг')) {
+        projectType = 'landing';
+        complexity = 'low';
+      }
+
+      // Базові ціни залежно від типу та складності
+      const basePrices = {
+        'landing': { min: 2000, max: 8000 },
+        'website': { min: 5000, max: 25000 },
+        'e-commerce': { min: 15000, max: 60000 },
+        'mobile-app': { min: 20000, max: 80000 }
+      };
+
+      const base = basePrices[projectType as keyof typeof basePrices];
+      const complexityMultiplier = complexity === 'high' ? 1.5 : complexity === 'medium' ? 1.0 : 0.7;
+
+      const initialRange = {
+        min: Math.round(base.min * complexityMultiplier),
+        max: Math.round(base.max * complexityMultiplier)
+      };
+
+      // Поточний діапазон (звужений на основі кроків)
+      const narrowingFactor = Math.min(estimateStep / 5, 0.8); // Максимум 80% звуження
+      const currentRange = {
+        min: Math.round(initialRange.min + (initialRange.max - initialRange.min) * narrowingFactor * 0.3),
+        max: Math.round(initialRange.max - (initialRange.max - initialRange.min) * narrowingFactor * 0.7)
+      };
+
+      const estimate: ProjectEstimate = {
+        currentRange,
+        initialRange,
+        currency: 'USD',
+        confidence: estimateStep >= 5 ? 'high' : estimateStep >= 3 ? 'medium' : 'low',
+        estimatedAt: new Date(),
+        timeline: estimateStep >= 3 ? '6-12 тижнів' : '8-16 тижнів',
+        team: {
+          designers: ['Анна Коваленко', 'Максим Петренко', 'Олена Сидоренко'],
+          contactPerson: 'Марія Іваненко',
+          contactEmail: 'maria@cieden.com'
+        },
+        phases: {
+          discovery: 'Аналіз вимог, дослідження ринку, планування архітектури проєкту',
+          design: 'UI/UX дизайн, прототипування, створення дизайн-системи',
+          development: 'Програмування, інтеграція, налаштування та тестування функцій',
+          testing: 'Комплексне тестування, виправлення помилок, оптимізація продуктивності'
+        }
+      };
+
+      setProjectEstimate(estimate);
+    } catch (error) {
+      console.error('Error generating project estimate:', error);
     }
   };
 
@@ -494,8 +574,13 @@ export default function ChatPage() {
       if (newStep >= 4 && !quickEstimate) {
         generateQuickEstimate(session.messages);
       }
+      
+      // Генеруємо проектний естімейт після 2-3 кроків
+      if (newStep >= 2 && !projectEstimate) {
+        generateProjectEstimate(session.messages);
+      }
     }
-  }, [session?.messages, conversationType, quickEstimate]);
+  }, [session?.messages, conversationType, quickEstimate, projectEstimate]);
 
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -616,15 +701,13 @@ export default function ChatPage() {
             </div>
           </div>
         </div>
-        {/* Project Card Sidebar */}
-        {showProjectSidebar && session?.projectCard && (
+        {/* Estimate Card Sidebar */}
+        {showProjectSidebar && projectEstimate && (
           <div className="h-full flex flex-col">
-            <ProjectSidebar
-              projectData={session.projectCard}
-              onComplete={handleProjectComplete}
-              onUpdateField={handleUpdateField}
-              onSaveProject={handleSaveProject}
-              wide
+            <EstimateCard
+              estimate={projectEstimate}
+              onContactManager={handleContactManager}
+              isVisible={true}
             />
           </div>
         )}

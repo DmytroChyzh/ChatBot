@@ -11,16 +11,23 @@ export interface Message {
 }
 
 export interface ProjectEstimate {
-  type: 'landing' | 'dashboard' | 'mobile' | 'web-app' | 'other';
-  pages: number;
-  phases: {
-    designSystem: boolean;
-    discovery: boolean;
-    communication: boolean;
-  };
-  estimatedHours: number;
-  estimatedCost: number;
+  currentRange: { min: number; max: number };
+  initialRange: { min: number; max: number };
   currency: string;
+  confidence: 'low' | 'medium' | 'high';
+  estimatedAt: Date;
+  timeline: string;
+  team: {
+    designers: string[];
+    contactPerson: string;
+    contactEmail: string;
+  };
+  phases: {
+    discovery: string;
+    design: string;
+    development: string;
+    testing: string;
+  };
 }
 
 // Нові типи для розширеної функціональності
@@ -129,9 +136,10 @@ export interface ChatSession {
   metadata: SessionMetadata;
   messages: Message[];
   projectCard: ProjectCardState;
-  conversationType: ConversationType; // НОВЕ ПОЛЕ
-  quickEstimate?: QuickEstimate; // НОВЕ ПОЛЕ
-  estimateStep: number; // НОВЕ ПОЛЕ
+  conversationType: ConversationType;
+  quickEstimate?: QuickEstimate;
+  projectEstimate?: ProjectEstimate; // НОВЕ ПОЛЕ
+  estimateStep: number;
   createdAt: Date;
   updatedAt: Date;
 } 
