@@ -45,14 +45,16 @@ export function getEstimationByType(projectType: string): RealEstimation | null 
  * Get all available project types
  */
 export function getAvailableProjectTypes(): string[] {
-  return [...new Set(realEstimations.estimations.map(est => est.projectType))];
+  const types = realEstimations.estimations.map(est => est.projectType);
+  return Array.from(new Set(types));
 }
 
 /**
  * Get all available complexity levels
  */
 export function getAvailableComplexityLevels(): string[] {
-  return [...new Set(realEstimations.estimations.map(est => est.complexity))];
+  const levels = realEstimations.estimations.map(est => est.complexity);
+  return Array.from(new Set(levels));
 }
 
 /**
