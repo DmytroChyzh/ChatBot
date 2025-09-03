@@ -781,7 +781,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         </div>
         {/* Estimate Card Sidebar */}
         {showProjectSidebar && projectEstimate && (
-          <div className="h-full flex flex-col">
+          <div className="flex flex-col" style={{ marginTop: '64px' }}>
             <EstimateCard
               estimate={projectEstimate}
               estimateStep={estimateStep}
