@@ -18,6 +18,7 @@ import EstimateCard from '../../components/EstimateCard';
 import ChatWindow from '../../components/ChatWindow';
 
 import { analyzeConversationType, shouldShowProjectCard, shouldShowEstimate } from '../../utils/conversationAnalyzer';
+import { searchTeam, getTeamMember, getAllTeamMembers } from '../../utils/teamSearch';
 
 interface ContactInfo {
   name: string;
@@ -212,6 +213,29 @@ export default function ChatPage() {
     e.preventDefault();
     if (!input.trim() || !contactSubmitted || isProjectComplete || !sessionId) return;
     setIsLoading(true);
+    
+    // Перевіряємо чи питання про команду
+    if (isTeamQuestion(input)) {
+      const teamAnswer = handleTeamQuestion(input);
+      
+      // Додаємо відповідь про команду
+      const teamMessage: Omit<Message, 'id'> = {
+        role: 'assistant',
+        content: teamAnswer,
+        timestamp: new Date(),
+      };
+
+      try {
+        await addMessageToSession(sessionId, teamMessage);
+        setInput('');
+      } catch (error) {
+        console.error('Error adding team message:', error);
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
     const userMessage: Omit<Message, 'id'> = {
       role: 'user',
       content: input,
@@ -244,6 +268,30 @@ export default function ChatPage() {
   const handleQuickPrompt = (value: string) => {
     if (!contactSubmitted || isProjectComplete || !sessionId) return;
     setIsLoading(true);
+    
+    // Перевіряємо чи питання про команду
+    if (isTeamQuestion(value)) {
+      const teamAnswer = handleTeamQuestion(value);
+      
+      // Додаємо відповідь про команду
+      const teamMessage: Omit<Message, 'id'> = {
+        role: 'assistant',
+        content: teamAnswer,
+        timestamp: new Date(),
+      };
+
+      (async () => {
+        try {
+          await addMessageToSession(sessionId, teamMessage);
+        } catch (error) {
+          console.error('Error adding team message:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      })();
+      return;
+    }
+
     const userMessage: Omit<Message, 'id'> = {
       role: 'user',
       content: value,
@@ -303,6 +351,47 @@ export default function ChatPage() {
     // Тут можна додати логіку для відкриття модального вікна або переходу на сторінку контактів
   };
 
+  // Функція для обробки питань про команду
+  const handleTeamQuestion = (question: string): string => {
+    const searchResult = searchTeam({ query: question });
+    
+    if (searchResult.members.length === 0) {
+      return 'Вибачте, не знайшов інформації про цю особу або відділ. Спробуйте переформулювати питання.';
+    }
+
+    if (searchResult.members.length === 1) {
+      const member = searchResult.members[0];
+      return `**${member.fullName}** - ${member.role} в відділі ${member.department}
+      
+**Досвід:** ${member.totalExperience} (в Cieden: ${member.inCieden})
+**Рівень:** ${member.seniority}
+**Англійська:** ${member.englishLevel}
+**Галузі:** ${member.industries.join(', ')}
+
+**Контакти:** ${member.email}
+${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
+    }
+
+    // Якщо знайдено кілька людей
+    const memberList = searchResult.members.map(m => 
+      `• **${m.fullName}** - ${m.role} (${m.seniority})`
+    ).join('\n');
+
+    return `Знайшов ${searchResult.members.length} людей:\n\n${memberList}\n\nЗадайте більш конкретне питання для детальної інформації.`;
+  };
+
+  // Перевіряємо чи питання про команду
+  const isTeamQuestion = (question: string): boolean => {
+    const teamKeywords = [
+      'хто', 'дизайнер', 'менеджер', 'продукт', 'команда', 'ceo', 'керівник',
+      'андрій', 'деміан', 'дмитро', 'ілля', 'роман', 'марта', 'владислав', 'володимир',
+      'design', 'product', 'management', 'lead', 'senior', 'middle'
+    ];
+    
+    const lowerQuestion = question.toLowerCase();
+    return teamKeywords.some(keyword => lowerQuestion.includes(keyword));
+  };
+
   // Voice functions
   const handleVoiceInput = (text: string) => {
     setInput(text);
@@ -322,6 +411,41 @@ export default function ChatPage() {
     }
   };
 
+  // Функції для визначення команди та контактів
+  const getDesignersForProject = (complexity: string, projectType: string): string[] => {
+    if (complexity === 'high') {
+      return ['Volodymyr Merlenko (Lead)', 'Andrii Prokopyshyn (Senior)', 'Marta Kacharaba (UX Research)'];
+    } else if (complexity === 'medium') {
+      return ['Volodymyr Merlenko (Lead)', 'Andrii Prokopyshyn (Senior)'];
+    } else {
+      return ['Andrii Prokopyshyn (Senior)'];
+    }
+  };
+
+  const getContactPersonForProject = (projectType: string): string => {
+    if (projectType === 'e-commerce' || projectType === 'mobile-app') {
+      return 'Vladyslav Pianov';
+    } else if (projectType === 'redesign' || projectType === 'landing') {
+      return 'Volodymyr Merlenko';
+    } else if (projectType === 'healthcare' || projectType === 'fintech') {
+      return 'Andrii Prokopyshyn';
+    } else {
+      return 'Roman Kaminechny';
+    }
+  };
+
+  const getContactEmailForProject = (projectType: string): string => {
+    if (projectType === 'e-commerce' || projectType === 'mobile-app') {
+      return 'vladyslav@cieden.com';
+    } else if (projectType === 'redesign' || projectType === 'landing') {
+      return 'volodymyr@cieden.com';
+    } else if (projectType === 'healthcare' || projectType === 'fintech') {
+      return 'andrii@cieden.com';
+    } else {
+      return 'roman@cieden.com';
+    }
+  };
+
   // Generate project estimate based on conversation
   const generateProjectEstimate = async (messages: Message[]) => {
     try {
@@ -336,8 +460,8 @@ export default function ChatPage() {
           timeline: 'Визначається...',
           team: {
             designers: [],
-            contactPerson: 'Марія Іваненко',
-            contactEmail: 'maria@cieden.com'
+            contactPerson: 'Roman Kaminechny',
+            contactEmail: 'roman@cieden.com'
           },
           phases: {
             discovery: 'Очікуємо деталі проєкту...',
@@ -436,9 +560,9 @@ export default function ChatPage() {
         estimatedAt: new Date(),
         timeline,
         team: {
-          designers: ['Анна Коваленко', 'Максим Петренко', 'Олена Сидоренко'],
-          contactPerson: 'Марія Іваненко',
-          contactEmail: 'maria@cieden.com'
+          designers: this.getDesignersForProject(complexity, projectType),
+          contactPerson: this.getContactPersonForProject(projectType),
+          contactEmail: this.getContactEmailForProject(projectType)
         },
         phases: {
           discovery: 'Аналіз вимог, дослідження ринку, планування архітектури проєкту',
