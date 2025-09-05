@@ -568,16 +568,22 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   // Функції для визначення команди та контактів (тепер імпортуються з teamUtils.ts)
   
   // Функція для генерації детального плану робіт для дизайн компанії
-  const generateDetailedPhases = (projectType: string, complexity: string, totalHours: number) => {
+  const generateDetailedPhases = (projectType: string, complexity: string, minHours: number, maxHours: number) => {
     const isUkrainian = language === 'uk';
+    
+    console.log('generateDetailedPhases called with:', { projectType, complexity, minHours, maxHours });
+    
+    // Використовуємо середнє значення з діапазону
+    const avgHours = Math.round((minHours + maxHours) / 2);
+    console.log('Average hours calculated:', avgHours);
     
     // Розподіляємо години по етапах
     const hoursDistribution = {
-      research: Math.round(totalHours * 0.15), // 15%
-      wireframing: Math.round(totalHours * 0.20), // 20%
-      design: Math.round(totalHours * 0.35), // 35%
-      prototyping: Math.round(totalHours * 0.15), // 15%
-      testing: Math.round(totalHours * 0.15) // 15%
+      research: Math.round(avgHours * 0.15), // 15%
+      wireframing: Math.round(avgHours * 0.20), // 20%
+      design: Math.round(avgHours * 0.35), // 35%
+      prototyping: Math.round(avgHours * 0.15), // 15%
+      testing: Math.round(avgHours * 0.15) // 15%
     };
     
     // Розраховуємо вартість (приблизно $50-80 за годину)
@@ -717,8 +723,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           };
 
           // Визначаємо фази з детальною інформацією
-          const totalHours = (currentRange.min + currentRange.max) / 2;
-          const phases = generateDetailedPhases(projectType, complexity, totalHours);
+          const phases = generateDetailedPhases(projectType, complexity, currentRange.min, currentRange.max);
 
           const estimate: ProjectEstimate = {
             currentRange,
@@ -748,7 +753,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
               contactPerson: getContactPersonForProject(projectType),
               contactEmail: getContactEmailForProject(projectType)
             },
-            phases: generateDetailedPhases(projectType, complexity, 200)
+            phases: generateDetailedPhases(projectType, complexity, 100, 200)
           };
           setProjectEstimate(fallbackEstimate);
         }
