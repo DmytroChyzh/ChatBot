@@ -364,6 +364,31 @@ export default function ChatPage() {
 
 
 
+  // Функція для показу fallback email інформації
+  const showEmailFallback = (contactEmail: string, subject: string, body: string, isUkrainian: boolean) => {
+    const emailText = `${contactEmail}\n\n${decodeURIComponent(subject)}\n\n${decodeURIComponent(body)}`;
+    
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(emailText).then(() => {
+        alert(isUkrainian 
+          ? `📧 Email скопійовано в буфер обміну!\n\nКонтактна особа: ${contactEmail}\n\nВставте в ваш поштовий клієнт (Gmail, Outlook, тощо).`
+          : `📧 Email copied to clipboard!\n\nContact person: ${contactEmail}\n\nPaste into your email client (Gmail, Outlook, etc.).`
+        );
+      }).catch(() => {
+        // Якщо clipboard не працює, показуємо модальне вікно
+        alert(isUkrainian 
+          ? `📧 Email менеджера: ${contactEmail}\n\nСкопіюйте цю адресу в ваш поштовий клієнт.\n\nТема: ${decodeURIComponent(subject)}`
+          : `📧 Manager email: ${contactEmail}\n\nCopy this address to your email client.\n\nSubject: ${decodeURIComponent(subject)}`
+        );
+      });
+    } else {
+      alert(isUkrainian 
+        ? `📧 Email менеджера: ${contactEmail}\n\nСкопіюйте цю адресу в ваш поштовий клієнт.\n\nТема: ${decodeURIComponent(subject)}`
+        : `📧 Manager email: ${contactEmail}\n\nCopy this address to your email client.\n\nSubject: ${decodeURIComponent(subject)}`
+      );
+    }
+  };
+
   // Handle contact manager
   const handleContactManager = () => {
     console.log('Contacting manager...');
@@ -422,48 +447,18 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
     const mailtoLink = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
     console.log('Mailto link:', mailtoLink);
     
+    // Спробуємо відкрити email клієнт
     try {
-      // Спробуємо відкрити в тому ж вікні, якщо popup заблокований
-      const newWindow = window.open(mailtoLink, '_blank');
-      if (newWindow) {
-        console.log('Email client opened successfully');
-      } else {
-        console.log('Popup blocked, trying alternative method');
-        // Альтернативний спосіб - створюємо посилання та клікаємо по ньому
-        const link = document.createElement('a');
-        link.href = mailtoLink;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        console.log('Email client opened via link click');
-      }
+      window.open(mailtoLink, '_blank');
+      console.log('Attempted to open email client');
     } catch (error) {
       console.error('Failed to open email client:', error);
-      
-      // Fallback: копіюємо email в буфер обміну
-      const emailText = `${contactEmail}\n\n${decodeURIComponent(subject)}\n\n${decodeURIComponent(body)}`;
-      
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(emailText).then(() => {
-          alert(isUkrainian 
-            ? `Email скопійовано в буфер обміну!\n\n${contactEmail}\n\nВставте в ваш поштовий клієнт.`
-            : `Email copied to clipboard!\n\n${contactEmail}\n\nPaste into your email client.`
-          );
-        }).catch(() => {
-          // Якщо clipboard не працює, показуємо модальне вікно
-          alert(isUkrainian 
-            ? `Email менеджера: ${contactEmail}\n\nСкопіюйте цю адресу в ваш поштовий клієнт.`
-            : `Manager email: ${contactEmail}\n\nCopy this address to your email client.`
-          );
-        });
-      } else {
-        alert(isUkrainian 
-          ? `Email менеджера: ${contactEmail}\n\nСкопіюйте цю адресу в ваш поштовий клієнт.`
-          : `Manager email: ${contactEmail}\n\nCopy this address to your email client.`
-        );
-      }
     }
+    
+    // Завжди показуємо fallback через 1 секунду для надійності
+    setTimeout(() => {
+      showEmailFallback(contactEmail, subject, body, isUkrainian);
+    }, 1000);
   };
 
 
