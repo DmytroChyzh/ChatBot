@@ -423,8 +423,21 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
     console.log('Mailto link:', mailtoLink);
     
     try {
-      window.open(mailtoLink, '_blank');
-      console.log('Email client opened successfully');
+      // Спробуємо відкрити в тому ж вікні, якщо popup заблокований
+      const newWindow = window.open(mailtoLink, '_blank');
+      if (newWindow) {
+        console.log('Email client opened successfully');
+      } else {
+        console.log('Popup blocked, trying alternative method');
+        // Альтернативний спосіб - створюємо посилання та клікаємо по ньому
+        const link = document.createElement('a');
+        link.href = mailtoLink;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        console.log('Email client opened via link click');
+      }
     } catch (error) {
       console.error('Failed to open email client:', error);
       

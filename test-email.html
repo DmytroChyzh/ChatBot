@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Test</title>
+</head>
+<body>
+    <h1>Тест Email функціональності</h1>
+    <button onclick="testEmail()">Тест Email</button>
+    <div id="result"></div>
+
+    <script>
+        function testEmail() {
+            console.log('Testing email functionality...');
+            
+            const contactEmail = 'olesia.havryshko@cieden.com';
+            const subject = encodeURIComponent('Запит на консультацію щодо проекту');
+            const body = encodeURIComponent(`Доброго дня, Olesia Havryshko!
+
+Мене цікавить консультація щодо мого проекту. 
+
+Деталі проекту:
+- Діапазон вартості: $2250 - $4500
+- Термін виконання: 9-11 тижнів
+- Команда: Andrii Prokopyshyn, Demian Peretiatko
+
+Буду вдячний за можливість обговорити деталі та отримати більш точну оцінку.
+
+З повагою,
+Тестовий Клієнт
+Email: test@example.com`);
+
+            const mailtoLink = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+            console.log('Mailto link:', mailtoLink);
+            
+            try {
+                const newWindow = window.open(mailtoLink, '_blank');
+                if (newWindow) {
+                    console.log('Email client opened successfully');
+                    document.getElementById('result').innerHTML = '<p style="color: green;">Email клієнт відкрито успішно!</p>';
+                } else {
+                    console.log('Popup blocked, trying alternative method');
+                    const link = document.createElement('a');
+                    link.href = mailtoLink;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    console.log('Email client opened via link click');
+                    document.getElementById('result').innerHTML = '<p style="color: green;">Email клієнт відкрито через альтернативний метод!</p>';
+                }
+            } catch (error) {
+                console.error('Failed to open email client:', error);
+                document.getElementById('result').innerHTML = '<p style="color: red;">Помилка: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>
