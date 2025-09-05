@@ -232,11 +232,8 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 >
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">
-                      {phaseKey === 'discovery' && (language === 'uk' ? 'Дослідження' : 'Discovery')}
-                      {phaseKey === 'design' && (language === 'uk' ? 'Дизайн' : 'Design')}
-                      {phaseKey === 'development' && (language === 'uk' ? 'Розробка' : 'Development')}
-                      {phaseKey === 'testing' && (language === 'uk' ? 'Тестування' : 'Testing')}
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {description}
                     </span>
                   </div>
                   <ArrowRight 
@@ -249,7 +246,10 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 {expandedPhase === phaseKey && (
                   <div className="px-3 pb-3 border-t border-gray-200 dark:border-gray-600">
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                      {description}
+                      {language === 'uk' 
+                        ? 'Детальний опис етапу буде надано під час роботи над проектом.'
+                        : 'Detailed stage description will be provided during project work.'
+                      }
                     </p>
                   </div>
                 )}
