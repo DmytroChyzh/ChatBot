@@ -368,24 +368,66 @@ export default function ChatPage() {
   const showEmailFallback = (contactEmail: string, subject: string, body: string, isUkrainian: boolean) => {
     const emailText = `${contactEmail}\n\n${decodeURIComponent(subject)}\n\n${decodeURIComponent(body)}`;
     
+    // Копіюємо в буфер обміну
     if (navigator.clipboard) {
       navigator.clipboard.writeText(emailText).then(() => {
-        alert(isUkrainian 
-          ? `📧 Email скопійовано в буфер обміну!\n\nКонтактна особа: ${contactEmail}\n\nВставте в ваш поштовий клієнт (Gmail, Outlook, тощо).`
-          : `📧 Email copied to clipboard!\n\nContact person: ${contactEmail}\n\nPaste into your email client (Gmail, Outlook, etc.).`
+        // Показуємо модальне вікно з кнопками
+        const userChoice = confirm(isUkrainian 
+          ? `📧 Email скопійовано в буфер обміну!\n\nКонтактна особа: ${contactEmail}\n\nНатисніть "OK" щоб відкрити Gmail, або "Скасувати" щоб залишитися тут.`
+          : `📧 Email copied to clipboard!\n\nContact person: ${contactEmail}\n\nClick "OK" to open Gmail, or "Cancel" to stay here.`
         );
+        
+        if (userChoice) {
+          // Даємо користувачу вибір поштового сервісу
+          const emailService = prompt(isUkrainian 
+            ? `Виберіть поштовий сервіс:\n1 - Gmail\n2 - Outlook\n3 - Yahoo\n4 - Інший\n\nВведіть номер (1-4):`
+            : `Choose email service:\n1 - Gmail\n2 - Outlook\n3 - Yahoo\n4 - Other\n\nEnter number (1-4):`
+          );
+          
+          let emailUrl = '';
+          switch(emailService) {
+            case '1':
+              emailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${contactEmail}&su=${encodeURIComponent(decodeURIComponent(subject))}&body=${encodeURIComponent(decodeURIComponent(body))}`;
+              break;
+            case '2':
+              emailUrl = `https://outlook.live.com/mail/0/deeplink/compose?to=${contactEmail}&subject=${encodeURIComponent(decodeURIComponent(subject))}&body=${encodeURIComponent(decodeURIComponent(body))}`;
+              break;
+            case '3':
+              emailUrl = `https://compose.mail.yahoo.com/?to=${contactEmail}&subject=${encodeURIComponent(decodeURIComponent(subject))}&body=${encodeURIComponent(decodeURIComponent(body))}`;
+              break;
+            default:
+              // За замовчуванням Gmail
+              emailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${contactEmail}&su=${encodeURIComponent(decodeURIComponent(subject))}&body=${encodeURIComponent(decodeURIComponent(body))}`;
+          }
+          
+          if (emailUrl) {
+            window.open(emailUrl, '_blank');
+          }
+        }
       }).catch(() => {
         // Якщо clipboard не працює, показуємо модальне вікно
-        alert(isUkrainian 
-          ? `📧 Email менеджера: ${contactEmail}\n\nСкопіюйте цю адресу в ваш поштовий клієнт.\n\nТема: ${decodeURIComponent(subject)}`
-          : `📧 Manager email: ${contactEmail}\n\nCopy this address to your email client.\n\nSubject: ${decodeURIComponent(subject)}`
+        const userChoice = confirm(isUkrainian 
+          ? `📧 Email менеджера: ${contactEmail}\n\nНатисніть "OK" щоб відкрити Gmail, або "Скасувати" щоб залишитися тут.\n\nТема: ${decodeURIComponent(subject)}`
+          : `📧 Manager email: ${contactEmail}\n\nClick "OK" to open Gmail, or "Cancel" to stay here.\n\nSubject: ${decodeURIComponent(subject)}`
         );
+        
+        if (userChoice) {
+          // За замовчуванням відкриваємо Gmail
+          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${contactEmail}&su=${encodeURIComponent(decodeURIComponent(subject))}&body=${encodeURIComponent(decodeURIComponent(body))}`;
+          window.open(gmailUrl, '_blank');
+        }
       });
     } else {
-      alert(isUkrainian 
-        ? `📧 Email менеджера: ${contactEmail}\n\nСкопіюйте цю адресу в ваш поштовий клієнт.\n\nТема: ${decodeURIComponent(subject)}`
-        : `📧 Manager email: ${contactEmail}\n\nCopy this address to your email client.\n\nSubject: ${decodeURIComponent(subject)}`
+      const userChoice = confirm(isUkrainian 
+        ? `📧 Email менеджера: ${contactEmail}\n\nНатисніть "OK" щоб відкрити Gmail, або "Скасувати" щоб залишитися тут.\n\nТема: ${decodeURIComponent(subject)}`
+        : `📧 Manager email: ${contactEmail}\n\nClick "OK" to open Gmail, or "Cancel" to stay here.\n\nSubject: ${decodeURIComponent(subject)}`
       );
+      
+      if (userChoice) {
+        // За замовчуванням відкриваємо Gmail
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${contactEmail}&su=${encodeURIComponent(decodeURIComponent(subject))}&body=${encodeURIComponent(decodeURIComponent(body))}`;
+        window.open(gmailUrl, '_blank');
+      }
     }
   };
 
@@ -796,10 +838,10 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   return (
     <div className="h-screen w-full bg-background font-sans overflow-hidden">
       {/* Header - на всю ширину екрану */}
-      <Header 
-        theme={theme} 
-        toggleTheme={toggleTheme} 
-        mounted={mounted} 
+          <Header 
+            theme={theme} 
+            toggleTheme={toggleTheme} 
+            mounted={mounted} 
         small={false}
         className="w-full"
         onClearSession={handleClearSession}
