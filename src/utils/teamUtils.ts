@@ -62,12 +62,17 @@ export function getDesignersForProject(complexity: string, projectType: string):
   // Фільтруємо за seniority та проектом
   let filteredDesigners = designers;
   
-  if (complexity === 'high' || projectType === 'e-commerce' || projectType === 'mobile-app') {
+  if (complexity === 'high' || projectType === 'e-commerce' || projectType === 'mobile-app' || projectType === 'enterprise') {
     // Для складних проектів - тільки Senior дизайнери
     filteredDesigners = designers.filter(d => d.seniority === 'Senior');
   } else if (complexity === 'medium') {
     // Для середніх проектів - Senior + Middle
-    filteredDesigners = designers.filter(d => ['Senior', 'Middle'].includes(d.seniority));
+    filteredDesigners = designers.filter(d => ['Senior', 'Middle', 'Str. Middle'].includes(d.seniority));
+  }
+  
+  // Якщо немає Senior дизайнерів для складних проектів, беремо всіх
+  if (filteredDesigners.length === 0 && (complexity === 'high' || projectType === 'e-commerce')) {
+    filteredDesigners = designers.filter(d => ['Senior', 'Middle', 'Str. Middle'].includes(d.seniority));
   }
   
   // Повертаємо імена дизайнерів
@@ -79,27 +84,57 @@ export function getDesignersForProject(complexity: string, projectType: string):
  */
 export function getContactPersonForProject(projectType: string): string {
   // Логіка вибору контактної особи за типом проекту
-  if (projectType === 'e-commerce' || projectType === 'website') {
-    // Для веб-проектів - Product Manager
-    const productManagers = getTeamMembersByRole('Product Manager');
+  
+  // Для веб-проектів - Product Manager/Business Analyst
+  if (projectType === 'e-commerce' || projectType === 'website' || projectType === 'web-app') {
+    const productManagers = getTeamMembersByDepartment('Product');
+    if (productManagers.length > 0) {
+      // Вибираємо першого Product Manager з найбільшим досвідом
+      const sortedPMs = productManagers.sort((a, b) => {
+        const aExp = parseInt(a.totalExperience.split(' ')[0]) || 0;
+        const bExp = parseInt(b.totalExperience.split(' ')[0]) || 0;
+        return bExp - aExp; // Сортуємо за спаданням досвіду
+      });
+      return sortedPMs[0].fullName;
+    }
+  }
+  
+  // Для мобільних додатків - також Product Manager
+  if (projectType === 'mobile-app') {
+    const productManagers = getTeamMembersByDepartment('Product');
     if (productManagers.length > 0) {
       return productManagers[0].fullName;
     }
   }
   
-  // За замовчуванням - перший менеджер
-  const managers = teamData.members.filter(m => m.access === 'Manager');
-  if (managers.length > 0) {
-    return managers[0].fullName;
+  // Для складних проектів - Product Manager або Senior Designer
+  if (projectType === 'enterprise' || projectType === 'saas') {
+    const productManagers = getTeamMembersByDepartment('Product');
+    if (productManagers.length > 0) {
+      return productManagers[0].fullName;
+    }
   }
   
-  // Якщо немає менеджерів - перший Senior
+  // За замовчуванням - перший Product Manager
+  const productManagers = getTeamMembersByDepartment('Product');
+  if (productManagers.length > 0) {
+    return productManagers[0].fullName;
+  }
+  
+  // Якщо немає Product Manager - перший Leader
+  const leaders = teamData.members.filter(m => m.access === 'Leader');
+  if (leaders.length > 0) {
+    return leaders[0].fullName;
+  }
+  
+  // Якщо немає Leader - перший Senior
   const seniors = teamData.members.filter(m => m.seniority === 'Senior');
   if (seniors.length > 0) {
     return seniors[0].fullName;
   }
   
-  return 'Roman Kaminechny'; // Fallback
+  // Fallback - Anastasiya Mudryk (Head of Product)
+  return 'Anastasiya Mudryk';
 }
 
 /**
