@@ -116,7 +116,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme, mounted } = useTheme();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // Підписка на оновлення сесії в реальному часі
@@ -367,7 +367,83 @@ export default function ChatPage() {
   // Handle contact manager
   const handleContactManager = () => {
     console.log('Contacting manager...');
-    // Тут можна додати логіку для відкриття модального вікна або переходу на сторінку контактів
+    
+    // Отримуємо контактну особу та email з поточного естімейту
+    const contactPerson = projectEstimate?.team?.contactPerson || 'Olesia Havryshko';
+    const contactEmail = projectEstimate?.team?.contactEmail || 'olesia.havryshko@cieden.com';
+    
+    // Створюємо тему та тіло email'у залежно від мови
+    const isUkrainian = language === 'uk';
+    
+    const subject = encodeURIComponent(
+      isUkrainian 
+        ? 'Запит на консультацію щодо проекту' 
+        : 'Project Consultation Request'
+    );
+    
+    const body = encodeURIComponent(
+      isUkrainian 
+        ? `Доброго дня, ${contactPerson}!
+
+Мене цікавить консультація щодо мого проекту. 
+
+Деталі проекту:
+- Діапазон вартості: $${projectEstimate?.currentRange?.min || 0} - $${projectEstimate?.currentRange?.max || 0}
+- Термін виконання: ${projectEstimate?.timeline || 'Визначається'}
+- Команда: ${projectEstimate?.team?.designers?.join(', ') || 'Визначається'}
+
+Буду вдячний за можливість обговорити деталі та отримати більш точну оцінку.
+
+З повагою,
+${contact.name || 'Клієнт'}
+${contact.email ? `\nEmail: ${contact.email}` : ''}`
+        : `Hello ${contactPerson}!
+
+I'm interested in a consultation about my project.
+
+Project details:
+- Cost range: $${projectEstimate?.currentRange?.min || 0} - $${projectEstimate?.currentRange?.max || 0}
+- Timeline: ${projectEstimate?.timeline || 'To be determined'}
+- Team: ${projectEstimate?.team?.designers?.join(', ') || 'To be determined'}
+
+I would appreciate the opportunity to discuss the details and get a more accurate estimate.
+
+Best regards,
+${contact.name || 'Client'}
+${contact.email ? `\nEmail: ${contact.email}` : ''}`
+    );
+    
+    // Відкриваємо поштовий клієнт
+    const mailtoLink = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+    
+    try {
+      window.open(mailtoLink, '_blank');
+    } catch (error) {
+      console.error('Failed to open email client:', error);
+      
+      // Fallback: копіюємо email в буфер обміну
+      const emailText = `${contactEmail}\n\n${decodeURIComponent(subject)}\n\n${decodeURIComponent(body)}`;
+      
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(emailText).then(() => {
+          alert(isUkrainian 
+            ? `Email скопійовано в буфер обміну!\n\n${contactEmail}\n\nВставте в ваш поштовий клієнт.`
+            : `Email copied to clipboard!\n\n${contactEmail}\n\nPaste into your email client.`
+          );
+        }).catch(() => {
+          // Якщо clipboard не працює, показуємо модальне вікно
+          alert(isUkrainian 
+            ? `Email менеджера: ${contactEmail}\n\nСкопіюйте цю адресу в ваш поштовий клієнт.`
+            : `Manager email: ${contactEmail}\n\nCopy this address to your email client.`
+          );
+        });
+      } else {
+        alert(isUkrainian 
+          ? `Email менеджера: ${contactEmail}\n\nСкопіюйте цю адресу в ваш поштовий клієнт.`
+          : `Manager email: ${contactEmail}\n\nCopy this address to your email client.`
+        );
+      }
+    }
   };
 
 
