@@ -277,7 +277,10 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
         {/* CTA кнопка та пояснення - завжди внизу */}
         <div className="p-6 pt-0 space-y-4">
           <button
-            onClick={onContactManager}
+            onClick={() => {
+              console.log('Contact manager button clicked!');
+              onContactManager();
+            }}
             className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
           >
             <Phone className="w-4 h-4" />

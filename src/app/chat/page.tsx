@@ -367,10 +367,15 @@ export default function ChatPage() {
   // Handle contact manager
   const handleContactManager = () => {
     console.log('Contacting manager...');
+    console.log('Current projectEstimate:', projectEstimate);
+    console.log('Current contact:', contact);
     
     // Отримуємо контактну особу та email з поточного естімейту
     const contactPerson = projectEstimate?.team?.contactPerson || 'Olesia Havryshko';
     const contactEmail = projectEstimate?.team?.contactEmail || 'olesia.havryshko@cieden.com';
+    
+    console.log('Selected contact person:', contactPerson);
+    console.log('Selected contact email:', contactEmail);
     
     // Створюємо тему та тіло email'у залежно від мови
     const isUkrainian = language === 'uk';
@@ -415,9 +420,11 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
     
     // Відкриваємо поштовий клієнт
     const mailtoLink = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+    console.log('Mailto link:', mailtoLink);
     
     try {
       window.open(mailtoLink, '_blank');
+      console.log('Email client opened successfully');
     } catch (error) {
       console.error('Failed to open email client:', error);
       
