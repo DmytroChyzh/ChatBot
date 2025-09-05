@@ -21,6 +21,7 @@ import TeamUploader from '../../components/TeamUploader';
 import { analyzeConversationType, shouldShowProjectCard, shouldShowEstimate } from '../../utils/conversationAnalyzer';
 import { searchTeam, getTeamMember, getAllTeamMembers } from '../../utils/teamSearch';
 import { getRealEstimation, calculateAdjustedPrice, getAdjustedTimeline, getAdjustedTeamSize } from '../../utils/realEstimations';
+import { getContactPersonForProject, getContactEmailForProject, getDesignersForProject } from '../../utils/teamUtils';
 
 
 interface ContactInfo {
@@ -431,40 +432,8 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
     }
   };
 
-  // Функції для визначення команди та контактів
-  const getDesignersForProject = (complexity: string, projectType: string): string[] => {
-    if (complexity === 'high') {
-      return ['Volodymyr Merlenko (Lead)', 'Andrii Prokopyshyn (Senior)', 'Marta Kacharaba (UX Research)'];
-    } else if (complexity === 'medium') {
-      return ['Volodymyr Merlenko (Lead)', 'Andrii Prokopyshyn (Senior)'];
-    } else {
-      return ['Andrii Prokopyshyn (Senior)'];
-    }
-  };
+  // Функції для визначення команди та контактів (тепер імпортуються з teamUtils.ts)
 
-  const getContactPersonForProject = (projectType: string): string => {
-    if (projectType === 'e-commerce' || projectType === 'mobile-app') {
-      return 'Vladyslav Pianov';
-    } else if (projectType === 'redesign' || projectType === 'landing') {
-      return 'Volodymyr Merlenko';
-    } else if (projectType === 'healthcare' || projectType === 'fintech') {
-      return 'Andrii Prokopyshyn';
-    } else {
-      return 'Roman Kaminechny';
-    }
-  };
-
-  const getContactEmailForProject = (projectType: string): string => {
-    if (projectType === 'e-commerce' || projectType === 'mobile-app') {
-      return 'vladyslav@cieden.com';
-    } else if (projectType === 'redesign' || projectType === 'landing') {
-      return 'volodymyr@cieden.com';
-    } else if (projectType === 'healthcare' || projectType === 'fintech') {
-      return 'andrii@cieden.com';
-    } else {
-      return 'roman@cieden.com';
-    }
-  };
 
   // Generate project estimate based on conversation
   const generateProjectEstimate = async (messages: Message[]) => {
