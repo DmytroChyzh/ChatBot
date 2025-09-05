@@ -133,8 +133,8 @@ export function getContactPersonForProject(projectType: string): string {
     return seniors[0].fullName;
   }
   
-  // Fallback - Anastasiya Mudryk (Head of Product)
-  return 'Anastasiya Mudryk';
+  // Fallback - Kateryna Zavertailo
+  return 'Kateryna Zavertailo';
 }
 
 /**
@@ -143,7 +143,7 @@ export function getContactPersonForProject(projectType: string): string {
 export function getContactEmailForProject(projectType: string): string {
   const contactPerson = getContactPersonForProject(projectType);
   const member = teamData.members.find(m => m.fullName === contactPerson);
-  return member?.email || 'roman@cieden.com';
+  return member?.email || 'kateryna.zavertailo@cieden.com';
 }
 
 /**

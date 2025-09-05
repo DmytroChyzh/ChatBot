@@ -438,8 +438,8 @@ export default function ChatPage() {
     console.log('Current contact:', contact);
     
     // Отримуємо контактну особу та email з поточного естімейту
-    const contactPerson = projectEstimate?.team?.contactPerson || 'Olesia Havryshko';
-    const contactEmail = projectEstimate?.team?.contactEmail || 'olesia.havryshko@cieden.com';
+    const contactPerson = projectEstimate?.team?.contactPerson || 'Kateryna Zavertailo';
+    const contactEmail = projectEstimate?.team?.contactEmail || 'kateryna.zavertailo@cieden.com';
     
     console.log('Selected contact person:', contactPerson);
     console.log('Selected contact email:', contactEmail);
@@ -566,6 +566,47 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   };
 
   // Функції для визначення команди та контактів (тепер імпортуються з teamUtils.ts)
+  
+  // Функція для генерації детального плану робіт для дизайн компанії
+  const generateDetailedPhases = (projectType: string, complexity: string, totalHours: number) => {
+    const isUkrainian = language === 'uk';
+    
+    // Розподіляємо години по етапах
+    const hoursDistribution = {
+      research: Math.round(totalHours * 0.15), // 15%
+      wireframing: Math.round(totalHours * 0.20), // 20%
+      design: Math.round(totalHours * 0.35), // 35%
+      prototyping: Math.round(totalHours * 0.15), // 15%
+      testing: Math.round(totalHours * 0.15) // 15%
+    };
+    
+    // Розраховуємо вартість (приблизно $50-80 за годину)
+    const hourlyRate = complexity === 'high' ? 80 : complexity === 'medium' ? 65 : 50;
+    
+    const phases = {
+      research: isUkrainian 
+        ? `🔍 Дослідження та аналіз (${hoursDistribution.research} год, $${hoursDistribution.research * hourlyRate})`
+        : `🔍 Research & Analysis (${hoursDistribution.research}h, $${hoursDistribution.research * hourlyRate})`,
+      
+      wireframing: isUkrainian 
+        ? `📐 Структура та навігація (${hoursDistribution.wireframing} год, $${hoursDistribution.wireframing * hourlyRate})`
+        : `📐 Structure & Navigation (${hoursDistribution.wireframing}h, $${hoursDistribution.wireframing * hourlyRate})`,
+      
+      design: isUkrainian 
+        ? `🎨 Візуальний дизайн (${hoursDistribution.design} год, $${hoursDistribution.design * hourlyRate})`
+        : `🎨 Visual Design (${hoursDistribution.design}h, $${hoursDistribution.design * hourlyRate})`,
+      
+      prototyping: isUkrainian 
+        ? `⚡ Прототипування (${hoursDistribution.prototyping} год, $${hoursDistribution.prototyping * hourlyRate})`
+        : `⚡ Prototyping (${hoursDistribution.prototyping}h, $${hoursDistribution.prototyping * hourlyRate})`,
+      
+      testing: isUkrainian 
+        ? `🧪 Тестування та оптимізація (${hoursDistribution.testing} год, $${hoursDistribution.testing * hourlyRate})`
+        : `🧪 Testing & Optimization (${hoursDistribution.testing}h, $${hoursDistribution.testing * hourlyRate})`
+    };
+    
+    return phases;
+  };
 
 
   // Generate project estimate based on conversation
@@ -583,13 +624,14 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           timeline: 'Визначається...',
           team: {
             designers: ['Andrii Prokopyshyn (Senior)'],
-            contactPerson: 'Roman Kaminechny',
-            contactEmail: 'roman@cieden.com'
+            contactPerson: 'Kateryna Zavertailo',
+            contactEmail: 'kateryna.zavertailo@cieden.com'
           },
           phases: {
-            discovery: 'Очікуємо деталі проєкту...',
+            research: 'Очікуємо деталі проєкту...',
+            wireframing: 'Очікуємо деталі проєкту...',
             design: 'Очікуємо деталі проєкту...',
-            development: 'Очікуємо деталі проєкту...',
+            prototyping: 'Очікуємо деталі проєкту...',
             testing: 'Очікуємо деталі проєкту...'
           }
         };
@@ -674,13 +716,9 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             contactEmail: getContactEmailForProject(projectType)
           };
 
-          // Визначаємо фази
-          const phases = {
-            discovery: 'Аналіз вимог, дослідження ринку, планування архітектури проєкту',
-            design: 'UX/UI дизайн, прототипування, тестування з користувачами',
-            development: 'Фронтенд та бекенд розробка, інтеграція з API',
-            testing: 'Тестування, виправлення помилок, оптимізація продуктивності'
-          };
+          // Визначаємо фази з детальною інформацією
+          const totalHours = (currentRange.min + currentRange.max) / 2;
+          const phases = generateDetailedPhases(projectType, complexity, totalHours);
 
           const estimate: ProjectEstimate = {
             currentRange,
@@ -710,12 +748,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
               contactPerson: getContactPersonForProject(projectType),
               contactEmail: getContactEmailForProject(projectType)
             },
-            phases: {
-              discovery: 'Аналіз вимог, дослідження ринку, планування архітектури проєкту',
-              design: 'UX/UI дизайн, прототипування, тестування з користувачами',
-              development: 'Фронтенд та бекенд розробка, інтеграція з API',
-              testing: 'Тестування, виправлення помилок, оптимізація продуктивності'
-            }
+            phases: generateDetailedPhases(projectType, complexity, 200)
           };
           setProjectEstimate(fallbackEstimate);
         }

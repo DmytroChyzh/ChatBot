@@ -25,9 +25,10 @@ interface EstimateCardProps {
       contactEmail: string;
     };
     phases: {
-      discovery: string;
+      research: string;
+      wireframing: string;
       design: string;
-      development: string;
+      prototyping: string;
       testing: string;
     };
   };
