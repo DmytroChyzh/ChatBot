@@ -7,12 +7,14 @@ interface AlternativeVoiceChatProps {
   disabled?: boolean;
   className?: string;
   onTranscript?: (text: string) => void;
+  onSpeak?: (text: string) => void;
 }
 
 const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({ 
   disabled = false,
   className = "",
-  onTranscript
+  onTranscript,
+  onSpeak
 }) => {
   const { language } = useLanguage();
   const [isListening, setIsListening] = useState(false);
@@ -240,6 +242,14 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     synthesisRef.current.speak(utterance);
   };
 
+  const speakText = (text: string) => {
+    if (onSpeak) {
+      onSpeak(text);
+    } else {
+      speakResponse(text);
+    }
+  };
+
   if (!isSupported) {
     return (
       <button
@@ -330,6 +340,30 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
                 <line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
+
+            {/* Кнопка озвучування (якщо є текст) */}
+            {transcript && (
+              <button
+                onClick={() => speakText(transcript)}
+                className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+                title="Озвучити текст"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+              </button>
+            )}
 
             {/* Кнопка зупинки/підтвердження */}
             <button
