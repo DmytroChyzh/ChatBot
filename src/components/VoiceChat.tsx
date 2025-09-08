@@ -67,7 +67,13 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to create session');
+      console.error('Session creation error:', errorData);
+      
+      if (response.status === 500 && errorData.error?.includes('OPENAI_API_KEY')) {
+        throw new Error('API ключ не налаштований. Додайте OPENAI_API_KEY в .env.local');
+      }
+      
+      throw new Error(errorData.error || `Failed to create session: ${response.status}`);
     }
 
     return await response.json();
@@ -98,52 +104,56 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
     return peerConnection;
   };
 
-  const setupWebSocket = (sessionId: string) => {
-    const ws = new WebSocket(`wss://api.openai.com/v1/realtime/sessions/${sessionId}?model=gpt-4o-realtime-preview`);
-    
-    ws.onopen = () => {
-      console.log('WebSocket connected');
-      setIsConnecting(false);
-      setIsConnected(true);
-      setError(null);
-    };
+  const setupWebSocket = (sessionId: string): Promise<WebSocket> => {
+    return new Promise((resolve, reject) => {
+      const ws = new WebSocket(`wss://api.openai.com/v1/realtime/sessions/${sessionId}?model=gpt-4o-realtime-preview`);
+      
+      ws.onopen = () => {
+        console.log('WebSocket connected');
+        setIsConnecting(false);
+        setIsConnected(true);
+        setError(null);
+        resolve(ws);
+      };
 
-    ws.onmessage = async (event) => {
-      const data = JSON.parse(event.data);
-      console.log('WebSocket message:', data);
+      ws.onmessage = async (event) => {
+        const data = JSON.parse(event.data);
+        console.log('WebSocket message:', data);
 
-      switch (data.type) {
-        case 'webrtc.answer':
-          if (peerConnectionRef.current) {
-            await peerConnectionRef.current.setRemoteDescription(data.sdp);
-          }
-          break;
-          
-        case 'webrtc.ice_candidate':
-          if (peerConnectionRef.current) {
-            await peerConnectionRef.current.addIceCandidate(data.candidate);
-          }
-          break;
-          
-        case 'error':
-          console.error('WebSocket error:', data.error);
-          setError(data.error.message || 'WebSocket error');
-          break;
-      }
-    };
+        switch (data.type) {
+          case 'webrtc.answer':
+            if (peerConnectionRef.current) {
+              await peerConnectionRef.current.setRemoteDescription(data.sdp);
+            }
+            break;
+            
+          case 'webrtc.ice_candidate':
+            if (peerConnectionRef.current) {
+              await peerConnectionRef.current.addIceCandidate(data.candidate);
+            }
+            break;
+            
+          case 'error':
+            console.error('WebSocket error:', data.error);
+            setError(data.error.message || 'WebSocket error');
+            break;
+        }
+      };
 
-    ws.onclose = () => {
-      console.log('WebSocket disconnected');
-      setIsConnected(false);
-    };
+      ws.onclose = () => {
+        console.log('WebSocket disconnected');
+        setIsConnected(false);
+      };
 
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      setError('WebSocket connection error');
-      setIsConnecting(false);
-    };
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        setError('WebSocket connection error');
+        setIsConnecting(false);
+        reject(error);
+      };
 
-    websocketRef.current = ws;
+      websocketRef.current = ws;
+    });
   };
 
   const startVoiceChat = async () => {
@@ -179,21 +189,24 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
         peerConnection.addTrack(track, stream);
       });
 
-      // 4. Налаштовуємо WebSocket
+      // 4. Налаштовуємо WebSocket і чекаємо на підключення
       console.log('Setting up WebSocket...');
-      setupWebSocket(session.id);
+      await setupWebSocket(session.id);
 
       // 5. Створюємо offer
       console.log('Creating offer...');
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
 
-      // Відправляємо offer через WebSocket
-      if (websocketRef.current) {
+      // Відправляємо offer через WebSocket (тепер він точно підключений)
+      if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
         websocketRef.current.send(JSON.stringify({
           type: 'webrtc.offer',
           sdp: offer
         }));
+        console.log('Offer sent successfully');
+      } else {
+        throw new Error('WebSocket not ready');
       }
 
     } catch (error) {

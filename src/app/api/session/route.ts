@@ -16,11 +16,12 @@ export async function POST(request: NextRequest) {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
+        'OpenAI-Beta': 'realtime=v1'
       },
       body: JSON.stringify({
         model: 'gpt-4o-realtime-preview',
         voice: 'verse',
-        instructions: 'You are a helpful AI assistant. Respond naturally and conversationally.',
+        instructions: 'You are a helpful AI assistant. Respond naturally and conversationally in Ukrainian and English.',
         input_audio_format: 'pcm16',
         output_audio_format: 'pcm16',
         turn_detection: {

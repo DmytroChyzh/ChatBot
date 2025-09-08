@@ -15,6 +15,7 @@ import Image from 'next/image';
 import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
+import ApiKeyTest from '../../components/ApiKeyTest';
 import ChatWindow from '../../components/ChatWindow';
 import TeamUploader from '../../components/TeamUploader';
 
@@ -992,6 +993,11 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
        {/* Team Uploader - тільки для адміністраторів */}
        <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
          <TeamUploader />
+       </div>
+       
+       {/* API Key Test - для тестування OpenAI API */}
+       <div className="px-4 py-2 bg-green-50 dark:bg-green-900/20 border-b border-green-200 dark:border-green-800">
+         <ApiKeyTest />
        </div>
        
       
