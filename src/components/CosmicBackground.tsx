@@ -10,7 +10,7 @@ export default function CosmicBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 -z-10">
+    <div className="fixed inset-0 -z-10 bg-black">
       {/* Космічний туман */}
       <div
         className="absolute inset-0 opacity-40"
@@ -23,7 +23,7 @@ export default function CosmicBackground() {
         }}
       />
 
-      {/* Анімовані зорі CSS */}
+      {/* Анімовані зорі */}
       <div className="absolute inset-0">
         {/* Зорі */}
         {Array.from({ length: 100 }).map((_, i) => (
@@ -43,22 +43,16 @@ export default function CosmicBackground() {
         {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={`moving-${i}`}
-            className="absolute w-1 h-1 bg-white rounded-full"
+            className="absolute w-1 h-1 bg-white rounded-full animate-bounce"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animation: `twinkle ${3 + Math.random() * 4}s infinite`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 4}s`,
             }}
           />
         ))}
       </div>
-
-      <style jsx>{`
-        @keyframes twinkle {
-          0%, 100% { opacity: 0; transform: scale(0.5); }
-          50% { opacity: 1; transform: scale(1); }
-        }
-      `}</style>
     </div>
   );
 }
