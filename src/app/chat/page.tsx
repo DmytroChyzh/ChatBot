@@ -922,14 +922,14 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           className=""
         />
         <div className="flex items-center justify-center h-full" style={{ marginTop: '64px' }}>
-        <div className="w-full max-w-md mx-4">
+        <div className="w-full max-w-md mx-4 relative z-10">
           <div className="text-center mb-8">
 
               <h1 className="text-2xl font-bold text-foreground mb-2">{t('contact.title')}</h1>
               <p className="text-muted-foreground">{t('contact.subtitle')}</p>
           </div>
           
-          <form onSubmit={handleContactSubmit} className="space-y-4">
+          <form onSubmit={handleContactSubmit} className="space-y-4 relative z-10">
             <div>
               <input
                 type="text"
