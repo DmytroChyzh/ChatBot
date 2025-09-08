@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 export default function CosmicBackground() {
   useEffect(() => {
@@ -9,168 +9,315 @@ export default function CosmicBackground() {
     document.body.style.overflow = "hidden";
   }, []);
 
+  // Стабілізуємо позиції та анімації щоб не перерендерювались
+  const starElements = useMemo(() => {
+    const elements = [];
+    
+    // Малі зорі
+    for (let i = 0; i < 150; i++) {
+      elements.push({
+        id: i,
+        type: 'small',
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        delay: Math.random() * 4,
+        duration: 1.5 + Math.random() * 2.5
+      });
+    }
+    
+    // Середні зорі
+    for (let i = 0; i < 80; i++) {
+      elements.push({
+        id: `medium-${i}`,
+        type: 'medium',
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        delay: Math.random() * 3,
+        duration: 2 + Math.random() * 3
+      });
+    }
+    
+    // Великі зорі
+    for (let i = 0; i < 30; i++) {
+      elements.push({
+        id: `large-${i}`,
+        type: 'large',
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        delay: Math.random() * 2,
+        duration: 3 + Math.random() * 2
+      });
+    }
+    
+    // Метеори
+    for (let i = 0; i < 15; i++) {
+      elements.push({
+        id: `meteor-${i}`,
+        type: 'meteor',
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        delay: Math.random() * 5,
+        duration: 4 + Math.random() * 3
+      });
+    }
+    
+    // Планети
+    for (let i = 0; i < 3; i++) {
+      elements.push({
+        id: `planet-${i}`,
+        type: 'planet',
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        delay: Math.random() * 6,
+        duration: 5 + Math.random() * 3,
+        size: 8 + Math.random() * 12,
+        color: i === 0 ? '#8B5CF6' : i === 1 ? '#06B6D4' : '#F59E0B'
+      });
+    }
+    
+    // Туманності
+    for (let i = 0; i < 4; i++) {
+      elements.push({
+        id: `nebula-${i}`,
+        type: 'nebula',
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        delay: Math.random() * 10,
+        duration: 10 + Math.random() * 6,
+        size: 150 + Math.random() * 300,
+        color: i === 0 ? '#8B5CF6' : i === 1 ? '#06B6D4' : i === 2 ? '#EC4899' : '#F59E0B'
+      });
+    }
+    
+    // Зоряні скупчення
+    for (let i = 0; i < 3; i++) {
+      const clusterStars = [];
+      for (let j = 0; j < 8; j++) {
+        clusterStars.push({
+          id: `cluster-star-${i}-${j}`,
+          left: Math.random() * 40 - 20,
+          top: Math.random() * 40 - 20,
+          delay: Math.random() * 3,
+          duration: 2 + Math.random() * 2
+        });
+      }
+      elements.push({
+        id: `cluster-${i}`,
+        type: 'cluster',
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        stars: clusterStars
+      });
+    }
+    
+    // Комети
+    for (let i = 0; i < 2; i++) {
+      elements.push({
+        id: `comet-${i}`,
+        type: 'comet',
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        delay: Math.random() * 12,
+        duration: 6 + Math.random() * 4
+      });
+    }
+    
+    // Пульсари
+    for (let i = 0; i < 5; i++) {
+      elements.push({
+        id: `pulsar-${i}`,
+        type: 'pulsar',
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        delay: Math.random() * 3,
+        duration: 1 + Math.random() * 2
+      });
+    }
+    
+    // Галактичний пил
+    for (let i = 0; i < 50; i++) {
+      elements.push({
+        id: `dust-${i}`,
+        type: 'dust',
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        delay: Math.random() * 20,
+        duration: 20 + Math.random() * 30
+      });
+    }
+    
+    return elements;
+  }, []); // Пустий масив залежностей - генерується тільки один раз
+
   return (
     <div className="fixed inset-0 z-0">
       {/* Анімовані зорі */}
       <div className="absolute inset-0">
-        {/* Малі зорі - зменшено кількість */}
-        {Array.from({ length: 60 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-0.5 h-0.5 bg-white rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `cosmic-twinkle ${3 + Math.random() * 4}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 6}s`,
-            }}
-          />
-        ))}
-        
-        {/* Середні зорі - зменшено кількість */}
-        {Array.from({ length: 30 }).map((_, i) => (
-          <div
-            key={`medium-${i}`}
-            className="absolute w-1 h-1 bg-white rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `cosmic-twinkle ${4 + Math.random() * 3}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 5}s`,
-            }}
-          />
-        ))}
-        
-        {/* Великі зорі - зменшено кількість */}
-        {Array.from({ length: 12 }).map((_, i) => (
-          <div
-            key={`large-${i}`}
-            className="absolute w-1.5 h-1.5 bg-white rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `cosmic-twinkle ${5 + Math.random() * 2}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 4}s`,
-            }}
-          />
-        ))}
-        
-        {/* Рухливі зорі (метеори) - зменшено кількість */}
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={`meteor-${i}`}
-            className="absolute w-0.5 h-0.5 bg-blue-300 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `cosmic-drift ${8 + Math.random() * 4}s linear infinite`,
-              animationDelay: `${Math.random() * 8}s`,
-            }}
-          />
-        ))}
-        
-        {/* Планети - зменшено кількість */}
-        {Array.from({ length: 2 }).map((_, i) => (
-          <div
-            key={`planet-${i}`}
-            className="absolute rounded-full"
-            style={{
-              width: `${8 + Math.random() * 8}px`,
-              height: `${8 + Math.random() * 8}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              background: i === 0 ? '#8B5CF6' : '#06B6D4',
-              animation: `cosmic-pulse ${6 + Math.random() * 4}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 8}s`,
-            }}
-          />
-        ))}
-        
-        {/* Туманності - зменшено кількість */}
-        {Array.from({ length: 2 }).map((_, i) => (
-          <div
-            key={`nebula-${i}`}
-            className="absolute rounded-full opacity-10"
-            style={{
-              width: `${200 + Math.random() * 200}px`,
-              height: `${200 + Math.random() * 200}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              background: `radial-gradient(ellipse, ${i === 0 ? '#8B5CF6' : '#06B6D4'}20, transparent 60%)`,
-              animation: `cosmic-nebula ${15 + Math.random() * 10}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 15}s`,
-            }}
-          />
-        ))}
-        
-        {/* Зоряні скупчення - зменшено кількість */}
-        {Array.from({ length: 2 }).map((_, i) => (
-          <div
-            key={`cluster-${i}`}
-            className="absolute"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-          >
-            {Array.from({ length: 5 }).map((_, j) => (
-              <div
-                key={`cluster-star-${i}-${j}`}
-                className="absolute w-0.5 h-0.5 bg-yellow-200 rounded-full"
-                style={{
-                  left: `${Math.random() * 30 - 15}px`,
-                  top: `${Math.random() * 30 - 15}px`,
-                  animation: `cosmic-twinkle ${3 + Math.random() * 2}s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 4}s`,
-                }}
-              />
-            ))}
-          </div>
-        ))}
-        
-        {/* Комети - зменшено кількість */}
-        {Array.from({ length: 1 }).map((_, i) => (
-          <div
-            key={`comet-${i}`}
-            className="absolute w-1 h-1 bg-cyan-300 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `cosmic-comet ${10 + Math.random() * 5}s linear infinite`,
-              animationDelay: `${Math.random() * 10}s`,
-              boxShadow: '0 0 8px #06B6D4, 0 0 16px #06B6D4',
-            }}
-          />
-        ))}
-        
-        {/* Пульсари - зменшено кількість */}
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div
-            key={`pulsar-${i}`}
-            className="absolute w-1 h-1 bg-white rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `cosmic-pulsar ${2 + Math.random() * 3}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 5}s`,
-              boxShadow: '0 0 4px #ffffff, 0 0 8px #ffffff',
-            }}
-          />
-        ))}
-        
-        {/* Галактичний пил - зменшено кількість */}
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={`dust-${i}`}
-            className="absolute w-0.5 h-0.5 bg-gray-400 rounded-full opacity-20"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `cosmic-drift ${25 + Math.random() * 20}s linear infinite`,
-              animationDelay: `${Math.random() * 25}s`,
-            }}
-          />
-        ))}
+        {starElements.map((element) => {
+          switch (element.type) {
+            case 'small':
+              return (
+                <div
+                  key={element.id}
+                  className="absolute w-0.5 h-0.5 bg-white rounded-full animate-pulse"
+                  style={{
+                    left: `${element.left}%`,
+                    top: `${element.top}%`,
+                    animationDelay: `${element.delay}s`,
+                    animationDuration: `${element.duration}s`,
+                    willChange: 'transform, opacity'
+                  }}
+                />
+              );
+            case 'medium':
+              return (
+                <div
+                  key={element.id}
+                  className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
+                  style={{
+                    left: `${element.left}%`,
+                    top: `${element.top}%`,
+                    animationDelay: `${element.delay}s`,
+                    animationDuration: `${element.duration}s`,
+                    willChange: 'transform, opacity'
+                  }}
+                />
+              );
+            case 'large':
+              return (
+                <div
+                  key={element.id}
+                  className="absolute w-1.5 h-1.5 bg-white rounded-full animate-pulse"
+                  style={{
+                    left: `${element.left}%`,
+                    top: `${element.top}%`,
+                    animationDelay: `${element.delay}s`,
+                    animationDuration: `${element.duration}s`,
+                    willChange: 'transform, opacity'
+                  }}
+                />
+              );
+            case 'meteor':
+              return (
+                <div
+                  key={element.id}
+                  className="absolute w-0.5 h-0.5 bg-blue-300 rounded-full animate-bounce"
+                  style={{
+                    left: `${element.left}%`,
+                    top: `${element.top}%`,
+                    animationDelay: `${element.delay}s`,
+                    animationDuration: `${element.duration}s`,
+                    willChange: 'transform, opacity'
+                  }}
+                />
+              );
+            case 'planet':
+              return (
+                <div
+                  key={element.id}
+                  className="absolute rounded-full animate-pulse"
+                  style={{
+                    width: `${element.size}px`,
+                    height: `${element.size}px`,
+                    left: `${element.left}%`,
+                    top: `${element.top}%`,
+                    background: element.color,
+                    animationDelay: `${element.delay}s`,
+                    animationDuration: `${element.duration}s`,
+                    willChange: 'transform, opacity'
+                  }}
+                />
+              );
+            case 'nebula':
+              return (
+                <div
+                  key={element.id}
+                  className="absolute rounded-full opacity-15 animate-pulse"
+                  style={{
+                    width: `${element.size}px`,
+                    height: `${element.size}px`,
+                    left: `${element.left}%`,
+                    top: `${element.top}%`,
+                    background: `radial-gradient(ellipse, ${element.color}30, transparent 60%)`,
+                    animationDelay: `${element.delay}s`,
+                    animationDuration: `${element.duration}s`,
+                    willChange: 'transform, opacity'
+                  }}
+                />
+              );
+            case 'cluster':
+              return (
+                <div
+                  key={element.id}
+                  className="absolute"
+                  style={{
+                    left: `${element.left}%`,
+                    top: `${element.top}%`,
+                  }}
+                >
+                  {element.stars.map((star) => (
+                    <div
+                      key={star.id}
+                      className="absolute w-0.5 h-0.5 bg-yellow-200 rounded-full animate-pulse"
+                      style={{
+                        left: `${star.left}px`,
+                        top: `${star.top}px`,
+                        animationDelay: `${star.delay}s`,
+                        animationDuration: `${star.duration}s`,
+                        willChange: 'transform, opacity'
+                      }}
+                    />
+                  ))}
+                </div>
+              );
+            case 'comet':
+              return (
+                <div
+                  key={element.id}
+                  className="absolute w-1 h-1 bg-cyan-300 rounded-full animate-bounce"
+                  style={{
+                    left: `${element.left}%`,
+                    top: `${element.top}%`,
+                    animationDelay: `${element.delay}s`,
+                    animationDuration: `${element.duration}s`,
+                    boxShadow: '0 0 10px #06B6D4, 0 0 20px #06B6D4, 0 0 30px #06B6D4',
+                    willChange: 'transform, opacity'
+                  }}
+                />
+              );
+            case 'pulsar':
+              return (
+                <div
+                  key={element.id}
+                  className="absolute w-1 h-1 bg-white rounded-full"
+                  style={{
+                    left: `${element.left}%`,
+                    top: `${element.top}%`,
+                    animation: `cosmic-pulsar ${element.duration}s ease-in-out infinite`,
+                    animationDelay: `${element.delay}s`,
+                    boxShadow: '0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 15px #ffffff',
+                    willChange: 'transform, opacity'
+                  }}
+                />
+              );
+            case 'dust':
+              return (
+                <div
+                  key={element.id}
+                  className="absolute w-0.5 h-0.5 bg-gray-400 rounded-full opacity-30"
+                  style={{
+                    left: `${element.left}%`,
+                    top: `${element.top}%`,
+                    animation: `cosmic-drift ${element.duration}s linear infinite`,
+                    animationDelay: `${element.delay}s`,
+                    willChange: 'transform, opacity'
+                  }}
+                />
+              );
+            default:
+              return null;
+          }
+        })}
       </div>
     </div>
   );
