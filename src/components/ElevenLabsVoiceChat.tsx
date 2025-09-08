@@ -32,7 +32,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
 
   const ELEVENLABS_API_KEY = process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY || 'sk_61908dfd38eb151e87df080ede12f8b12f03232fa79048c4';
   const VOICE_ID = 'pNInz6obpgDQGcFmaJgB'; // Adam voice (default)
-  const AGENT_ID = 'default'; // Default agent ID for ElevenLabs
+      const AGENT_ID = 'agent_6201k4mrpmh7fks9cqgq6qxcsdmb'; // Your ElevenLabs agent ID
 
   useEffect(() => {
     return () => {
@@ -103,11 +103,119 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
       // Setup audio analysis for visualization
       await setupAudioAnalysis(stream);
       
-      // Try Text-to-Speech API instead of Conversational AI
-      // Conversational AI requires agent creation first
-      console.log('ElevenLabs: Using Text-to-Speech API instead of Conversational AI');
-      setError('ElevenLabs Conversational AI потребує створення агента. Використовуйте синю кнопку для голосового запису.');
-      return;
+      // Connect to ElevenLabs Conversational AI
+      const wsUrl = `wss://api.elevenlabs.io/v1/convai/conversation?key=${ELEVENLABS_API_KEY}&agent_id=${AGENT_ID}`;
+      console.log('ElevenLabs: Connecting to:', wsUrl);
+      const ws = new WebSocket(wsUrl);
+      
+      ws.onopen = () => {
+        console.log('Connected to ElevenLabs');
+        setIsConnected(true);
+        
+        // Send initial configuration - правильний формат для ElevenLabs
+        ws.send(JSON.stringify({
+          type: 'conversation_initiation_client_finalized',
+          conversation_config_override: {
+            agent: {
+              prompt: {
+                prompt: language === 'uk' 
+                  ? 'Ти корисний AI асистент. Відповідай природно українською та англійською мовою.'
+                  : 'You are a helpful AI assistant. Respond naturally in Ukrainian and English.',
+                temperature: 0.8
+              },
+              voice: {
+                voice_id: VOICE_ID,
+                stability: 0.5,
+                similarity_boost: 0.8
+              },
+              language: language === 'uk' ? 'uk' : 'en'
+            }
+          }
+        }));
+        
+        console.log('ElevenLabs: Initial configuration sent');
+      };
+      
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log('ElevenLabs message:', data);
+          
+          switch (data.type) {
+            case 'audio':
+              // Play received audio
+              if (data.audio) {
+                playAudio(data.audio);
+              }
+              break;
+            case 'agent_response':
+              // Handle text response
+              if (data.response && onResponse) {
+                onResponse(data.response);
+              }
+              break;
+            case 'user_transcript':
+              // Handle user transcript
+              if (data.transcript && onTranscript) {
+                onTranscript(data.transcript);
+              }
+              break;
+            case 'conversation_initiation_server_finalized':
+              console.log('ElevenLabs: Server configuration received');
+              break;
+            case 'error':
+              console.error('ElevenLabs error:', data.error);
+              setError(`ElevenLabs помилка: ${data.error}`);
+              break;
+            default:
+              console.log('ElevenLabs: Unknown message type:', data.type);
+          }
+        } catch (error) {
+          console.error('ElevenLabs: Error parsing message:', error);
+        }
+      };
+      
+      ws.onerror = (error) => {
+        console.error('ElevenLabs WebSocket error:', error);
+        console.error('ElevenLabs: WebSocket URL was:', wsUrl);
+        console.error('ElevenLabs: API Key present:', !!ELEVENLABS_API_KEY);
+        setError('Помилка підключення до ElevenLabs. Перевірте API ключ та мережу.');
+        setIsConnected(false);
+      };
+      
+      ws.onclose = (event) => {
+        console.log('ElevenLabs WebSocket closed:', event.code, event.reason);
+        setIsConnected(false);
+        
+        if (event.code !== 1000) {
+          setError(`З'єднання закрито з кодом: ${event.code}. ${event.reason || 'Невідома причина'}`);
+        }
+      };
+      
+      websocketRef.current = ws;
+      
+      // Setup MediaRecorder for sending audio
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0 && ws.readyState === WebSocket.OPEN) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64 = reader.result?.toString().split(',')[1];
+            if (base64) {
+              ws.send(JSON.stringify({
+                type: 'audio',
+                audio: base64
+              }));
+            }
+          };
+          reader.readAsDataURL(event.data);
+        }
+      };
+      
+      mediaRecorderRef.current = mediaRecorder;
       
     } catch (error) {
       console.error('Error connecting to ElevenLabs:', error);
