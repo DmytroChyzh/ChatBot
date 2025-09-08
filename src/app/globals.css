@@ -137,19 +137,19 @@
 
   /* Космічна тема - текст ТАКИЙ Ж ЯК У ТЕМНІЙ ТЕМІ */
   .cosmic .text-gray-600 {
-    color: hsl(var(--muted-foreground)) !important;
+    color: hsl(0 0% 12%) !important;
   }
 
   .cosmic .text-gray-500 {
-    color: hsl(var(--muted-foreground)) !important;
+    color: hsl(0 0% 20%) !important;
   }
 
   .cosmic .text-gray-700 {
-    color: hsl(var(--muted-foreground)) !important;
+    color: hsl(0 0% 5%) !important;
   }
 
   .cosmic .text-gray-900 {
-    color: hsl(var(--foreground)) !important;
+    color: hsl(0 0% 5%) !important;
   }
 
   .cosmic .bg-gray-50 {
@@ -201,13 +201,13 @@
     background-color: #3C2780 !important;
   }
 
-  /* Космічна тема - додаткові кольори ТАКІ Ж ЯК У ТЕМНІЙ ТЕМІ */
+  /* Космічна тема - контрастні кольори для тексту на світлому фоні */
   .cosmic .text-gray-300 {
-    color: hsl(var(--muted-foreground)) !important;
+    color: hsl(0 0% 10%) !important;
   }
 
   .cosmic .text-gray-400 {
-    color: hsl(var(--muted-foreground)) !important;
+    color: hsl(0 0% 15%) !important;
   }
 
   .cosmic .bg-gray-700 {
