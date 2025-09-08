@@ -355,15 +355,36 @@ export default function ChatPage() {
     setIsProjectComplete(false);
   };
 
-  const handleStartOver = () => {
-    // Очищуємо сесію але залишаємо контактну інформацію
+  const handleStartOver = async () => {
+    // Очищуємо стару сесію
     localStorage.removeItem('chatSessionId');
     setSessionId(null);
     setSession(null);
     setIsProjectComplete(false);
     setConversationType('general');
     setEstimateStep(0);
-    // НЕ очищуємо contactSubmitted та contact - залишаємо користувача в чаті
+    
+    // Створюємо нову сесію з тими самими кредами
+    try {
+      const newSessionId = await createChatSession(contact.name, contact.email);
+      setSessionId(newSessionId);
+      localStorage.setItem('chatSessionId', newSessionId);
+      
+      // Створюємо новий об'єкт сесії
+      const newSession: ChatSession = {
+        id: newSessionId,
+        contact: contact,
+        messages: [],
+        projectCard: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      setSession(newSession);
+      
+      console.log('New session created:', newSessionId);
+    } catch (error) {
+      console.error('Error creating new session:', error);
+    }
   };
 
 
@@ -992,10 +1013,10 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
     <div className="h-screen w-full bg-background font-sans overflow-hidden">
       {theme === 'cosmic' && <CosmicBackground />}
       {/* Header - на всю ширину екрану */}
-        <Header 
-          theme={theme} 
-          toggleTheme={toggleTheme} 
-          mounted={mounted} 
+          <Header 
+            theme={theme} 
+            toggleTheme={toggleTheme} 
+            mounted={mounted} 
         small={false}
         className="w-full"
         onClearSession={handleClearSession}
