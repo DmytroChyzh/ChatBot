@@ -15,6 +15,7 @@ import Image from 'next/image';
 import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
+import VoiceTest from '../../components/VoiceTest';
 import ChatWindow from '../../components/ChatWindow';
 import TeamUploader from '../../components/TeamUploader';
 
@@ -1007,10 +1008,15 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         onClearSession={handleClearSession}
       />
       
-      {/* Team Uploader - тільки для адміністраторів */}
-      <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
-        <TeamUploader />
-      </div>
+       {/* Team Uploader - тільки для адміністраторів */}
+       <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
+         <TeamUploader />
+       </div>
+       
+       {/* Voice Test - для діагностики */}
+       <div className="px-4 py-2 bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800">
+         <VoiceTest />
+       </div>
       
       {/* Main Content Area - під хедером */}
       <div className="flex w-full h-full" style={{ marginTop: '96px', height: 'calc(100vh - 96px)' }}> 

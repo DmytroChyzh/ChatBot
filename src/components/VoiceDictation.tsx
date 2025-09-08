@@ -24,6 +24,11 @@ const VoiceDictation: React.FC<VoiceDictationProps> = ({
   useEffect(() => {
     const checkSupport = () => {
       const hasRecognition = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+      console.log('Speech recognition support:', hasRecognition);
+      console.log('Available APIs:', {
+        webkitSpeechRecognition: 'webkitSpeechRecognition' in window,
+        SpeechRecognition: 'SpeechRecognition' in window
+      });
       setIsSupported(hasRecognition);
     };
     checkSupport();
@@ -31,14 +36,19 @@ const VoiceDictation: React.FC<VoiceDictationProps> = ({
 
   // Ініціалізуємо розпізнавання мови
   useEffect(() => {
-    if (!isSupported) return;
+    if (!isSupported) {
+      console.log('Speech recognition not supported');
+      return;
+    }
 
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
+      console.log('Initializing speech recognition...');
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = false;
       recognitionRef.current.interimResults = true;
       recognitionRef.current.lang = language === 'uk' ? 'uk-UA' : 'en-US';
+      console.log('Speech recognition initialized with language:', recognitionRef.current.lang);
 
       recognitionRef.current.onstart = () => {
         console.log('Voice dictation started');
@@ -47,13 +57,24 @@ const VoiceDictation: React.FC<VoiceDictationProps> = ({
       };
 
       recognitionRef.current.onresult = (event: any) => {
+        console.log('Speech recognition result:', event);
         let finalTranscript = '';
+        let interimTranscript = '';
+        
         for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
           }
         }
+        
+        console.log('Final transcript:', finalTranscript);
+        console.log('Interim transcript:', interimTranscript);
+        
         if (finalTranscript) {
+          console.log('Sending final transcript to parent:', finalTranscript);
           onTextReceived(finalTranscript);
         }
       };
@@ -94,18 +115,35 @@ const VoiceDictation: React.FC<VoiceDictationProps> = ({
 
   // Почати запис голосу
   const startListening = () => {
-    if (recognitionRef.current && !disabled) {
-      try {
-        setError(null);
-        console.log('Starting voice dictation...');
-        recognitionRef.current.start();
-      } catch (error) {
-        console.error('Error starting voice dictation:', error);
-        setError(language === 'uk' ? 'Не вдалося запустити диктовку. Перевірте дозволи браузера.' : 'Failed to start dictation. Check browser permissions.');
-      }
-    } else if (!recognitionRef.current) {
+    console.log('startListening called', { 
+      hasRecognition: !!recognitionRef.current, 
+      disabled, 
+      isSupported 
+    });
+    
+    if (!isSupported) {
+      setError(language === 'uk' ? 'Розпізнавання мови не підтримується в цьому браузері.' : 'Speech recognition not supported in this browser.');
+      return;
+    }
+    
+    if (disabled) {
+      console.log('Voice dictation is disabled');
+      return;
+    }
+    
+    if (!recognitionRef.current) {
       console.error('Speech recognition not initialized');
       setError(language === 'uk' ? 'Розпізнавання мови не ініціалізовано.' : 'Speech recognition not initialized.');
+      return;
+    }
+    
+    try {
+      setError(null);
+      console.log('Starting voice dictation...');
+      recognitionRef.current.start();
+    } catch (error) {
+      console.error('Error starting voice dictation:', error);
+      setError(language === 'uk' ? 'Не вдалося запустити диктовку. Перевірте дозволи браузера.' : 'Failed to start dictation. Check browser permissions.');
     }
   };
 
