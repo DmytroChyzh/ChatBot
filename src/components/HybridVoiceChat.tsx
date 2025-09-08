@@ -106,7 +106,7 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
         setError(null);
       };
 
-      recognitionRef.current.onresult = (event) => {
+      recognitionRef.current.onresult = async (event) => {
         let finalTranscript = '';
         let interimTranscript = '';
 
