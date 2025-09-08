@@ -20,6 +20,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [transcript, setTranscript] = useState('');
 
@@ -92,6 +93,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
   const connectToElevenLabs = async () => {
     try {
       setError(null);
+      setIsConnecting(true);
       console.log('ElevenLabs: Starting connection...');
       console.log('ElevenLabs: API Key present:', !!ELEVENLABS_API_KEY);
       console.log('ElevenLabs: API Key length:', ELEVENLABS_API_KEY?.length);
@@ -111,6 +113,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
       ws.onopen = () => {
         console.log('Connected to ElevenLabs');
         setIsConnected(true);
+        setIsConnecting(false);
         
         // Send initial configuration - правильний формат для ElevenLabs
         ws.send(JSON.stringify({
@@ -248,6 +251,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
     } catch (error) {
       console.error('Error connecting to ElevenLabs:', error);
       setError('Не вдалося підключитися до ElevenLabs');
+      setIsConnecting(false);
     }
   };
 
@@ -346,7 +350,6 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
                  <line x1="12" y1="19" x2="12" y2="23"/>
                  <line x1="8" y1="23" x2="16" y2="23"/>
-                 <path d="M3 6l3 3 3-3 3 3 3-3"/>
                </svg>
              )}
       </button>
@@ -366,6 +369,13 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-red-500 text-white text-sm rounded-lg shadow-lg whitespace-nowrap z-50 max-w-xs">
           {error}
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-red-500"></div>
+        </div>
+      )}
+
+      {/* Connecting status */}
+      {isConnecting && (
+        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-green-500 text-white text-xs rounded-full shadow-lg whitespace-nowrap z-50">
+          • Connecting...
         </div>
       )}
     </div>
