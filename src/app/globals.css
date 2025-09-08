@@ -107,9 +107,9 @@
     background-color: hsl(var(--card)) !important;
   }
 
-  /* Космічна тема - картка ТАКА Ж ЯК У ТЕМНІЙ ТЕМІ */
+  /* Космічна тема - картка як у інпуті */
   .cosmic .bg-white {
-    background-color: #1f2937 !important;
+    background-color: hsl(0 0% 16%) !important;
   }
 
   .cosmic .cosmic-bg {
