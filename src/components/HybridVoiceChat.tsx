@@ -374,7 +374,7 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
             ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
             : isSpeaking
             ? 'bg-green-500 hover:bg-green-600 text-white animate-pulse'
-            : 'bg-blue-500 hover:bg-blue-600 text-white'
+            : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
         } ${disabled || isProcessing ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         title={
           isListening
