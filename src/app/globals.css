@@ -242,6 +242,47 @@
       opacity: 0;
     }
   }
+
+  @keyframes cosmic-pulsar {
+    0%, 100% {
+      opacity: 0.1;
+      transform: scale(0.5);
+      box-shadow: 0 0 2px #ffffff, 0 0 4px #ffffff, 0 0 6px #ffffff;
+    }
+    50% {
+      opacity: 1;
+      transform: scale(2);
+      box-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #ffffff;
+    }
+  }
+
+  @keyframes cosmic-comet {
+    0% {
+      transform: translateX(-50px) translateY(-50px) scale(0.5);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100vw) translateY(100vh) scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  @keyframes cosmic-nebula {
+    0%, 100% {
+      opacity: 0.1;
+      transform: scale(0.8) rotate(0deg);
+    }
+    50% {
+      opacity: 0.3;
+      transform: scale(1.2) rotate(180deg);
+    }
+  }
 }
 
 @layer base {

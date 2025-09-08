@@ -5,7 +5,7 @@ import { useEffect } from "react";
 export default function CosmicBackground() {
   useEffect(() => {
     document.body.style.background =
-      "radial-gradient(circle at 20% 20%, #2e026d, #000000 70%)";
+      "radial-gradient(ellipse at 20% 20%, #1e1b4b, #312e81, #1e1b4b, #000000 80%), linear-gradient(45deg, #0f0f23, #1a1a2e, #16213e)";
     document.body.style.overflow = "hidden";
   }, []);
 
@@ -87,18 +87,87 @@ export default function CosmicBackground() {
         ))}
         
         {/* Туманності */}
-        {Array.from({ length: 2 }).map((_, i) => (
+        {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={`nebula-${i}`}
-            className="absolute rounded-full opacity-20 animate-pulse"
+            className="absolute rounded-full opacity-15 animate-pulse"
             style={{
-              width: `${100 + Math.random() * 200}px`,
-              height: `${100 + Math.random() * 200}px`,
+              width: `${150 + Math.random() * 300}px`,
+              height: `${150 + Math.random() * 300}px`,
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              background: `radial-gradient(circle, ${i === 0 ? '#8B5CF6' : '#06B6D4'}40, transparent 70%)`,
-              animationDelay: `${Math.random() * 8}s`,
-              animationDuration: `${8 + Math.random() * 4}s`,
+              background: `radial-gradient(ellipse, ${i === 0 ? '#8B5CF6' : i === 1 ? '#06B6D4' : i === 2 ? '#EC4899' : '#F59E0B'}30, transparent 60%)`,
+              animationDelay: `${Math.random() * 10}s`,
+              animationDuration: `${10 + Math.random() * 6}s`,
+            }}
+          />
+        ))}
+        
+        {/* Зоряні скупчення */}
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div
+            key={`cluster-${i}`}
+            className="absolute"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+          >
+            {Array.from({ length: 8 }).map((_, j) => (
+              <div
+                key={`cluster-star-${i}-${j}`}
+                className="absolute w-0.5 h-0.5 bg-yellow-200 rounded-full animate-pulse"
+                style={{
+                  left: `${Math.random() * 40 - 20}px`,
+                  top: `${Math.random() * 40 - 20}px`,
+                  animationDelay: `${Math.random() * 3}s`,
+                  animationDuration: `${2 + Math.random() * 2}s`,
+                }}
+              />
+            ))}
+          </div>
+        ))}
+        
+        {/* Комети */}
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div
+            key={`comet-${i}`}
+            className="absolute w-1 h-1 bg-cyan-300 rounded-full animate-bounce"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 12}s`,
+              animationDuration: `${6 + Math.random() * 4}s`,
+              boxShadow: '0 0 10px #06B6D4, 0 0 20px #06B6D4, 0 0 30px #06B6D4',
+            }}
+          />
+        ))}
+        
+        {/* Пульсари */}
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div
+            key={`pulsar-${i}`}
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animation: `cosmic-pulsar ${1 + Math.random() * 2}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 3}s`,
+              boxShadow: '0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 15px #ffffff',
+            }}
+          />
+        ))}
+        
+        {/* Галактичний пил */}
+        {Array.from({ length: 50 }).map((_, i) => (
+          <div
+            key={`dust-${i}`}
+            className="absolute w-0.5 h-0.5 bg-gray-400 rounded-full opacity-30"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animation: `cosmic-drift ${20 + Math.random() * 30}s linear infinite`,
+              animationDelay: `${Math.random() * 20}s`,
             }}
           />
         ))}
