@@ -751,9 +751,28 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           };
           console.log('Current range after uncertainty adjustment:', currentRange, 'uncertainty factor:', uncertaintyFactor, 'estimateStep:', estimateStep);
 
-          // Отримуємо скоригований timeline та розмір команди з нової системи
-          const timeline = companyEstimation.timeline;
-          const teamSize = companyEstimation.teamSize;
+          // Отримуємо скоригований timeline та розмір команди з урахуванням невизначеності
+          let timeline, teamSize;
+          
+          if (estimateStep === 2) {
+            // Мало інформації - невизначені терміни та команда
+            timeline = language === 'uk' ? '4-12 тижнів' : '4-12 weeks';
+            teamSize = 3; // Більша команда для невизначеності
+          } else if (estimateStep === 3) {
+            // Трохи інформації - менш невизначені
+            timeline = language === 'uk' ? '6-10 тижнів' : '6-10 weeks';
+            teamSize = 2;
+          } else if (estimateStep === 4) {
+            // Більше інформації - більш точні
+            timeline = companyEstimation.timeline;
+            teamSize = companyEstimation.teamSize;
+          } else {
+            // Багато інформації - точні значення
+            timeline = companyEstimation.timeline;
+            teamSize = companyEstimation.teamSize;
+          }
+          
+          console.log('Timeline:', timeline, 'Team size:', teamSize);
 
           // Визначаємо команду
           const team = {
@@ -777,9 +796,15 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             testing: phasesData.testing
           };
 
+          // Скоригуємо години роботи з урахуванням невизначеності
+          const adjustedHours = {
+            min: Math.round(adjustedPrice.minHours * uncertaintyFactor),
+            max: Math.round(adjustedPrice.maxHours * uncertaintyFactor)
+          };
+          
           const estimate: ProjectEstimate = {
             currentRange,
-            initialRange: { min: adjustedPrice.minHours, max: adjustedPrice.maxHours },
+            initialRange: adjustedHours,
             currency: 'USD',
             confidence: estimateStep <= 2 ? 'low' : estimateStep <= 3 ? 'medium' : 'high',
             estimatedAt: new Date(),
@@ -812,13 +837,29 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             max: Math.round(fallbackBasePrice.max * fallbackUncertaintyFactor)
           };
           
+          // Скоригуємо fallback timeline та teamSize
+          let fallbackTimeline, fallbackTeamSize;
+          if (estimateStep === 2) {
+            fallbackTimeline = language === 'uk' ? '4-12 тижнів' : '4-12 weeks';
+            fallbackTeamSize = 3;
+          } else if (estimateStep === 3) {
+            fallbackTimeline = language === 'uk' ? '6-10 тижнів' : '6-10 weeks';
+            fallbackTeamSize = 2;
+          } else {
+            fallbackTimeline = language === 'uk' ? '8-12 тижнів' : '8-12 weeks';
+            fallbackTeamSize = 1;
+          }
+          
           const fallbackEstimate: ProjectEstimate = {
             currentRange: fallbackCurrentRange,
-            initialRange: { min: 100, max: 300 },
+            initialRange: { 
+              min: Math.round(100 * fallbackUncertaintyFactor), 
+              max: Math.round(300 * fallbackUncertaintyFactor) 
+            },
             currency: 'USD',
             confidence: 'low',
             estimatedAt: new Date(),
-            timeline: '8-12 тижнів',
+            timeline: fallbackTimeline,
             team: {
               designers: getDesignersForProject(complexity, projectType),
               contactPerson: getContactPersonForProject(projectType),
