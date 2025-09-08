@@ -723,13 +723,14 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           };
           console.log('Adjusted price:', adjustedPrice);
           
-          // Звужуємо діапазон з кожним кроком
-          const narrowingFactor = Math.max(0.1, 1 - (estimateStep * 0.15)); // Звужуємо на 15% за крок
+          // Збільшуємо діапазон, коли мало інформації (мало інфо = дорого!)
+          // estimateStep=1 → factor=1.8 (дорого), estimateStep=5 → factor=1.0 (точно)
+          const uncertaintyFactor = Math.max(1.0, 2.0 - (estimateStep * 0.2));
           const currentRange = {
-            min: Math.round(adjustedPrice.minPrice * (1 - narrowingFactor)),
-            max: Math.round(adjustedPrice.maxPrice * (1 - narrowingFactor))
+            min: Math.round(adjustedPrice.minPrice * uncertaintyFactor),
+            max: Math.round(adjustedPrice.maxPrice * uncertaintyFactor)
           };
-          console.log('Current range after narrowing:', currentRange, 'narrowing factor:', narrowingFactor);
+          console.log('Current range after uncertainty adjustment:', currentRange, 'uncertainty factor:', uncertaintyFactor);
 
           // Отримуємо скоригований timeline та розмір команди з нової системи
           const timeline = companyEstimation.timeline;
