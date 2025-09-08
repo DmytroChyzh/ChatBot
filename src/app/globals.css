@@ -107,6 +107,15 @@
     background-color: hsl(var(--card)) !important;
   }
 
+  /* Космічна тема - картка */
+  .cosmic .cosmic\:bg-gray-800 {
+    background-color: hsl(var(--card)) !important;
+  }
+
+  .cosmic .cosmic\:border-gray-700 {
+    border-color: hsl(var(--border)) !important;
+  }
+
   /* Космічна тема - прозорий фон для анімації */
   .cosmic body {
     background: transparent !important;
