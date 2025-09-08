@@ -101,8 +101,6 @@ export default function ChatPage() {
   
   // Voice states
   const [isVoiceActive, setIsVoiceActive] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   
   // Get last AI response for speech synthesis
   const getLastAIResponse = () => {
@@ -548,21 +546,13 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   };
 
   // Voice functions
-  const handleVoiceInput = (text: string) => {
+  const handleVoiceMessage = (text: string) => {
     setInput(text);
     // Автоматично надсилаємо голосове повідомлення
     if (text.trim()) {
       // Використовуємо handleSubmit замість handleSendMessage
       handleSubmit({ preventDefault: () => {} } as React.FormEvent);
       setInput(''); // Очищуємо інпут одразу після відправки
-    }
-  };
-
-  const handleToggleVoice = () => {
-    setIsVoiceActive(!isVoiceActive);
-    if (isVoiceActive) {
-      setIsListening(false);
-      setIsSpeaking(false);
     }
   };
 
@@ -1030,6 +1020,8 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                 messagesEndRef={messagesEndRef}
                 conversationType={conversationType}
                 estimateStep={estimateStep}
+                onVoiceMessage={handleVoiceMessage}
+                lastAIResponse={getLastAIResponse()}
               />
             </div>
             <div className="w-full flex justify-center">
@@ -1041,12 +1033,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                   loading={isLoading}
                   disabled={isProjectComplete}
                   projectComplete={isProjectComplete}
-                  isVoiceActive={isVoiceActive}
-                  isListening={isListening}
-                  isSpeaking={isSpeaking}
-                  onVoiceInput={handleVoiceInput}
-                  onToggleVoice={handleToggleVoice}
-                  lastAIResponse={getLastAIResponse()}
                 />
               </div>
             </div>

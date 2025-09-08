@@ -1,6 +1,7 @@
 import React, { RefObject } from 'react';
 import Image from 'next/image';
 import ChatMessage from './ChatMessage';
+import VoiceChat from './VoiceChat';
 
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -15,6 +16,9 @@ interface ChatWindowProps {
   paddingBottom?: number;
   conversationType: 'general' | 'project' | 'estimate';
   estimateStep: number;
+  // Voice chat props
+  onVoiceMessage?: (text: string) => void;
+  lastAIResponse?: string;
 }
 
 const MESSAGE_CONTAINER_PADDING = 32; // padding like in InputBox
@@ -29,14 +33,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   messagesEndRef, 
   paddingBottom,
   conversationType,
-  estimateStep
+  estimateStep,
+  onVoiceMessage,
+  lastAIResponse
 }) => {
   const { t, language } = useLanguage();
   const { theme } = useTheme();
   
   return (
   <div
-    className="flex-1 overflow-y-auto w-full px-0 py-8 transition-colors duration-300"
+    className="flex-1 overflow-y-auto w-full px-0 py-8 transition-colors duration-300 relative"
     style={{
       display: 'flex',
       flexDirection: 'column',
@@ -44,6 +50,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       paddingBottom: paddingBottom ? `${paddingBottom}px` : undefined,
     }}
   >
+    {/* Voice Chat Button - Fixed position in top right */}
+    {onVoiceMessage && (
+      <div className="fixed top-4 right-4 z-50">
+        <VoiceChat 
+          onVoiceMessage={onVoiceMessage}
+          lastAIResponse={lastAIResponse}
+          disabled={isLoading}
+        />
+      </div>
+    )}
     <div style={{ width: '100%', maxWidth: MAX_WIDTH, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
       {session?.messages.length === 0 && (
         <div className="text-center py-12 w-full">
