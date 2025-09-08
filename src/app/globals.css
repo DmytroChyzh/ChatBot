@@ -116,6 +116,23 @@
     border-color: hsl(var(--border)) !important;
   }
 
+  /* Космічна тема - текст та елементи картки */
+  .cosmic .cosmic\:text-gray-400 {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  .cosmic .cosmic\:text-white {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .cosmic .cosmic\:text-gray-300 {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
+  .cosmic .cosmic\:bg-gray-700 {
+    background-color: hsl(var(--muted)) !important;
+  }
+
   /* Космічна тема - прозорий фон для анімації */
   .cosmic body {
     background: transparent !important;

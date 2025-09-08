@@ -117,11 +117,11 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <DollarSign className="w-5 h-5 text-green-600" />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-gray-600 dark:text-gray-400 cosmic:text-gray-400">
               {language === 'uk' ? 'Діапазон вартості' : 'Cost Range'}
             </span>
           </div>
-          <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1 transition-all duration-500">
+          <div className="text-3xl font-bold text-gray-900 dark:text-white cosmic:text-white mb-1 transition-all duration-500">
             {estimate.currentRange.min === 0 && estimate.currentRange.max === 0 ? (
               <span className="text-gray-500">{language === 'uk' ? 'Визначається...' : 'Determining...'}</span>
             ) : (
@@ -130,16 +130,16 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               </span>
             )}
           </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="text-sm text-gray-500 dark:text-gray-400 cosmic:text-gray-400">
             {estimate.currency} • {estimate.estimatedAt.toLocaleDateString()}
           </div>
         </div>
 
         {/* Індикатор звуження */}
         {estimate.currentRange.min > 0 && estimate.currentRange.max > 0 ? (
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+          <div className="bg-gray-50 dark:bg-gray-700 cosmic:bg-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 cosmic:text-gray-300">
                 {language === 'uk' ? 'Точність естімейту' : 'Estimate Accuracy'}
               </span>
               <span className="text-sm font-bold text-purple-600">
