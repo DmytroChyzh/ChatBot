@@ -108,17 +108,44 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
     // Спочатку отримуємо WebSocket URL з нашого API
     const response = await fetch(`/api/websocket?sessionId=${sessionId}`);
     if (!response.ok) {
-      throw new Error('Failed to get WebSocket URL');
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to get WebSocket URL');
     }
     
-    const { wsUrl } = await response.json();
-    console.log('Got WebSocket URL from API');
+    const { wsUrl, apiKey } = await response.json();
+    console.log('Got WebSocket URL from API:', wsUrl);
     
     return new Promise((resolve, reject) => {
-      const ws = new WebSocket(wsUrl);
+      // Браузерні WebSocket не підтримують кастомні заголовки
+      // Використовуємо API ключ в URL (це єдиний спосіб для браузера)
+      const wsUrlWithAuth = `${wsUrl}&api_key=${apiKey}`;
+      const ws = new WebSocket(wsUrlWithAuth);
       
       ws.onopen = () => {
         console.log('WebSocket connected');
+        
+        // Відправляємо початкове повідомлення для ініціалізації сесії
+        ws.send(JSON.stringify({
+          type: 'session.update',
+          session: {
+            modalities: ['text', 'audio'],
+            instructions: 'You are a helpful AI assistant. Respond naturally and conversationally in Ukrainian and English.',
+            voice: 'verse',
+            input_audio_format: 'pcm16',
+            output_audio_format: 'pcm16',
+            turn_detection: {
+              type: 'server_vad',
+              threshold: 0.5,
+              prefix_padding_ms: 300,
+              silence_duration_ms: 500
+            },
+            tools: [],
+            tool_choice: 'auto',
+            temperature: 0.8,
+            max_response_output_tokens: 4096
+          }
+        }));
+        
         setIsConnecting(false);
         setIsConnected(true);
         setError(null);

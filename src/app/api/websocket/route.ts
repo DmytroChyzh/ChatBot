@@ -15,11 +15,13 @@ export async function GET(request: NextRequest) {
 
   try {
     // Створюємо WebSocket підключення до OpenAI
+    // OpenAI Realtime API використовує Authorization header, а не query parameter
     const wsUrl = `wss://api.openai.com/v1/realtime/sessions/${sessionId}?model=gpt-4o-realtime-preview`;
     
-    // Повертаємо URL для клієнта
+    // Повертаємо URL та API ключ для клієнта
     return NextResponse.json({ 
       wsUrl,
+      apiKey,
       sessionId 
     });
   } catch (error) {
