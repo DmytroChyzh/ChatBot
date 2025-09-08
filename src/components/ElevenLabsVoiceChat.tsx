@@ -33,7 +33,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
 
   const ELEVENLABS_API_KEY = process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY || 'sk_61908dfd38eb151e87df080ede12f8b12f03232fa79048c4';
   const VOICE_ID = 'pNInz6obpgDQGcFmaJgB'; // Adam voice (default)
-      const AGENT_ID = 'agent_6201k4mrpmh7fks9cqgq6qxcsdmb'; // Your ElevenLabs agent ID
+      const AGENT_ID = 'agent_6201k4mrpmh7fks9cqgq6qxcsdmb'; // Your ElevenLabs agent ID v2
 
   useEffect(() => {
     return () => {
@@ -175,8 +175,12 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
           switch (data.type) {
             case 'audio':
               // Play received audio
-              if (data.audio) {
+              console.log('ElevenLabs: Received audio data:', data);
+              if (data.audio && data.audio.length > 0) {
+                console.log('ElevenLabs: Playing audio, length:', data.audio.length);
                 playAudio(data.audio);
+              } else {
+                console.log('ElevenLabs: Audio data is empty or missing');
               }
               break;
             case 'agent_response':
@@ -257,13 +261,31 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
 
   const playAudio = (base64Audio: string) => {
     try {
+      console.log('ElevenLabs: playAudio called with data length:', base64Audio.length);
       const audio = new Audio(`data:audio/mpeg;base64,${base64Audio}`);
-      audio.onplay = () => setIsSpeaking(true);
-      audio.onended = () => setIsSpeaking(false);
-      audio.onerror = () => setIsSpeaking(false);
-      audio.play();
+      
+      audio.onloadstart = () => console.log('ElevenLabs: Audio loading started');
+      audio.oncanplay = () => console.log('ElevenLabs: Audio can play');
+      audio.onplay = () => {
+        console.log('ElevenLabs: Audio started playing');
+        setIsSpeaking(true);
+      };
+      audio.onended = () => {
+        console.log('ElevenLabs: Audio finished playing');
+        setIsSpeaking(false);
+      };
+      audio.onerror = (e) => {
+        console.error('ElevenLabs: Audio error:', e);
+        setIsSpeaking(false);
+      };
+      
+      audio.play().catch(e => {
+        console.error('ElevenLabs: Error playing audio:', e);
+        setIsSpeaking(false);
+      });
     } catch (error) {
-      console.error('Error playing audio:', error);
+      console.error('ElevenLabs: Error in playAudio:', error);
+      setIsSpeaking(false);
     }
   };
 
