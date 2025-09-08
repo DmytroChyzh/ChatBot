@@ -2,8 +2,6 @@
 
 import { useEffect } from "react";
 import Particles from "@tsparticles/react";
-import { loadSlim } from "@tsparticles/slim";
-import { Engine } from "@tsparticles/engine";
 
 export default function CosmicBackground() {
   useEffect(() => {
@@ -11,10 +9,6 @@ export default function CosmicBackground() {
       "radial-gradient(circle at 20% 20%, #2e026d, #000000 70%)";
     document.body.style.overflow = "hidden";
   }, []);
-
-  const particlesLoaded = async (container: any) => {
-    console.log("Particles loaded:", container);
-  };
 
   return (
     <div className="fixed inset-0 -z-10">
@@ -33,28 +27,10 @@ export default function CosmicBackground() {
       {/* Зорі */}
       <Particles
         id="tsparticles"
-        loaded={particlesLoaded}
         options={{
-          background: {
-            color: "transparent",
-          },
-          fpsLimit: 60,
-          interactivity: {
-            events: {
-              onHover: {
-                enable: true,
-                mode: "repulse",
-              },
-            },
-            modes: {
-              repulse: {
-                distance: 100,
-              },
-            },
-          },
           particles: {
             number: {
-              value: 120,
+              value: 50,
             },
             color: {
               value: "#ffffff",
@@ -70,12 +46,9 @@ export default function CosmicBackground() {
             },
             move: {
               enable: true,
-              speed: 0.6,
-              direction: "none",
-              outModes: "out",
+              speed: 0.5,
             },
           },
-          detectRetina: true,
         }}
       />
     </div>
