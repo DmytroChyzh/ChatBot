@@ -105,26 +105,20 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
   };
 
   const setupWebSocket = async (sessionId: string): Promise<WebSocket> => {
-    // Спробуємо підключитися через наш API proxy
-    const response = await fetch(`/api/websocket?sessionId=${sessionId}`);
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to get WebSocket URL');
+    // Спробуємо підключитися безпосередньо до OpenAI WebSocket
+    // Оскільки API proxy не працює на Vercel, використаємо прямий підхід
+    const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error('NEXT_PUBLIC_OPENAI_API_KEY not found');
     }
     
-    const { wsUrl, apiKey, sessionData } = await response.json();
-    console.log('Got WebSocket URL from API:', wsUrl);
+    // Створюємо WebSocket URL з API ключем
+    const wsUrl = `wss://api.openai.com/v1/realtime/sessions/${sessionId}?model=gpt-4o-realtime-preview&api_key=${apiKey}`;
+    console.log('Connecting directly to WebSocket:', wsUrl);
     console.log('API Key present:', !!apiKey);
-    console.log('Session data from API:', sessionData);
-    
-    // Спробуємо різні способи підключення
-    // OpenAI Realtime API потребує Authorization header, але браузери не підтримують це
-    // Спробуємо використати API ключ в URL
-    const wsUrlWithAuth = `${wsUrl}&api_key=${apiKey}`;
-    console.log('Connecting to WebSocket:', wsUrlWithAuth);
     
     return new Promise((resolve, reject) => {
-      const ws = new WebSocket(wsUrlWithAuth);
+      const ws = new WebSocket(wsUrl);
       
       ws.onopen = () => {
         console.log('WebSocket connected');
@@ -178,9 +172,8 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
 
       ws.onerror = (error) => {
         console.error('WebSocket error:', error);
-        console.error('WebSocket URL was:', wsUrlWithAuth);
+        console.error('WebSocket URL was:', wsUrl);
         console.error('API Key present:', !!apiKey);
-        console.error('Session data:', sessionData);
         setError('OpenAI Realtime API недоступний. Можливо, ваш API ключ не має доступу до Realtime API або API ще в beta. Використовуйте синю кнопку для голосового чату.');
         setIsConnecting(false);
         reject(error);
