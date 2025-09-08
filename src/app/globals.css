@@ -116,29 +116,42 @@
     border-color: hsl(var(--border)) !important;
   }
 
-  /* Космічна тема - примусово темні кольори для всіх елементів */
+  /* Космічна тема - примусово білий текст для всіх елементів */
   .cosmic .text-gray-600 {
-    color: hsl(var(--muted-foreground)) !important;
+    color: #ffffff !important;
   }
 
   .cosmic .text-gray-500 {
-    color: hsl(var(--muted-foreground)) !important;
+    color: #ffffff !important;
   }
 
   .cosmic .text-gray-700 {
-    color: hsl(var(--muted-foreground)) !important;
+    color: #ffffff !important;
   }
 
   .cosmic .text-gray-900 {
-    color: hsl(var(--foreground)) !important;
+    color: #ffffff !important;
   }
 
   .cosmic .bg-gray-50 {
     background-color: #212121 !important;
   }
 
-  .cosmic .dark\:bg-gray-800 {
+  /* Космічна тема - додаткові кольори для картки */
+  .cosmic .text-gray-300 {
+    color: #ffffff !important;
+  }
+
+  .cosmic .text-gray-400 {
+    color: #ffffff !important;
+  }
+
+  .cosmic .bg-gray-700 {
     background-color: #212121 !important;
+  }
+
+  .cosmic .border-gray-700 {
+    border-color: #404040 !important;
   }
 
   /* Космічна тема - прозорий фон для анімації */
