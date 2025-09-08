@@ -952,7 +952,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           toggleTheme={toggleTheme} 
           mounted={mounted} 
           className=""
-          onStartOver={handleStartOver}
         />
         <div className="flex items-center justify-center h-full" style={{ marginTop: '64px' }}>
         <div className="w-full max-w-md mx-4 relative z-10">
