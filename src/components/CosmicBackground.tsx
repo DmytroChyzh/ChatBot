@@ -12,8 +12,8 @@ export default function CosmicBackground() {
     document.body.style.overflow = "hidden";
   }, []);
 
-  const particlesInit = async (engine: Engine) => {
-    await loadSlim(engine);
+  const particlesLoaded = async (container: any) => {
+    console.log("Particles loaded:", container);
   };
 
   return (
@@ -33,7 +33,7 @@ export default function CosmicBackground() {
       {/* Зорі */}
       <Particles
         id="tsparticles"
-        init={particlesInit}
+        loaded={particlesLoaded}
         options={{
           background: {
             color: "transparent",
