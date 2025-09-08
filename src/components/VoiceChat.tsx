@@ -105,26 +105,23 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
   };
 
   const setupWebSocket = async (sessionId: string): Promise<WebSocket> => {
-    // Спочатку отримуємо WebSocket URL з нашого API
-    const response = await fetch(`/api/websocket?sessionId=${sessionId}`);
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to get WebSocket URL');
+    // Спробуємо підключитися безпосередньо до OpenAI WebSocket
+    const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error('NEXT_PUBLIC_OPENAI_API_KEY not found');
     }
     
-    const { wsUrl, apiKey } = await response.json();
-    console.log('Got WebSocket URL from API:', wsUrl);
+    // Створюємо WebSocket URL з API ключем
+    const wsUrl = `wss://api.openai.com/v1/realtime/sessions/${sessionId}?model=gpt-4o-realtime-preview&api_key=${apiKey}`;
+    console.log('Connecting to WebSocket:', wsUrl);
     
     return new Promise((resolve, reject) => {
-      // Браузерні WebSocket не підтримують кастомні заголовки
-      // Використовуємо API ключ в URL (це єдиний спосіб для браузера)
-      const wsUrlWithAuth = `${wsUrl}&api_key=${apiKey}`;
-      const ws = new WebSocket(wsUrlWithAuth);
+      const ws = new WebSocket(wsUrl);
       
       ws.onopen = () => {
         console.log('WebSocket connected');
         
-        // Відправляємо початкове повідомлення для ініціалізації сесії
+        // Відправляємо спрощене початкове повідомлення
         ws.send(JSON.stringify({
           type: 'session.update',
           session: {
@@ -132,17 +129,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
             instructions: 'You are a helpful AI assistant. Respond naturally and conversationally in Ukrainian and English.',
             voice: 'verse',
             input_audio_format: 'pcm16',
-            output_audio_format: 'pcm16',
-            turn_detection: {
-              type: 'server_vad',
-              threshold: 0.5,
-              prefix_padding_ms: 300,
-              silence_duration_ms: 500
-            },
-            tools: [],
-            tool_choice: 'auto',
-            temperature: 0.8,
-            max_response_output_tokens: 4096
+            output_audio_format: 'pcm16'
           }
         }));
         
@@ -183,7 +170,9 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
 
       ws.onerror = (error) => {
         console.error('WebSocket error:', error);
-        setError('OpenAI Realtime API недоступний. Використовуйте синю кнопку для голосового чату.');
+        console.error('WebSocket URL was:', wsUrl);
+        console.error('API Key present:', !!apiKey);
+        setError('OpenAI Realtime API недоступний. Можливо, ваш API ключ не має доступу до Realtime API або API ще в beta. Використовуйте синю кнопку для голосового чату.');
         setIsConnecting(false);
         reject(error);
       };
