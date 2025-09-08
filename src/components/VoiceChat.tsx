@@ -104,9 +104,18 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
     return peerConnection;
   };
 
-  const setupWebSocket = (sessionId: string): Promise<WebSocket> => {
+  const setupWebSocket = async (sessionId: string): Promise<WebSocket> => {
+    // Спочатку отримуємо WebSocket URL з нашого API
+    const response = await fetch(`/api/websocket?sessionId=${sessionId}`);
+    if (!response.ok) {
+      throw new Error('Failed to get WebSocket URL');
+    }
+    
+    const { wsUrl } = await response.json();
+    console.log('Got WebSocket URL from API');
+    
     return new Promise((resolve, reject) => {
-      const ws = new WebSocket(`wss://api.openai.com/v1/realtime/sessions/${sessionId}?model=gpt-4o-realtime-preview`);
+      const ws = new WebSocket(wsUrl);
       
       ws.onopen = () => {
         console.log('WebSocket connected');

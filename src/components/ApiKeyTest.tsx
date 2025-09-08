@@ -67,10 +67,15 @@ const ApiKeyTest: React.FC = () => {
           <p><strong>Як налаштувати:</strong></p>
           <ol className="list-decimal list-inside space-y-1 mt-2">
             <li>Створіть файл <code>.env.local</code> в корені проекту</li>
-            <li>Додайте: <code>OPENAI_API_KEY=your_key_here</code></li>
+            <li>Додайте обидва ключі:</li>
+            <li><code>OPENAI_API_KEY=your_key_here</code></li>
+            <li><code>NEXT_PUBLIC_OPENAI_API_KEY=your_key_here</code></li>
             <li>Перезапустіть сервер: <code>npm run dev</code></li>
             <li>Натисніть кнопку вище для тестування</li>
           </ol>
+          <p className="mt-2 text-xs text-yellow-600 dark:text-yellow-400">
+            ⚠️ Обидва ключі повинні мати однакове значення
+          </p>
         </div>
       </div>
     </div>
