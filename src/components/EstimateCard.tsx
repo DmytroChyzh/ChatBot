@@ -175,7 +175,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 
         {/* Час та команда */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-1">
               <Clock className="w-4 h-4 text-blue-600" />
               <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
@@ -191,7 +191,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
             </div>
           </div>
           
-          <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-1">
               <Users className="w-4 h-4 text-green-600" />
               <span className="text-sm font-medium text-green-800 dark:text-green-200">
@@ -210,7 +210,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 
         {/* Години роботи */}
         {estimate.initialRange && estimate.initialRange.min > 0 && (
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-1">
               <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -268,7 +268,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
         </div>
 
         {/* Контактна особа */}
-        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
           <div className="flex items-center gap-3 mb-2">
             <Phone className="w-5 h-5 text-purple-600" />
             <span className="text-sm font-medium text-purple-800 dark:text-purple-200">

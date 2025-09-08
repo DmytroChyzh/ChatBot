@@ -141,6 +141,19 @@
     background-color: hsl(var(--muted)) !important;
   }
 
+  /* Космічна тема - всі секції однакові */
+  .cosmic .bg-blue-50 {
+    background-color: hsl(var(--muted)) !important;
+  }
+
+  .cosmic .bg-green-50 {
+    background-color: hsl(var(--muted)) !important;
+  }
+
+  .cosmic .bg-purple-50 {
+    background-color: hsl(var(--muted)) !important;
+  }
+
   /* Космічна тема - додаткові кольори ТАКІ Ж ЯК У ТЕМНІЙ ТЕМІ */
   .cosmic .text-gray-300 {
     color: hsl(var(--muted-foreground)) !important;
