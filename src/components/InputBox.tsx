@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import AlternativeVoiceChat from './AlternativeVoiceChat';
-import ElevenLabsVoiceChat from './ElevenLabsVoiceChat';
 import HybridVoiceChat from './HybridVoiceChat';
 
 interface InputBoxProps {
@@ -107,16 +106,6 @@ const InputBox: React.FC<InputBoxProps> = ({
           disabled={loading || disabled}
           onTranscript={onChange}
         />
-
-          {/* ElevenLabs Voice Chat */}
-          <ElevenLabsVoiceChat 
-            disabled={loading || disabled}
-            onTranscript={onChange}
-            onResponse={(text) => {
-              // Handle AI response
-              console.log('AI Response:', text);
-            }}
-          />
 
           {/* Hybrid Voice Chat (ElevenLabs + OpenAI) */}
           <HybridVoiceChat 

@@ -338,7 +338,7 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
             ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
             : isSpeaking
             ? 'bg-green-500 hover:bg-green-600 text-white animate-pulse'
-            : 'bg-purple-500 hover:bg-purple-600 text-white'
+            : 'bg-blue-500 hover:bg-blue-600 text-white'
         } ${disabled || isProcessing ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         title={
           isListening
@@ -356,8 +356,8 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
           </svg>
         ) : isProcessing ? (
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 6v6l4 2"/>
+            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-6.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-6.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
           </svg>
         ) : isSpeaking ? (
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -369,10 +369,12 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
           </svg>
         ) : (
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            <line x1="12" y1="19" x2="12" y2="23"/>
-            <line x1="8" y1="23" x2="16" y2="23"/>
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <circle cx="12" cy="16" r="1"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <path d="M12 1v3"/>
+            <path d="M6 3l1.5 1.5"/>
+            <path d="M17.5 4.5L19 3"/>
           </svg>
         )}
       </button>
