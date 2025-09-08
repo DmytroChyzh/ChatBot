@@ -10,6 +10,8 @@ interface InputBoxProps {
   loading?: boolean;
   disabled?: boolean;
   projectComplete?: boolean;
+  sessionId?: string | null;
+  onAddMessage?: (message: { role: 'user' | 'assistant', content: string, timestamp: Date }) => Promise<void>;
 }
 
 const InputBox: React.FC<InputBoxProps> = ({ 
@@ -18,7 +20,9 @@ const InputBox: React.FC<InputBoxProps> = ({
   onSend, 
   loading, 
   disabled, 
-  projectComplete
+  projectComplete,
+  sessionId,
+  onAddMessage
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useLanguage();
@@ -115,6 +119,8 @@ const InputBox: React.FC<InputBoxProps> = ({
               // Handle AI response
               console.log('Hybrid AI Response:', text);
             }}
+            sessionId={sessionId}
+            onAddMessage={onAddMessage}
           />
       </div>
     </div>

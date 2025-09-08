@@ -1014,6 +1014,12 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                   loading={isLoading}
                   disabled={isProjectComplete}
                   projectComplete={isProjectComplete}
+                  sessionId={sessionId}
+                  onAddMessage={async (message) => {
+                    if (sessionId) {
+                      await addMessageToSession(sessionId, message);
+                    }
+                  }}
                 />
               </div>
             </div>

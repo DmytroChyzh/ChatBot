@@ -61,13 +61,17 @@ interface HybridVoiceChatProps {
   className?: string;
   onTranscript?: (text: string) => void;
   onResponse?: (text: string) => void;
+  sessionId?: string | null;
+  onAddMessage?: (message: { role: 'user' | 'assistant', content: string, timestamp: Date }) => Promise<void>;
 }
 
 const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
   disabled = false,
   className = "",
   onTranscript,
-  onResponse
+  onResponse,
+  sessionId,
+  onAddMessage
 }) => {
   const { language } = useLanguage();
   const [isListening, setIsListening] = useState(false);
@@ -121,6 +125,20 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
           if (onTranscript) {
             onTranscript(finalTranscript);
           }
+          
+          // Add user message to chat
+          if (onAddMessage) {
+            try {
+              await onAddMessage({
+                role: 'user',
+                content: finalTranscript,
+                timestamp: new Date()
+              });
+            } catch (error) {
+              console.error('HybridVoiceChat: Error adding user message:', error);
+            }
+          }
+          
           // Process with OpenAI
           processWithOpenAI(finalTranscript);
         }
@@ -215,6 +233,19 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
       console.log('HybridVoiceChat: OpenAI response:', data);
 
       if (data.content) {
+        // Add assistant message to chat
+        if (onAddMessage) {
+          try {
+            await onAddMessage({
+              role: 'assistant',
+              content: data.content,
+              timestamp: new Date()
+            });
+          } catch (error) {
+            console.error('HybridVoiceChat: Error adding assistant message:', error);
+          }
+        }
+
         // Send response to parent component
         if (onResponse) {
           onResponse(data.content);
