@@ -19,6 +19,7 @@ interface ChatWindowProps {
   // Voice chat props
   onVoiceMessage?: (text: string) => void;
   lastAIResponse?: string;
+  isVoiceChatActive?: boolean;
 }
 
 const MESSAGE_CONTAINER_PADDING = 32; // padding like in InputBox
@@ -35,7 +36,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   conversationType,
   estimateStep,
   onVoiceMessage,
-  lastAIResponse
+  lastAIResponse,
+  isVoiceChatActive = false
 }) => {
   const { t, language } = useLanguage();
   const { theme } = useTheme();
@@ -50,8 +52,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       paddingBottom: paddingBottom ? `${paddingBottom}px` : undefined,
     }}
   >
-    {/* Voice Chat Button - Fixed position in top right */}
-    {onVoiceMessage && (
+    {/* Voice Chat Button - Fixed position in top right - only show when voice chat is active */}
+    {onVoiceMessage && isVoiceChatActive && (
       <div className="fixed top-4 right-4 z-50">
         <VoiceChat 
           onVoiceMessage={onVoiceMessage}

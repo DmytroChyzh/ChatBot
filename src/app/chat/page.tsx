@@ -101,6 +101,7 @@ export default function ChatPage() {
   
   // Voice states
   const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [isVoiceChatActive, setIsVoiceChatActive] = useState(false);
   
   // Get last AI response for speech synthesis
   const getLastAIResponse = () => {
@@ -554,6 +555,11 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
       handleSubmit({ preventDefault: () => {} } as React.FormEvent);
       setInput(''); // Очищуємо інпут одразу після відправки
     }
+  };
+
+  const handleToggleVoiceChat = () => {
+    setIsVoiceChatActive(!isVoiceChatActive);
+    console.log('Voice chat toggled:', !isVoiceChatActive);
   };
 
 
@@ -1023,6 +1029,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                 estimateStep={estimateStep}
                 onVoiceMessage={handleVoiceMessage}
                 lastAIResponse={getLastAIResponse()}
+                isVoiceChatActive={isVoiceChatActive}
               />
             </div>
             <div className="w-full flex justify-center">
@@ -1034,6 +1041,8 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                   loading={isLoading}
                   disabled={isProjectComplete}
                   projectComplete={isProjectComplete}
+                  isVoiceChatActive={isVoiceChatActive}
+                  onToggleVoiceChat={handleToggleVoiceChat}
                 />
               </div>
             </div>

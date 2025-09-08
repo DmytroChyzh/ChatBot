@@ -9,9 +9,9 @@ interface InputBoxProps {
   loading?: boolean;
   disabled?: boolean;
   projectComplete?: boolean;
-  // Voice mode toggle
-  isVoiceModeActive?: boolean;
-  onToggleVoiceMode?: () => void;
+  // Voice chat mode toggle
+  isVoiceChatActive?: boolean;
+  onToggleVoiceChat?: () => void;
 }
 
 const InputBox: React.FC<InputBoxProps> = ({ 
@@ -21,8 +21,8 @@ const InputBox: React.FC<InputBoxProps> = ({
   loading, 
   disabled, 
   projectComplete,
-  isVoiceModeActive = false,
-  onToggleVoiceMode
+  isVoiceChatActive = false,
+  onToggleVoiceChat
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useLanguage();
@@ -113,6 +113,37 @@ const InputBox: React.FC<InputBoxProps> = ({
           onTextReceived={handleDictation}
           disabled={loading || disabled}
         />
+
+        {/* Кнопка голосового режиму чату */}
+        {onToggleVoiceChat && (
+          <button
+            type="button"
+            onClick={onToggleVoiceChat}
+            disabled={loading || disabled}
+            className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 ${
+              isVoiceChatActive 
+                ? 'bg-purple-500 hover:bg-purple-600 text-white' 
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300'
+            }`}
+            title={isVoiceChatActive ? 'Вимкнути голосовий чат' : 'Увімкнути голосовий чат'}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 18V5l12-2v13"/>
+              <circle cx="6" cy="18" r="3"/>
+              <circle cx="18" cy="16" r="3"/>
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   );
