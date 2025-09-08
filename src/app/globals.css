@@ -112,6 +112,21 @@
     background-color: hsl(0 0% 16%) !important;
   }
 
+  /* Додатковий селектор для картки */
+  .cosmic [class*="bg-white"] {
+    background-color: hsl(0 0% 16%) !important;
+  }
+
+  /* Більш специфічний селектор для картки */
+  .cosmic div[class*="bg-white"] {
+    background-color: hsl(0 0% 16%) !important;
+  }
+
+  /* Примусово для всіх елементів з bg-white */
+  .cosmic *[class*="bg-white"] {
+    background-color: hsl(0 0% 16%) !important;
+  }
+
   .cosmic .cosmic-bg {
     background-color: #1f2937 !important;
   }
