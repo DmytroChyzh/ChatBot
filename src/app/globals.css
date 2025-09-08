@@ -153,20 +153,20 @@
   }
 
   .cosmic .bg-gray-50 {
-    background-color: hsl(var(--muted)) !important;
+    background-color: hsl(0 0% 25%) !important;
   }
 
-  /* Космічна тема - всі секції однакові */
+  /* Космічна тема - всі секції світліший сірий */
   .cosmic .bg-blue-50 {
-    background-color: hsl(var(--muted)) !important;
+    background-color: hsl(0 0% 25%) !important;
   }
 
   .cosmic .bg-green-50 {
-    background-color: hsl(var(--muted)) !important;
+    background-color: hsl(0 0% 25%) !important;
   }
 
   .cosmic .bg-purple-50 {
-    background-color: hsl(var(--muted)) !important;
+    background-color: hsl(0 0% 25%) !important;
   }
 
   /* Космічна тема - допоміжні кнопки темно-фіолетові */
