@@ -11,9 +11,6 @@ export default function CosmicBackground() {
 
   return (
     <div className="fixed inset-0 z-0">
-      {/* Темний фон як у темній темі */}
-      <div className="absolute inset-0 bg-[hsl(var(--background))]" />
-      
       {/* Анімовані зорі */}
       <div className="absolute inset-0">
         {/* Зорі */}

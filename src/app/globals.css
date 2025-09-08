@@ -107,51 +107,55 @@
     background-color: hsl(var(--card)) !important;
   }
 
-  /* Космічна тема - картка */
+  /* Космічна тема - картка ТАКА Ж ЯК У ТЕМНІЙ ТЕМІ */
   .cosmic .bg-white {
-    background-color: #212121 !important;
+    background-color: hsl(var(--card)) !important;
+  }
+
+  .cosmic .cosmic-bg {
+    background-color: hsl(var(--card)) !important;
   }
 
   .cosmic .border-gray-200 {
     border-color: hsl(var(--border)) !important;
   }
 
-  /* Космічна тема - примусово білий текст для всіх елементів */
+  /* Космічна тема - текст ТАКИЙ Ж ЯК У ТЕМНІЙ ТЕМІ */
   .cosmic .text-gray-600 {
-    color: #ffffff !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .cosmic .text-gray-500 {
-    color: #ffffff !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .cosmic .text-gray-700 {
-    color: #ffffff !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .cosmic .text-gray-900 {
-    color: #ffffff !important;
+    color: hsl(var(--foreground)) !important;
   }
 
   .cosmic .bg-gray-50 {
-    background-color: #212121 !important;
+    background-color: hsl(var(--muted)) !important;
   }
 
-  /* Космічна тема - додаткові кольори для картки */
+  /* Космічна тема - додаткові кольори ТАКІ Ж ЯК У ТЕМНІЙ ТЕМІ */
   .cosmic .text-gray-300 {
-    color: #ffffff !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .cosmic .text-gray-400 {
-    color: #ffffff !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .cosmic .bg-gray-700 {
-    background-color: #212121 !important;
+    background-color: hsl(var(--muted)) !important;
   }
 
   .cosmic .border-gray-700 {
-    border-color: #404040 !important;
+    border-color: hsl(var(--border)) !important;
   }
 
   /* Космічна тема - прозорий фон для анімації */
