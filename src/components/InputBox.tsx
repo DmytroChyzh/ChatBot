@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import AlternativeVoiceChat from './AlternativeVoiceChat';
+import ElevenLabsVoiceChat from './ElevenLabsVoiceChat';
 
 interface InputBoxProps {
   value: string;
@@ -104,6 +105,16 @@ const InputBox: React.FC<InputBoxProps> = ({
         <AlternativeVoiceChat 
           disabled={loading || disabled}
           onTranscript={onChange}
+        />
+
+        {/* ElevenLabs Voice Chat */}
+        <ElevenLabsVoiceChat 
+          disabled={loading || disabled}
+          onTranscript={onChange}
+          onResponse={(text) => {
+            // Handle AI response
+            console.log('AI Response:', text);
+          }}
         />
       </div>
     </div>
