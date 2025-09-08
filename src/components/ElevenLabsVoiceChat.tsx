@@ -268,17 +268,26 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
   };
 
   const startVoiceChat = async () => {
-    if (disabled || isConnected) return;
+    console.log('ElevenLabs: startVoiceChat called');
+    console.log('ElevenLabs: disabled:', disabled);
+    console.log('ElevenLabs: isConnected:', isConnected);
+    
+    if (disabled || isConnected) {
+      console.log('ElevenLabs: Skipping - disabled or already connected');
+      return;
+    }
     
     if (!ELEVENLABS_API_KEY) {
+      console.error('ElevenLabs: No API key found');
       setError('API ключ ElevenLabs не знайдено. Перевірте змінні середовища.');
       return;
     }
     
+    console.log('ElevenLabs: Starting voice chat...');
     try {
       await connectToElevenLabs();
     } catch (error) {
-      console.error('Error starting voice chat:', error);
+      console.error('ElevenLabs: Error starting voice chat:', error);
       setError('Не вдалося запустити голосовий чат');
     }
   };
@@ -314,14 +323,23 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
     <div className="relative">
       <button
         type="button"
-        onClick={isConnected ? toggleListening : startVoiceChat}
+        onClick={() => {
+          console.log('ElevenLabs button clicked');
+          console.log('ElevenLabs: isConnected:', isConnected);
+          console.log('ElevenLabs: isListening:', isListening);
+          if (isConnected) {
+            toggleListening();
+          } else {
+            startVoiceChat();
+          }
+        }}
         disabled={disabled}
              className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 ${
                isConnected
                  ? isListening
                    ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
-                   : 'bg-green-500 hover:bg-green-600 text-white'
-                 : 'bg-blue-500 hover:bg-blue-600 text-white'
+                   : 'bg-red-500 hover:bg-red-600 text-white'
+                 : 'bg-purple-500 hover:bg-purple-600 text-white'
              } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         title={
           isConnected
@@ -342,6 +360,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
               <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
               <line x1="12" y1="19" x2="12" y2="23"/>
               <line x1="8" y1="23" x2="16" y2="23"/>
+              <line x1="2" y1="2" x2="22" y2="22"/>
             </svg>
           )
              ) : (
