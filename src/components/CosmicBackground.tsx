@@ -10,23 +10,14 @@ export default function CosmicBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-0 bg-black">
-      {/* Космічний туман */}
-      <div
-        className="absolute inset-0 opacity-40"
-        style={{
-          backgroundImage:
-            "url('https://i.ibb.co/k1MT7dy/nebula-purple.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          filter: "blur(30px)",
-        }}
-      />
-
+    <div className="fixed inset-0 -z-10">
+      {/* Простий космічний фон */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-black to-blue-900" />
+      
       {/* Анімовані зорі */}
       <div className="absolute inset-0">
         {/* Зорі */}
-        {Array.from({ length: 100 }).map((_, i) => (
+        {Array.from({ length: 50 }).map((_, i) => (
           <div
             key={i}
             className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
@@ -40,7 +31,7 @@ export default function CosmicBackground() {
         ))}
         
         {/* Рухливі зорі */}
-        {Array.from({ length: 20 }).map((_, i) => (
+        {Array.from({ length: 10 }).map((_, i) => (
           <div
             key={`moving-${i}`}
             className="absolute w-1 h-1 bg-white rounded-full animate-bounce"

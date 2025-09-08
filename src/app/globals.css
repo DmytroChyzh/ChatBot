@@ -56,11 +56,11 @@
   }
 
   .cosmic {
-    /* Використовуємо кольори темної теми */
+    /* ТОЧНО такі ж кольори як у темній темі */
     --background: 0 0% 13%;
     --header-bg: 0 0% 11.8%;
     
-    /* Custom header color for cosmic theme */
+    /* Custom header color for cosmic theme - точно як у темній */
     .header-cosmic {
       background-color: #1E1E1E !important;
     }
@@ -83,11 +83,6 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
     --input-bg: 0 0% 16%;
-  }
-
-  /* Космічна тема - прозорий фон для анімації */
-  .cosmic body {
-    background: transparent !important;
   }
 
   /* Космічні анімації */
