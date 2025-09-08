@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import VoiceChat from './VoiceChat';
 import AlternativeVoiceChat from './AlternativeVoiceChat';
-import FullVoiceChat from './FullVoiceChat';
 
 interface InputBoxProps {
   value: string;
@@ -111,15 +110,6 @@ const InputBox: React.FC<InputBoxProps> = ({
         <AlternativeVoiceChat 
           disabled={loading || disabled}
           onTranscript={onChange}
-        />
-
-        {/* Повний голосовий чат (Web Speech API) */}
-        <FullVoiceChat 
-          disabled={loading || disabled}
-          onSendMessage={(message) => {
-            onChange(message);
-            onSend();
-          }}
         />
       </div>
     </div>
