@@ -355,6 +355,19 @@ export default function ChatPage() {
     setIsProjectComplete(false);
   };
 
+  const handleStartOver = () => {
+    // Очищуємо все і повертаємося на початкову сторінку
+    localStorage.removeItem('chatSessionId');
+    localStorage.removeItem('chatContact');
+    setSessionId(null);
+    setSession(null);
+    setContactSubmitted(false);
+    setContact({ name: '', email: '' });
+    setIsProjectComplete(false);
+    setConversationType('general');
+    setEstimateStep(0);
+  };
+
 
 
 
@@ -920,6 +933,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           toggleTheme={toggleTheme} 
           mounted={mounted} 
           className=""
+          onStartOver={handleStartOver}
         />
         <div className="flex items-center justify-center h-full" style={{ marginTop: '64px' }}>
         <div className="w-full max-w-md mx-4 relative z-10">
@@ -980,13 +994,14 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
     <div className="h-screen w-full bg-background font-sans overflow-hidden">
       {theme === 'cosmic' && <CosmicBackground />}
       {/* Header - на всю ширину екрану */}
-          <Header 
-            theme={theme} 
-            toggleTheme={toggleTheme} 
-            mounted={mounted} 
+        <Header 
+          theme={theme} 
+          toggleTheme={toggleTheme} 
+          mounted={mounted} 
         small={false}
         className="w-full"
         onClearSession={handleClearSession}
+        onStartOver={handleStartOver}
       />
       
        

@@ -19,6 +19,7 @@ const translations = {
     // Header
     'header.title': 'Cieden Assistant',
     'header.clearSession': 'Clear session',
+    'header.startOver': 'Start Over',
     'header.lightTheme': 'Light theme',
     'header.darkTheme': 'Dark theme',
     'header.cosmicTheme': 'Cosmic theme',
@@ -105,6 +106,7 @@ const translations = {
     // Header
     'header.title': 'Асистент',
     'header.clearSession': 'Очистити сесію',
+    'header.startOver': 'Почати заново',
     'header.lightTheme': 'Світла тема',
     'header.darkTheme': 'Темна тема',
     'header.cosmicTheme': 'Космічна тема',
