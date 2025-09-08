@@ -55,10 +55,6 @@ export default function CosmicBackground() {
           particles: {
             number: {
               value: 120,
-              density: {
-                enable: true,
-                value_area: 800,
-              },
             },
             color: {
               value: "#ffffff",
