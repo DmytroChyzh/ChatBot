@@ -57,7 +57,7 @@ export default function CosmicBackground() {
               value: 120,
               density: {
                 enable: true,
-                area: 800,
+                value_area: 800,
               },
             },
             color: {
