@@ -568,14 +568,15 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   // Функції для визначення команди та контактів (тепер імпортуються з teamUtils.ts)
   
   // Функція для генерації детального плану робіт для дизайн компанії
-  const generateDetailedPhases = (projectType: string, complexity: string, minHours: number, maxHours: number) => {
+  const generateDetailedPhases = (projectType: string, complexity: string, minHours: number, maxHours: number, minPrice: number, maxPrice: number) => {
     const isUkrainian = language === 'uk';
     
-    console.log('generateDetailedPhases called with:', { projectType, complexity, minHours, maxHours });
+    console.log('generateDetailedPhases called with:', { projectType, complexity, minHours, maxHours, minPrice, maxPrice });
     
     // Використовуємо середнє значення з діапазону
     const avgHours = Math.round((minHours + maxHours) / 2);
-    console.log('Average hours calculated:', avgHours);
+    const avgPrice = Math.round((minPrice + maxPrice) / 2);
+    console.log('Average hours and price calculated:', { avgHours, avgPrice });
     
     // Розподіляємо години по етапах
     const hoursDistribution = {
@@ -586,29 +587,35 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
       testing: Math.round(avgHours * 0.15) // 15%
     };
     
-    // Розраховуємо вартість (приблизно $50-80 за годину)
-    const hourlyRate = complexity === 'high' ? 80 : complexity === 'medium' ? 65 : 50;
+    // Розподіляємо вартість по етапах (не за годинами, а за відсотками від загальної вартості)
+    const priceDistribution = {
+      research: Math.round(avgPrice * 0.15), // 15%
+      wireframing: Math.round(avgPrice * 0.20), // 20%
+      design: Math.round(avgPrice * 0.35), // 35%
+      prototyping: Math.round(avgPrice * 0.15), // 15%
+      testing: Math.round(avgPrice * 0.15) // 15%
+    };
     
     const phases = {
       research: isUkrainian 
-        ? `🔍 Дослідження та аналіз (${hoursDistribution.research} год, $${hoursDistribution.research * hourlyRate})`
-        : `🔍 Research & Analysis (${hoursDistribution.research}h, $${hoursDistribution.research * hourlyRate})`,
+        ? `🔍 Дослідження та аналіз (${hoursDistribution.research} год, $${priceDistribution.research})`
+        : `🔍 Research & Analysis (${hoursDistribution.research}h, $${priceDistribution.research})`,
       
       wireframing: isUkrainian 
-        ? `📐 Структура та навігація (${hoursDistribution.wireframing} год, $${hoursDistribution.wireframing * hourlyRate})`
-        : `📐 Structure & Navigation (${hoursDistribution.wireframing}h, $${hoursDistribution.wireframing * hourlyRate})`,
+        ? `📐 Структура та навігація (${hoursDistribution.wireframing} год, $${priceDistribution.wireframing})`
+        : `📐 Structure & Navigation (${hoursDistribution.wireframing}h, $${priceDistribution.wireframing})`,
       
       design: isUkrainian 
-        ? `🎨 Візуальний дизайн (${hoursDistribution.design} год, $${hoursDistribution.design * hourlyRate})`
-        : `🎨 Visual Design (${hoursDistribution.design}h, $${hoursDistribution.design * hourlyRate})`,
+        ? `🎨 Візуальний дизайн (${hoursDistribution.design} год, $${priceDistribution.design})`
+        : `🎨 Visual Design (${hoursDistribution.design}h, $${priceDistribution.design})`,
       
       prototyping: isUkrainian 
-        ? `⚡ Прототипування (${hoursDistribution.prototyping} год, $${hoursDistribution.prototyping * hourlyRate})`
-        : `⚡ Prototyping (${hoursDistribution.prototyping}h, $${hoursDistribution.prototyping * hourlyRate})`,
+        ? `⚡ Прототипування (${hoursDistribution.prototyping} год, $${priceDistribution.prototyping})`
+        : `⚡ Prototyping (${hoursDistribution.prototyping}h, $${priceDistribution.prototyping})`,
       
       testing: isUkrainian 
-        ? `🧪 Тестування та оптимізація (${hoursDistribution.testing} год, $${hoursDistribution.testing * hourlyRate})`
-        : `🧪 Testing & Optimization (${hoursDistribution.testing}h, $${hoursDistribution.testing * hourlyRate})`
+        ? `🧪 Тестування та оптимізація (${hoursDistribution.testing} год, $${priceDistribution.testing})`
+        : `🧪 Testing & Optimization (${hoursDistribution.testing}h, $${priceDistribution.testing})`
     };
     
     return phases;
@@ -723,7 +730,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           };
 
           // Визначаємо фази з детальною інформацією
-          const phases = generateDetailedPhases(projectType, complexity, currentRange.min, currentRange.max);
+          const phases = generateDetailedPhases(projectType, complexity, currentRange.min, currentRange.max, adjustedPrice.minPrice, adjustedPrice.maxPrice);
 
           const estimate: ProjectEstimate = {
             currentRange,
@@ -753,7 +760,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
               contactPerson: getContactPersonForProject(projectType),
               contactEmail: getContactEmailForProject(projectType)
             },
-            phases: generateDetailedPhases(projectType, complexity, 100, 200)
+            phases: generateDetailedPhases(projectType, complexity, 100, 200, 2250, 4500)
           };
           setProjectEstimate(fallbackEstimate);
         }
