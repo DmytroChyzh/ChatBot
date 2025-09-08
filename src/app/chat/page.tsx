@@ -642,11 +642,18 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             contactEmail: 'kateryna.zavertailo@cieden.com'
           },
           phases: {
-            research: 'Очікуємо деталі проєкту...',
-            wireframing: 'Очікуємо деталі проєкту...',
-            design: 'Очікуємо деталі проєкту...',
-            prototyping: 'Очікуємо деталі проєкту...',
-            testing: 'Очікуємо деталі проєкту...'
+            research: language === 'uk' ? '🔍 Дослідження та аналіз (0 год, $0)' : '🔍 Research & Analysis (0h, $0)',
+            wireframing: language === 'uk' ? '📐 Структура та навігація (0 год, $0)' : '📐 Structure & Navigation (0h, $0)',
+            design: language === 'uk' ? '🎨 Візуальний дизайн (0 год, $0)' : '🎨 Visual Design (0h, $0)',
+            prototyping: language === 'uk' ? '⚡ Прототипування (0 год, $0)' : '⚡ Prototyping (0h, $0)',
+            testing: language === 'uk' ? '🧪 Тестування та оптимізація (0 год, $0)' : '🧪 Testing & Optimization (0h, $0)'
+          },
+          phaseDescriptions: {
+            research: language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
+            wireframing: language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
+            design: language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
+            prototyping: language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
+            testing: language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...'
           }
         };
         console.log('Setting initial estimate:', initialEstimate);
@@ -723,14 +730,26 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           };
           console.log('Adjusted price:', adjustedPrice);
           
-          // Збільшуємо діапазон, коли мало інформації (мало інфо = дорого!)
-          // estimateStep=1 → factor=1.8 (дорого), estimateStep=5 → factor=1.0 (точно)
-          const uncertaintyFactor = Math.max(1.0, 2.0 - (estimateStep * 0.2));
+          // Логіка невизначеності: estimateStep=2 → дуже широкий діапазон, estimateStep=5+ → точний
+          let uncertaintyFactor;
+          if (estimateStep === 2) {
+            // Перша інформація - дуже широкий діапазон ($10k-$50k)
+            uncertaintyFactor = 3.0;
+          } else if (estimateStep === 3) {
+            // Трохи інформації - широкий діапазон
+            uncertaintyFactor = 2.0;
+          } else if (estimateStep === 4) {
+            // Більше інформації - середній діапазон
+            uncertaintyFactor = 1.5;
+          } else {
+            // Багато інформації - точний діапазон
+            uncertaintyFactor = 1.0;
+          }
           const currentRange = {
             min: Math.round(adjustedPrice.minPrice * uncertaintyFactor),
             max: Math.round(adjustedPrice.maxPrice * uncertaintyFactor)
           };
-          console.log('Current range after uncertainty adjustment:', currentRange, 'uncertainty factor:', uncertaintyFactor);
+          console.log('Current range after uncertainty adjustment:', currentRange, 'uncertainty factor:', uncertaintyFactor, 'estimateStep:', estimateStep);
 
           // Отримуємо скоригований timeline та розмір команди з нової системи
           const timeline = companyEstimation.timeline;
