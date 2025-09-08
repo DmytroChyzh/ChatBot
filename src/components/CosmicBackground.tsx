@@ -10,14 +10,14 @@ export default function CosmicBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 -z-10">
+    <div className="fixed inset-0 z-0">
       {/* Темний фон як у темній темі */}
       <div className="absolute inset-0 bg-[hsl(var(--background))]" />
       
       {/* Анімовані зорі */}
       <div className="absolute inset-0">
         {/* Зорі */}
-        {Array.from({ length: 80 }).map((_, i) => (
+        {Array.from({ length: 100 }).map((_, i) => (
           <div
             key={i}
             className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
@@ -31,7 +31,7 @@ export default function CosmicBackground() {
         ))}
         
         {/* Рухливі зорі */}
-        {Array.from({ length: 15 }).map((_, i) => (
+        {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={`moving-${i}`}
             className="absolute w-1 h-1 bg-white rounded-full animate-bounce"
