@@ -17,6 +17,7 @@ import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
 import ApiKeyTest from '../../components/ApiKeyTest';
 import SimpleVoiceTest from '../../components/SimpleVoiceTest';
+import OpenAITest from '../../components/OpenAITest';
 import ChatWindow from '../../components/ChatWindow';
 import TeamUploader from '../../components/TeamUploader';
 
@@ -1004,6 +1005,11 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
        {/* Simple Voice Test - детальний тест WebSocket */}
        <div className="px-4 py-2 bg-purple-50 dark:bg-purple-900/20 border-b border-purple-200 dark:border-purple-800">
          <SimpleVoiceTest />
+       </div>
+       
+       {/* OpenAI Test - повний тест всіх API */}
+       <div className="px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-200 dark:border-orange-800">
+         <OpenAITest />
        </div>
        
       
