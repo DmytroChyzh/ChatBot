@@ -20,29 +20,21 @@ export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [mounted, setMounted] = useState(false);
-  const [theme, setThemeState] = useState<'light' | 'dark' | 'cosmic'>('light');
+  const [theme, setThemeState] = useState<'light' | 'dark' | 'cosmic'>('cosmic');
 
   useEffect(() => {
     // Встановлюємо тему тільки після монтування на клієнті
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'cosmic' || 'light';
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'cosmic' || 'cosmic';
     setThemeState(savedTheme);
     setMounted(true);
   }, []);
 
   useEffect(() => {
     if (mounted) {
-      if (theme === 'dark') {
-        document.body.classList.add('dark');
-        document.body.classList.remove('cosmic');
-        localStorage.setItem('theme', 'dark');
-      } else if (theme === 'cosmic') {
-        document.body.classList.add('cosmic');
-        document.body.classList.remove('dark');
-        localStorage.setItem('theme', 'cosmic');
-      } else {
-        document.body.classList.remove('dark', 'cosmic');
-        localStorage.setItem('theme', 'light');
-      }
+      // Завжди встановлюємо космічну тему
+      document.body.classList.add('cosmic');
+      document.body.classList.remove('dark');
+      localStorage.setItem('theme', 'cosmic');
     }
   }, [theme, mounted]);
 
