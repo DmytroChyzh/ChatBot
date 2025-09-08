@@ -356,16 +356,14 @@ export default function ChatPage() {
   };
 
   const handleStartOver = () => {
-    // Очищуємо все і повертаємося на початкову сторінку
+    // Очищуємо сесію але залишаємо контактну інформацію
     localStorage.removeItem('chatSessionId');
-    localStorage.removeItem('chatContact');
     setSessionId(null);
     setSession(null);
-    setContactSubmitted(false);
-    setContact({ name: '', email: '' });
     setIsProjectComplete(false);
     setConversationType('general');
     setEstimateStep(0);
+    // НЕ очищуємо contactSubmitted та contact - залишаємо користувача в чаті
   };
 
 
