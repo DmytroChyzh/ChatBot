@@ -26,10 +26,12 @@ const VoiceSpeaker: React.FC<VoiceSpeakerProps> = ({
     // Перевіряємо підтримку браузера
     const checkSupport = () => {
       const hasSynthesis = 'speechSynthesis' in window;
+      console.log('VoiceSpeaker: Speech synthesis support:', hasSynthesis);
       setIsSupported(hasSynthesis);
       
       if (hasSynthesis) {
         synthesisRef.current = window.speechSynthesis;
+        console.log('VoiceSpeaker: Speech synthesis initialized');
       }
     };
     
@@ -48,6 +50,7 @@ const VoiceSpeaker: React.FC<VoiceSpeakerProps> = ({
     
     try {
       setError(null);
+      console.log('Starting speech synthesis for text:', text.substring(0, 50) + '...');
       
       // Зупиняємо поточне озвучування
       if (isSpeaking) {
@@ -56,18 +59,23 @@ const VoiceSpeaker: React.FC<VoiceSpeakerProps> = ({
         return;
       }
       
+      // Очищуємо попередні озвучування
+      synthesisRef.current.cancel();
+      
       // Створюємо нове озвучування
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = language === 'uk' ? 'uk-UA' : 'en-US';
-      utterance.rate = 0.9;
+      utterance.rate = 0.8;
       utterance.pitch = 1;
       utterance.volume = 1;
       
       utterance.onstart = () => {
+        console.log('Speech synthesis started');
         setIsSpeaking(true);
       };
       
       utterance.onend = () => {
+        console.log('Speech synthesis ended');
         setIsSpeaking(false);
       };
       
@@ -78,7 +86,11 @@ const VoiceSpeaker: React.FC<VoiceSpeakerProps> = ({
       };
       
       utteranceRef.current = utterance;
-      synthesisRef.current.speak(utterance);
+      
+      // Додаємо невелику затримку для стабільності
+      setTimeout(() => {
+        synthesisRef.current.speak(utterance);
+      }, 100);
       
     } catch (error) {
       console.error('Error speaking text:', error);

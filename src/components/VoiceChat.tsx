@@ -183,7 +183,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
 
       ws.onerror = (error) => {
         console.error('WebSocket error:', error);
-        setError('WebSocket connection error');
+        setError('OpenAI Realtime API недоступний. Використовуйте синю кнопку для голосового чату.');
         setIsConnecting(false);
         reject(error);
       };
@@ -275,7 +275,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
             ? 'Зупинити голосовий чат'
             : isConnecting
             ? 'Підключення...'
-            : 'Почати голосовий чат'
+            : 'OpenAI Realtime API (може не працювати)'
         }
       >
         {isConnected ? (
