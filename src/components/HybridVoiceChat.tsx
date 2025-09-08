@@ -195,14 +195,15 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
       setIsProcessing(true);
       console.log('HybridVoiceChat: Processing with OpenAI:', text);
 
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/ai', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           message: text,
-          language: language
+          conversationHistory: [],
+          sessionId: 'hybrid-voice-chat'
         }),
       });
 
@@ -213,14 +214,14 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
       const data = await response.json();
       console.log('HybridVoiceChat: OpenAI response:', data);
 
-      if (data.response) {
+      if (data.content) {
         // Send response to parent component
         if (onResponse) {
-          onResponse(data.response);
+          onResponse(data.content);
         }
 
         // Convert to speech using ElevenLabs
-        await convertToSpeech(data.response);
+        await convertToSpeech(data.content);
       }
     } catch (error) {
       console.error('HybridVoiceChat: Error processing with OpenAI:', error);
