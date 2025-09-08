@@ -188,6 +188,47 @@
     color: hsl(0 0% 15%) !important;
   }
 
+  /* Космічна тема - всі тексти в секціях темні для читабельності */
+  .cosmic .bg-gray-50 .text-gray-700,
+  .cosmic .bg-gray-50 .text-gray-600,
+  .cosmic .bg-gray-50 .text-gray-500,
+  .cosmic .bg-blue-50 .text-gray-700,
+  .cosmic .bg-blue-50 .text-gray-600,
+  .cosmic .bg-blue-50 .text-gray-500,
+  .cosmic .bg-green-50 .text-gray-700,
+  .cosmic .bg-green-50 .text-gray-600,
+  .cosmic .bg-green-50 .text-gray-500,
+  .cosmic .bg-purple-50 .text-gray-700,
+  .cosmic .bg-purple-50 .text-gray-600,
+  .cosmic .bg-purple-50 .text-gray-500 {
+    color: hsl(0 0% 10%) !important;
+  }
+
+  /* Космічна тема - кольорові тексти в секціях */
+  .cosmic .bg-gray-50 .text-blue-700,
+  .cosmic .bg-gray-50 .text-green-700,
+  .cosmic .bg-gray-50 .text-purple-700,
+  .cosmic .bg-blue-50 .text-blue-700,
+  .cosmic .bg-green-50 .text-green-700,
+  .cosmic .bg-purple-50 .text-purple-700 {
+    color: hsl(0 0% 15%) !important;
+  }
+
+  /* Космічна тема - іконки в секціях білі або оранжеві */
+  .cosmic .bg-gray-50 svg[class*="text-blue-600"],
+  .cosmic .bg-gray-50 svg[class*="text-green-600"],
+  .cosmic .bg-gray-50 svg[class*="text-purple-600"],
+  .cosmic .bg-blue-50 svg[class*="text-blue-600"],
+  .cosmic .bg-green-50 svg[class*="text-green-600"],
+  .cosmic .bg-purple-50 svg[class*="text-purple-600"] {
+    color: #ffffff !important;
+  }
+
+  /* Космічна тема - іконки TrendingDown білі */
+  .cosmic .bg-gray-50 svg[class*="text-gray-600"] {
+    color: #ffffff !important;
+  }
+
   /* Космічна тема - допоміжні кнопки темно-фіолетові */
   .cosmic button[class*="bg-[#2D225A]"] {
     background-color: #4A2C7B !important;
