@@ -137,19 +137,19 @@
 
   /* Космічна тема - текст ТАКИЙ Ж ЯК У ТЕМНІЙ ТЕМІ */
   .cosmic .text-gray-600 {
-    color: hsl(0 0% 12%) !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .cosmic .text-gray-500 {
-    color: hsl(0 0% 20%) !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .cosmic .text-gray-700 {
-    color: hsl(0 0% 5%) !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .cosmic .text-gray-900 {
-    color: hsl(0 0% 5%) !important;
+    color: hsl(var(--foreground)) !important;
   }
 
   .cosmic .bg-gray-50 {
@@ -167,6 +167,25 @@
 
   .cosmic .bg-purple-50 {
     background-color: hsl(0 0% 25%) !important;
+  }
+
+  /* Космічна тема - темний текст для читабельності на світлому фоні */
+  .cosmic .bg-gray-50 .text-blue-800,
+  .cosmic .bg-gray-50 .text-green-800,
+  .cosmic .bg-gray-50 .text-purple-800,
+  .cosmic .bg-blue-50 .text-blue-800,
+  .cosmic .bg-green-50 .text-green-800,
+  .cosmic .bg-purple-50 .text-purple-800 {
+    color: hsl(0 0% 10%) !important;
+  }
+
+  .cosmic .bg-gray-50 .text-blue-200,
+  .cosmic .bg-gray-50 .text-green-200,
+  .cosmic .bg-gray-50 .text-purple-200,
+  .cosmic .bg-blue-50 .text-blue-200,
+  .cosmic .bg-green-50 .text-green-200,
+  .cosmic .bg-purple-50 .text-purple-200 {
+    color: hsl(0 0% 15%) !important;
   }
 
   /* Космічна тема - допоміжні кнопки темно-фіолетові */
@@ -201,13 +220,13 @@
     background-color: #3C2780 !important;
   }
 
-  /* Космічна тема - контрастні кольори для тексту на світлому фоні */
+  /* Космічна тема - додаткові кольори ТАКІ Ж ЯК У ТЕМНІЙ ТЕМІ */
   .cosmic .text-gray-300 {
-    color: hsl(0 0% 10%) !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .cosmic .text-gray-400 {
-    color: hsl(0 0% 15%) !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .cosmic .bg-gray-700 {
