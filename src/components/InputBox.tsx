@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import VoiceDictation from './VoiceDictation';
+import VoiceDictationSelector from './VoiceDictationSelector';
 
 interface InputBoxProps {
   value: string;
@@ -109,7 +109,7 @@ const InputBox: React.FC<InputBoxProps> = ({
           </svg>
         </button>
         {/* Кнопка диктовки - завжди видима */}
-        <VoiceDictation 
+        <VoiceDictationSelector 
           onTextReceived={handleDictation}
           disabled={loading || disabled}
         />
