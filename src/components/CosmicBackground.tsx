@@ -10,7 +10,7 @@ export default function CosmicBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 -z-10 bg-black">
+    <div className="fixed inset-0 z-0 bg-black">
       {/* Космічний туман */}
       <div
         className="absolute inset-0 opacity-40"
