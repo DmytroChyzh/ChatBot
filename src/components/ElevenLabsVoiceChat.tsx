@@ -111,7 +111,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
         console.log('Connected to ElevenLabs');
         setIsConnected(true);
         
-        // Send initial configuration
+        // Send initial configuration - правильний формат для ElevenLabs
         ws.send(JSON.stringify({
           type: 'conversation_initiation_client_finalized',
           conversation_config_override: {
@@ -126,33 +126,51 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
                 voice_id: VOICE_ID,
                 stability: 0.5,
                 similarity_boost: 0.8
-              }
+              },
+              language: language === 'uk' ? 'uk' : 'en'
             }
           }
         }));
+        
+        console.log('ElevenLabs: Initial configuration sent');
       };
       
       ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log('ElevenLabs message:', data);
-        
-        switch (data.type) {
-          case 'audio':
-            // Play received audio
-            playAudio(data.audio);
-            break;
-          case 'agent_response':
-            // Handle text response
-            if (data.response && onResponse) {
-              onResponse(data.response);
-            }
-            break;
-          case 'user_transcript':
-            // Handle user transcript
-            if (data.transcript && onTranscript) {
-              onTranscript(data.transcript);
-            }
-            break;
+        try {
+          const data = JSON.parse(event.data);
+          console.log('ElevenLabs message:', data);
+          
+          switch (data.type) {
+            case 'audio':
+              // Play received audio
+              if (data.audio) {
+                playAudio(data.audio);
+              }
+              break;
+            case 'agent_response':
+              // Handle text response
+              if (data.response && onResponse) {
+                onResponse(data.response);
+              }
+              break;
+            case 'user_transcript':
+              // Handle user transcript
+              if (data.transcript && onTranscript) {
+                onTranscript(data.transcript);
+              }
+              break;
+            case 'conversation_initiation_server_finalized':
+              console.log('ElevenLabs: Server configuration received');
+              break;
+            case 'error':
+              console.error('ElevenLabs error:', data.error);
+              setError(`ElevenLabs помилка: ${data.error}`);
+              break;
+            default:
+              console.log('ElevenLabs: Unknown message type:', data.type);
+          }
+        } catch (error) {
+          console.error('ElevenLabs: Error parsing message:', error);
         }
       };
       
@@ -164,9 +182,13 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
         setIsConnected(false);
       };
       
-      ws.onclose = () => {
-        console.log('ElevenLabs WebSocket closed');
+      ws.onclose = (event) => {
+        console.log('ElevenLabs WebSocket closed:', event.code, event.reason);
         setIsConnected(false);
+        
+        if (event.code !== 1000) {
+          setError(`З'єднання закрито з кодом: ${event.code}. ${event.reason || 'Невідома причина'}`);
+        }
       };
       
       websocketRef.current = ws;
