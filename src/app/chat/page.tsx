@@ -21,6 +21,7 @@ import TeamUploader from '../../components/TeamUploader';
 import { analyzeConversationType, shouldShowProjectCard, shouldShowEstimate } from '../../utils/conversationAnalyzer';
 import { searchTeam, getTeamMember, getAllTeamMembers } from '../../utils/teamSearch';
 import { getRealEstimation, calculateAdjustedPrice, getAdjustedTimeline, getAdjustedTeamSize } from '../../utils/realEstimations';
+import { calculateRealisticEstimation, generateCompanyBasedPhases } from '../../utils/companyEstimations';
 import { getContactPersonForProject, getContactEmailForProject, getDesignersForProject } from '../../utils/teamUtils';
 
 
@@ -704,12 +705,20 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           specialRequirements.push('Преміум');
         }
 
-        // Отримуємо реальний естімейт з бази даних
+        // Отримуємо реальний естімейт з бази даних компанії
+        const companyEstimation = calculateRealisticEstimation(projectType, complexity, features, specialRequirements);
+        
+        // Також отримуємо старий естімейт для fallback
         const realEstimation = getRealEstimation(projectType, complexity);
         
-        if (realEstimation) {
-          // Розраховуємо скориговану ціну на основі додаткових функцій
-          const adjustedPrice = calculateAdjustedPrice(realEstimation, features, specialRequirements);
+        if (companyEstimation) {
+          // Використовуємо нові дані з компанії
+          const adjustedPrice = {
+            minHours: companyEstimation.minHours,
+            maxHours: companyEstimation.maxHours,
+            minPrice: companyEstimation.minPrice,
+            maxPrice: companyEstimation.maxPrice
+          };
           
           // Звужуємо діапазон з кожним кроком
           const narrowingFactor = Math.max(0.1, 1 - (estimateStep * 0.15)); // Звужуємо на 15% за крок
@@ -729,8 +738,8 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             contactEmail: getContactEmailForProject(projectType)
           };
 
-          // Визначаємо фази з детальною інформацією
-          const phases = generateDetailedPhases(projectType, complexity, currentRange.min, currentRange.max, adjustedPrice.minPrice, adjustedPrice.maxPrice);
+          // Визначаємо фази з детальною інформацією на основі даних компанії
+          const phases = generateCompanyBasedPhases(projectType, complexity, adjustedPrice.minHours, adjustedPrice.maxHours, adjustedPrice.minPrice, adjustedPrice.maxPrice, language);
 
           const estimate: ProjectEstimate = {
             currentRange,
@@ -760,7 +769,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
               contactPerson: getContactPersonForProject(projectType),
               contactEmail: getContactEmailForProject(projectType)
             },
-            phases: generateDetailedPhases(projectType, complexity, 100, 200, 2250, 4500)
+            phases: generateCompanyBasedPhases(projectType, complexity, 100, 200, 2250, 4500, language)
           };
           setProjectEstimate(fallbackEstimate);
         }
