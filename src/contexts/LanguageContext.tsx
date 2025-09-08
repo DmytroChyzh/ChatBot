@@ -21,6 +21,7 @@ const translations = {
     'header.clearSession': 'Clear session',
     'header.lightTheme': 'Light theme',
     'header.darkTheme': 'Dark theme',
+    'header.cosmicTheme': 'Cosmic theme',
     
     // Contact Form
     'contact.title': 'Assistant',
@@ -106,6 +107,7 @@ const translations = {
     'header.clearSession': 'Очистити сесію',
     'header.lightTheme': 'Світла тема',
     'header.darkTheme': 'Темна тема',
+    'header.cosmicTheme': 'Космічна тема',
     
     // Contact Form
     'contact.title': 'Асистент',

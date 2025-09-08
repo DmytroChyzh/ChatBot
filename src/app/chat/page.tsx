@@ -14,6 +14,7 @@ import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
 import ChatWindow from '../../components/ChatWindow';
+import CosmicBackground from '../../components/CosmicBackground';
 
 import { analyzeConversationType, shouldShowProjectCard } from '../../utils/conversationAnalyzer';
 import { searchTeam } from '../../utils/teamSearch';
@@ -913,6 +914,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   if (!contactSubmitted) {
     return (
       <div className="h-screen w-full bg-background font-sans overflow-hidden">
+        {theme === 'cosmic' && <CosmicBackground />}
         <Header 
           theme={theme} 
           toggleTheme={toggleTheme} 
@@ -976,6 +978,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
 
   return (
     <div className="h-screen w-full bg-background font-sans overflow-hidden">
+      {theme === 'cosmic' && <CosmicBackground />}
       {/* Header - на всю ширину екрану */}
           <Header 
             theme={theme} 

@@ -54,6 +54,36 @@
     --ring: 240 4.9% 83.9%;
     --input-bg: 0 0% 16%;
   }
+
+  .cosmic {
+    --background: 0 0% 0%;
+    --header-bg: 0 0% 5%;
+    
+    /* Custom header color for cosmic theme */
+    .header-cosmic {
+      background-color: rgba(46, 2, 109, 0.8) !important;
+      backdrop-filter: blur(10px);
+    }
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --input-bg: 0 0% 16%;
+  }
 }
 
 @layer base {
