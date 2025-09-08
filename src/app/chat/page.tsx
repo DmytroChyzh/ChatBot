@@ -744,8 +744,17 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           };
 
           // Визначаємо фази з детальною інформацією на основі даних компанії
-          const phases = generateCompanyBasedPhases(projectType, complexity, adjustedPrice.minHours, adjustedPrice.maxHours, adjustedPrice.minPrice, adjustedPrice.maxPrice, language);
-          console.log('Generated phases:', phases);
+          const phasesData = generateCompanyBasedPhases(projectType, complexity, adjustedPrice.minHours, adjustedPrice.maxHours, adjustedPrice.minPrice, adjustedPrice.maxPrice, language);
+          console.log('Generated phases:', phasesData);
+          
+          // Створюємо фази з описами для відображення
+          const phases = {
+            research: phasesData.research,
+            wireframing: phasesData.wireframing,
+            design: phasesData.design,
+            prototyping: phasesData.prototyping,
+            testing: phasesData.testing
+          };
 
           const estimate: ProjectEstimate = {
             currentRange,
@@ -755,7 +764,8 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             estimatedAt: new Date(),
             timeline,
             team,
-            phases
+            phases,
+            phaseDescriptions: phasesData.descriptions
           };
 
           console.log('Setting real estimate from database:', estimate);
@@ -775,7 +785,20 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
               contactPerson: getContactPersonForProject(projectType),
               contactEmail: getContactEmailForProject(projectType)
             },
-            phases: generateCompanyBasedPhases(projectType, complexity, 100, 200, 2250, 4500, language)
+            phases: (() => {
+              const fallbackPhasesData = generateCompanyBasedPhases(projectType, complexity, 100, 200, 2250, 4500, language);
+              return {
+                research: fallbackPhasesData.research,
+                wireframing: fallbackPhasesData.wireframing,
+                design: fallbackPhasesData.design,
+                prototyping: fallbackPhasesData.prototyping,
+                testing: fallbackPhasesData.testing
+              };
+            })(),
+            phaseDescriptions: (() => {
+              const fallbackPhasesData = generateCompanyBasedPhases(projectType, complexity, 100, 200, 2250, 4500, language);
+              return fallbackPhasesData.descriptions;
+            })()
           };
           setProjectEstimate(fallbackEstimate);
         }

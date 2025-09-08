@@ -29,6 +29,13 @@ export interface ProjectEstimate {
     prototyping: string;
     testing: string;
   };
+  phaseDescriptions?: {
+    research: string;
+    wireframing: string;
+    design: string;
+    prototyping: string;
+    testing: string;
+  };
 }
 
 // Нові типи для розширеної функціональності

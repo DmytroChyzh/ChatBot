@@ -167,6 +167,13 @@ export function generateCompanyBasedPhases(
   design: string;
   prototyping: string;
   testing: string;
+  descriptions: {
+    research: string;
+    wireframing: string;
+    design: string;
+    prototyping: string;
+    testing: string;
+  };
 } {
   const patterns = getEstimationPatterns();
   const isUkrainian = language === 'uk';
@@ -192,6 +199,9 @@ export function generateCompanyBasedPhases(
     testing: Math.round(avgPrice * patterns.phase_distribution.testing)
   };
   
+  // Generate detailed descriptions based on project type and complexity
+  const descriptions = generatePhaseDescriptions(projectType, complexity, isUkrainian);
+  
   return {
     research: isUkrainian 
       ? `🔍 Дослідження та аналіз (${hoursDistribution.research} год, $${priceDistribution.research})`
@@ -211,8 +221,112 @@ export function generateCompanyBasedPhases(
     
     testing: isUkrainian 
       ? `🧪 Тестування та оптимізація (${hoursDistribution.testing} год, $${priceDistribution.testing})`
-      : `🧪 Testing & Optimization (${hoursDistribution.testing}h, $${priceDistribution.testing})`
+      : `🧪 Testing & Optimization (${hoursDistribution.testing}h, $${priceDistribution.testing})`,
+    
+    descriptions
   };
+}
+
+/**
+ * Generate detailed descriptions for each phase based on project type and complexity
+ */
+function generatePhaseDescriptions(projectType: string, complexity: string, isUkrainian: boolean) {
+  const baseDescriptions = {
+    research: isUkrainian 
+      ? "Аналіз цільової аудиторії, конкурентів та ринку. Дослідження потреб користувачів, створення персон, аналіз бізнес-вимог та технічних обмежень."
+      : "Target audience analysis, competitor research, market analysis. User needs research, persona creation, business requirements analysis, and technical constraints study.",
+    
+    wireframing: isUkrainian 
+      ? "Створення інформаційної архітектури, карта сайту, низько-деталізовані макети (wireframes), планування навігації та структури контенту."
+      : "Information architecture creation, site map, low-fidelity wireframes, navigation planning, and content structure design.",
+    
+    design: isUkrainian 
+      ? "Створення візуального стилю, дизайн-система, високо-деталізовані макети (mockups), адаптивний дизайн для різних пристроїв, UI компоненти."
+      : "Visual style creation, design system, high-fidelity mockups, responsive design for different devices, UI components.",
+    
+    prototyping: isUkrainian 
+      ? "Створення інтерактивних прототипів для тестування користувацького досвіду, демонстрації функціональності та валідації дизайн-рішень."
+      : "Interactive prototype creation for user experience testing, functionality demonstration, and design validation.",
+    
+    testing: isUkrainian 
+      ? "Юзабіліті тестування, збір зворотного зв'язку, ітерації на основі результатів тестування, фінальна оптимізація дизайну."
+      : "Usability testing, feedback collection, iterations based on testing results, final design optimization."
+  };
+
+  // Customize descriptions based on project type
+  if (projectType === 'e-commerce') {
+    return {
+      research: isUkrainian 
+        ? "Аналіз цільової аудиторії, дослідження конкурентів в e-commerce, аналіз товарного каталогу, дослідження процесів покупки та конверсії."
+        : "Target audience analysis, e-commerce competitor research, product catalog analysis, purchase process and conversion research.",
+      
+      wireframing: isUkrainian 
+        ? "Створення структури каталогу товарів, планування корзини та процесу оформлення замовлення, карта сайту для інтернет-магазину."
+        : "Product catalog structure creation, shopping cart and checkout process planning, e-commerce site map.",
+      
+      design: isUkrainian 
+        ? "Дизайн каталогу товарів, сторінки товару, корзини, оформлення замовлення, особистого кабінету, адаптивний дизайн для мобільних пристроїв."
+        : "Product catalog design, product pages, shopping cart, checkout, user account, responsive design for mobile devices.",
+      
+      prototyping: isUkrainian 
+        ? "Інтерактивні прототипи процесу покупки, тестування корзини та оформлення замовлення, демонстрація функціональності магазину."
+        : "Interactive purchase process prototypes, cart and checkout testing, store functionality demonstration.",
+      
+      testing: isUkrainian 
+        ? "Тестування процесу покупки, аналіз конверсії, оптимізація користувацького досвіду в e-commerce, A/B тестування ключових сторінок."
+        : "Purchase process testing, conversion analysis, e-commerce UX optimization, A/B testing of key pages."
+    };
+  }
+
+  if (projectType === 'dashboard') {
+    return {
+      research: isUkrainian 
+        ? "Аналіз бізнес-процесів, дослідження потреб користувачів дашборду, аналіз даних та метрик, визначення ключових показників ефективності (KPI)."
+        : "Business process analysis, dashboard user needs research, data and metrics analysis, key performance indicators (KPI) definition.",
+      
+      wireframing: isUkrainian 
+        ? "Створення інформаційної архітектури дашборду, планування розташування віджетів, структура навігації між розділами."
+        : "Dashboard information architecture creation, widget layout planning, navigation structure between sections.",
+      
+      design: isUkrainian 
+        ? "Дизайн інтерфейсу дашборду, створення віджетів та графіків, дизайн-система для адміністративних панелей, темна/світла тема."
+        : "Dashboard interface design, widget and chart creation, administrative panel design system, dark/light theme.",
+      
+      prototyping: isUkrainian 
+        ? "Інтерактивні прототипи дашборду з робочими графіками, демонстрація фільтрації даних та взаємодії з віджетами."
+        : "Interactive dashboard prototypes with working charts, data filtering demonstration, and widget interaction.",
+      
+      testing: isUkrainian 
+        ? "Тестування з бізнес-користувачами, валідація ефективності відображення даних, оптимізація швидкості сприйняття інформації."
+        : "Business user testing, data display effectiveness validation, information perception speed optimization."
+    };
+  }
+
+  if (projectType === 'web-app') {
+    return {
+      research: isUkrainian 
+        ? "Аналіз функціональних вимог, дослідження користувацьких сценаріїв, аналіз інтеграцій з зовнішніми сервісами, технічні обмеження."
+        : "Functional requirements analysis, user scenario research, external service integration analysis, technical constraints.",
+      
+      wireframing: isUkrainian 
+        ? "Створення детальної інформаційної архітектури, планування користувацьких потоків, макети всіх екранів та функцій."
+        : "Detailed information architecture creation, user flow planning, all screens and functions wireframes.",
+      
+      design: isUkrainian 
+        ? "Повний дизайн інтерфейсу веб-додатку, створення дизайн-системи, адаптивний дизайн, анімації та мікро-взаємодії."
+        : "Complete web application interface design, design system creation, responsive design, animations and micro-interactions.",
+      
+      prototyping: isUkrainian 
+        ? "Повнофункціональні прототипи з усіма інтерактивними елементами, демонстрація робочих процесів та інтеграцій."
+        : "Full-featured prototypes with all interactive elements, working processes and integrations demonstration.",
+      
+      testing: isUkrainian 
+        ? "Комплексне тестування користувацького досвіду, тестування продуктивності, валідація всіх функцій та інтеграцій."
+        : "Comprehensive user experience testing, performance testing, all functions and integrations validation."
+    };
+  }
+
+  return baseDescriptions;
 }
 
 /**

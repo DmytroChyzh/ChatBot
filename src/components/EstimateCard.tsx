@@ -31,6 +31,13 @@ interface EstimateCardProps {
       prototyping: string;
       testing: string;
     };
+    phaseDescriptions?: {
+      research: string;
+      wireframing: string;
+      design: string;
+      prototyping: string;
+      testing: string;
+    };
   };
   estimateStep: number;
   conversationType: 'general' | 'project' | 'estimate';
@@ -246,9 +253,11 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 {expandedPhase === phaseKey && (
                   <div className="px-3 pb-3 border-t border-gray-200 dark:border-gray-600">
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                      {language === 'uk' 
-                        ? 'Детальний опис етапу буде надано під час роботи над проектом.'
-                        : 'Detailed stage description will be provided during project work.'
+                      {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
+                        (language === 'uk' 
+                          ? 'Детальний опис етапу буде надано під час роботи над проектом.'
+                          : 'Detailed stage description will be provided during project work.'
+                        )
                       }
                     </p>
                   </div>
