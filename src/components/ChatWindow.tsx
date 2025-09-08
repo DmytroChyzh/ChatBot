@@ -1,7 +1,6 @@
 import React, { RefObject } from 'react';
 import Image from 'next/image';
 import ChatMessage from './ChatMessage';
-import VoiceChat from './VoiceChat';
 
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -16,10 +15,6 @@ interface ChatWindowProps {
   paddingBottom?: number;
   conversationType: 'general' | 'project' | 'estimate';
   estimateStep: number;
-  // Voice chat props
-  onVoiceMessage?: (text: string) => void;
-  lastAIResponse?: string;
-  isVoiceChatActive?: boolean;
 }
 
 const MESSAGE_CONTAINER_PADDING = 32; // padding like in InputBox
@@ -34,10 +29,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   messagesEndRef, 
   paddingBottom,
   conversationType,
-  estimateStep,
-  onVoiceMessage,
-  lastAIResponse,
-  isVoiceChatActive = false
+  estimateStep
 }) => {
   const { t, language } = useLanguage();
   const { theme } = useTheme();
@@ -52,16 +44,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       paddingBottom: paddingBottom ? `${paddingBottom}px` : undefined,
     }}
   >
-    {/* Voice Chat Button - Fixed position in top right - only show when voice chat is active */}
-    {onVoiceMessage && isVoiceChatActive && (
-      <div className="fixed top-4 right-4 z-50">
-        <VoiceChat 
-          onVoiceMessage={onVoiceMessage}
-          lastAIResponse={lastAIResponse}
-          disabled={isLoading}
-        />
-      </div>
-    )}
     <div style={{ width: '100%', maxWidth: MAX_WIDTH, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
       {session?.messages.length === 0 && (
         <div className="text-center py-12 w-full">

@@ -15,7 +15,6 @@ import Image from 'next/image';
 import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
-import VoiceTest from '../../components/VoiceTest';
 import ChatWindow from '../../components/ChatWindow';
 import TeamUploader from '../../components/TeamUploader';
 
@@ -100,9 +99,6 @@ export default function ChatPage() {
   const [projectEstimate, setProjectEstimate] = useState<ProjectEstimate | null>(null);
 
   
-  // Voice states
-  const [isVoiceActive, setIsVoiceActive] = useState(false);
-  const [isVoiceChatActive, setIsVoiceChatActive] = useState(false);
   
   // Get last AI response for speech synthesis
   const getLastAIResponse = () => {
@@ -547,21 +543,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
     return teamKeywords.some(keyword => lowerQuestion.includes(keyword));
   };
 
-  // Voice functions
-  const handleVoiceMessage = (text: string) => {
-    setInput(text);
-    // Автоматично надсилаємо голосове повідомлення
-    if (text.trim()) {
-      // Використовуємо handleSubmit замість handleSendMessage
-      handleSubmit({ preventDefault: () => {} } as React.FormEvent);
-      setInput(''); // Очищуємо інпут одразу після відправки
-    }
-  };
-
-  const handleToggleVoiceChat = () => {
-    setIsVoiceChatActive(!isVoiceChatActive);
-    console.log('Voice chat toggled:', !isVoiceChatActive);
-  };
 
 
   // Функції для визначення команди та контактів (тепер імпортуються з teamUtils.ts)
@@ -1013,10 +994,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
          <TeamUploader />
        </div>
        
-       {/* Voice Test - для діагностики */}
-       <div className="px-4 py-2 bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800">
-         <VoiceTest />
-       </div>
       
       {/* Main Content Area - під хедером */}
       <div className="flex w-full h-full" style={{ marginTop: '96px', height: 'calc(100vh - 96px)' }}> 
@@ -1033,9 +1010,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                 messagesEndRef={messagesEndRef}
                 conversationType={conversationType}
                 estimateStep={estimateStep}
-                onVoiceMessage={handleVoiceMessage}
-                lastAIResponse={getLastAIResponse()}
-                isVoiceChatActive={isVoiceChatActive}
               />
             </div>
             <div className="w-full flex justify-center">
@@ -1047,8 +1021,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                   loading={isLoading}
                   disabled={isProjectComplete}
                   projectComplete={isProjectComplete}
-                  isVoiceChatActive={isVoiceChatActive}
-                  onToggleVoiceChat={handleToggleVoiceChat}
                 />
               </div>
             </div>
