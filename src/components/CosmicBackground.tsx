@@ -64,11 +64,9 @@ export default function CosmicBackground() {
             },
             opacity: {
               value: 0.8,
-              random: true,
             },
             size: {
               value: 2,
-              random: true,
             },
             move: {
               enable: true,
