@@ -108,45 +108,11 @@ const InputBox: React.FC<InputBoxProps> = ({
             <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
           </svg>
         </button>
-        {/* Кнопка перемикання голосового режиму */}
-        {onToggleVoiceMode && (
-          <button
-            type="button"
-            onClick={onToggleVoiceMode}
-            disabled={loading || disabled}
-            className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 ${
-              isVoiceModeActive 
-                ? 'bg-purple-500 hover:bg-purple-600 text-white' 
-                : 'bg-gray-200 hover:bg-gray-300 text-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300'
-            }`}
-            title={isVoiceModeActive ? 'Вимкнути голосовий режим' : 'Увімкнути голосовий режим'}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 2v4m-6 4V6m12 4V6"/>
-              <rect x="3" y="11" width="18" height="10" rx="4"/>
-              <circle cx="7.5" cy="16" r="1.5"/>
-              <circle cx="16.5" cy="16" r="1.5"/>
-            </svg>
-          </button>
-        )}
-
-        {/* Кнопка диктовки - показуємо тільки якщо голосовий режим активний */}
-        {isVoiceModeActive && (
-          <VoiceDictation 
-            onTextReceived={handleDictation}
-            disabled={loading || disabled}
-          />
-        )}
+        {/* Кнопка диктовки - завжди видима */}
+        <VoiceDictation 
+          onTextReceived={handleDictation}
+          disabled={loading || disabled}
+        />
       </div>
     </div>
   );

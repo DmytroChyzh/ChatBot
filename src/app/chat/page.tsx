@@ -101,7 +101,6 @@ export default function ChatPage() {
   
   // Voice states
   const [isVoiceActive, setIsVoiceActive] = useState(false);
-  const [isVoiceModeActive, setIsVoiceModeActive] = useState(false);
   
   // Get last AI response for speech synthesis
   const getLastAIResponse = () => {
@@ -557,10 +556,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
     }
   };
 
-  const handleToggleVoiceMode = () => {
-    setIsVoiceModeActive(!isVoiceModeActive);
-    console.log('Voice mode toggled:', !isVoiceModeActive);
-  };
 
   // Функції для визначення команди та контактів (тепер імпортуються з teamUtils.ts)
   
@@ -1039,8 +1034,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                   loading={isLoading}
                   disabled={isProjectComplete}
                   projectComplete={isProjectComplete}
-                  isVoiceModeActive={isVoiceModeActive}
-                  onToggleVoiceMode={handleToggleVoiceMode}
                 />
               </div>
             </div>

@@ -160,7 +160,7 @@ const VoiceDictation: React.FC<VoiceDictationProps> = ({
         className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 ${
           isListening 
             ? 'bg-red-500 text-white animate-pulse' 
-            : 'bg-blue-500 hover:bg-blue-600 text-white'
+            : 'bg-green-500 hover:bg-green-600 text-white'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         title={
           isListening 
