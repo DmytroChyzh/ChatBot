@@ -109,6 +109,7 @@ const InputBox: React.FC<InputBoxProps> = ({
         {/* Альтернативний голосовий чат (Web Speech API) */}
         <AlternativeVoiceChat 
           disabled={loading || disabled}
+          onTranscript={onChange}
         />
       </div>
     </div>

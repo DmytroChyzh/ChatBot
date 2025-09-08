@@ -6,11 +6,13 @@ import { useLanguage } from '../contexts/LanguageContext';
 interface AlternativeVoiceChatProps {
   disabled?: boolean;
   className?: string;
+  onTranscript?: (text: string) => void;
 }
 
 const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({ 
   disabled = false,
-  className = ""
+  className = "",
+  onTranscript
 }) => {
   const { language } = useLanguage();
   const [isListening, setIsListening] = useState(false);
@@ -58,13 +60,10 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
         console.log('Speech recognized:', transcript);
         setTranscript(transcript);
         
-        // Автоматично відправляємо розпізнаний текст
-        if (transcript.trim()) {
-          // Тут можна додати логіку для відправки повідомлення
-          console.log('Sending message:', transcript);
-          
-          // Озвучуємо відповідь
-          speakResponse(`Ви сказали: ${transcript}`);
+        // Передаємо розпізнаний текст в батьківський компонент
+        if (transcript.trim() && onTranscript) {
+          onTranscript(transcript);
+          console.log('Transcript sent to parent:', transcript);
         }
       };
 
