@@ -139,6 +139,11 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
             }
           }
           
+          // Clear the input field after sending message
+          if (onTranscript) {
+            onTranscript(''); // Clear the input
+          }
+          
           // Process with OpenAI
           processWithOpenAI(finalTranscript);
         }
