@@ -210,7 +210,7 @@
       },
       "totals": {
         "total_hours": 450,
-        "estimated_cost": 18000,
+        "total_cost": 18000,
         "timeline_weeks": 12,
         "team_size": 2
       },
