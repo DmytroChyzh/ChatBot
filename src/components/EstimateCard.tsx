@@ -93,7 +93,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md bg-white dark:bg-gray-800 cosmic:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 cosmic:border-gray-700 overflow-hidden flex flex-col estimate-card-scrollbar">
+    <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col estimate-card-scrollbar">
       {/* Заголовок */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-4">
         <div className="flex items-center gap-3">

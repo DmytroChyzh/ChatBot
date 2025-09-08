@@ -108,11 +108,11 @@
   }
 
   /* Космічна тема - картка */
-  .cosmic .cosmic\:bg-gray-800 {
+  .cosmic .bg-white {
     background-color: hsl(var(--card)) !important;
   }
 
-  .cosmic .cosmic\:border-gray-700 {
+  .cosmic .border-gray-200 {
     border-color: hsl(var(--border)) !important;
   }
 
