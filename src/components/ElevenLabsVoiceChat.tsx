@@ -30,7 +30,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
   const animationFrameRef = useRef<number | null>(null);
   const [audioLevel, setAudioLevel] = useState(0);
 
-  const ELEVENLABS_API_KEY = 'sk_61908dfd38eb151e87df080ede12f8b12f03232fa79048c4';
+  const ELEVENLABS_API_KEY = process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY || 'sk_61908dfd38eb151e87df080ede12f8b12f03232fa79048c4';
   const VOICE_ID = 'pNInz6obpgDQGcFmaJgB'; // Adam voice (default)
 
   useEffect(() => {
@@ -91,16 +91,20 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
   const connectToElevenLabs = async () => {
     try {
       setError(null);
+      console.log('ElevenLabs: Starting connection...');
+      console.log('ElevenLabs: API Key present:', !!ELEVENLABS_API_KEY);
+      console.log('ElevenLabs: API Key length:', ELEVENLABS_API_KEY?.length);
       
       // Get microphone access
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      console.log('Microphone access granted');
+      console.log('ElevenLabs: Microphone access granted');
       
       // Setup audio analysis for visualization
       await setupAudioAnalysis(stream);
       
       // Create WebSocket connection to ElevenLabs
       const wsUrl = `wss://api.elevenlabs.io/v1/convai/conversation?key=${ELEVENLABS_API_KEY}`;
+      console.log('ElevenLabs: Connecting to:', wsUrl);
       const ws = new WebSocket(wsUrl);
       
       ws.onopen = () => {
@@ -154,7 +158,9 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
       
       ws.onerror = (error) => {
         console.error('ElevenLabs WebSocket error:', error);
-        setError('Помилка підключення до ElevenLabs');
+        console.error('ElevenLabs: WebSocket URL was:', wsUrl);
+        console.error('ElevenLabs: API Key present:', !!ELEVENLABS_API_KEY);
+        setError('Помилка підключення до ElevenLabs. Перевірте API ключ та мережу.');
         setIsConnected(false);
       };
       
@@ -209,6 +215,11 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
   const startVoiceChat = async () => {
     if (disabled || isConnected) return;
     
+    if (!ELEVENLABS_API_KEY) {
+      setError('API ключ ElevenLabs не знайдено. Перевірте змінні середовища.');
+      return;
+    }
+    
     try {
       await connectToElevenLabs();
     } catch (error) {
@@ -255,7 +266,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
             ? isListening
               ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
               : 'bg-green-500 hover:bg-green-600 text-white'
-            : 'bg-blue-500 hover:bg-blue-600 text-white'
+            : 'bg-purple-500 hover:bg-purple-600 text-white'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         title={
           isConnected
@@ -280,10 +291,9 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
           )
         ) : (
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            <line x1="12" y1="19" x2="12" y2="23"/>
-            <line x1="8" y1="23" x2="16" y2="23"/>
+            <path d="M9 18V5l12-2v13"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="16" r="3"/>
           </svg>
         )}
       </button>
