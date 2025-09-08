@@ -1,13 +1,23 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import Particles from "@tsparticles/react";
+import { loadSlim } from "@tsparticles/slim";
+import type { Container, Engine } from "@tsparticles/engine";
 
 export default function CosmicBackground() {
   useEffect(() => {
     document.body.style.background =
       "radial-gradient(circle at 20% 20%, #2e026d, #000000 70%)";
     document.body.style.overflow = "hidden";
+  }, []);
+
+  const particlesInit = useCallback(async (engine: Engine) => {
+    await loadSlim(engine);
+  }, []);
+
+  const particlesLoaded = useCallback(async (container: Container | undefined) => {
+    console.log("Particles loaded:", container);
   }, []);
 
   return (
@@ -27,6 +37,8 @@ export default function CosmicBackground() {
       {/* Зорі */}
       <Particles
         id="tsparticles"
+        init={particlesInit}
+        loaded={particlesLoaded}
         options={{
           particles: {
             number: {
