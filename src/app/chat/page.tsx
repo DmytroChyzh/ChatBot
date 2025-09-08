@@ -763,8 +763,10 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           };
 
           // Визначаємо фази з детальною інформацією на основі даних компанії
-          const phasesData = generateCompanyBasedPhases(projectType, complexity, adjustedPrice.minHours, adjustedPrice.maxHours, adjustedPrice.minPrice, adjustedPrice.maxPrice, language);
-          console.log('Generated phases:', phasesData);
+          // Використовуємо скориговані ціни з uncertaintyFactor для фаз
+          const phasesData = generateCompanyBasedPhases(projectType, complexity, adjustedPrice.minHours, adjustedPrice.maxHours, currentRange.min, currentRange.max, language);
+          console.log('Generated phases with uncertainty factor:', phasesData);
+          console.log('Phase costs should sum to approximately:', currentRange.min, '-', currentRange.max);
           
           // Створюємо фази з описами для відображення
           const phases = {
@@ -792,8 +794,26 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         } else {
           console.log('No real estimation found for:', projectType, complexity);
           // Fallback to default estimation if no real data found
+          // Застосовуємо uncertainty factor і для fallback
+          let fallbackUncertaintyFactor;
+          if (estimateStep === 2) {
+            fallbackUncertaintyFactor = 3.0;
+          } else if (estimateStep === 3) {
+            fallbackUncertaintyFactor = 2.0;
+          } else if (estimateStep === 4) {
+            fallbackUncertaintyFactor = 1.5;
+          } else {
+            fallbackUncertaintyFactor = 1.0;
+          }
+          
+          const fallbackBasePrice = { min: 2250, max: 4500 };
+          const fallbackCurrentRange = {
+            min: Math.round(fallbackBasePrice.min * fallbackUncertaintyFactor),
+            max: Math.round(fallbackBasePrice.max * fallbackUncertaintyFactor)
+          };
+          
           const fallbackEstimate: ProjectEstimate = {
-            currentRange: { min: 100, max: 300 },
+            currentRange: fallbackCurrentRange,
             initialRange: { min: 100, max: 300 },
             currency: 'USD',
             confidence: 'low',
@@ -805,7 +825,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
               contactEmail: getContactEmailForProject(projectType)
             },
             phases: (() => {
-              const fallbackPhasesData = generateCompanyBasedPhases(projectType, complexity, 100, 200, 2250, 4500, language);
+              const fallbackPhasesData = generateCompanyBasedPhases(projectType, complexity, 100, 200, fallbackCurrentRange.min, fallbackCurrentRange.max, language);
               return {
                 research: fallbackPhasesData.research,
                 wireframing: fallbackPhasesData.wireframing,
@@ -815,7 +835,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
               };
             })(),
             phaseDescriptions: (() => {
-              const fallbackPhasesData = generateCompanyBasedPhases(projectType, complexity, 100, 200, 2250, 4500, language);
+              const fallbackPhasesData = generateCompanyBasedPhases(projectType, complexity, 100, 200, fallbackCurrentRange.min, fallbackCurrentRange.max, language);
               return fallbackPhasesData.descriptions;
             })()
           };
