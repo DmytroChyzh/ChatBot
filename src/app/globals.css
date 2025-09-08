@@ -154,6 +154,15 @@
     background-color: hsl(var(--muted)) !important;
   }
 
+  /* Космічна тема - допоміжні кнопки темно-фіолетові */
+  .cosmic .bg-\[\#2D225A\] {
+    background-color: #4A2C7B !important;
+  }
+
+  .cosmic .hover\:bg-\[\#3C2780\]:hover {
+    background-color: #5A3A8B !important;
+  }
+
   /* Космічна тема - додаткові кольори ТАКІ Ж ЯК У ТЕМНІЙ ТЕМІ */
   .cosmic .text-gray-300 {
     color: hsl(var(--muted-foreground)) !important;
