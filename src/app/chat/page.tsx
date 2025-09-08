@@ -8,21 +8,16 @@ import {
   subscribeToSession,
   getChatSession
 } from '../../lib/firestore';
-import ChatMessage from '../../components/ChatMessage';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import Image from 'next/image';
 import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
-import ApiKeyTest from '../../components/ApiKeyTest';
-import OpenAITest from '../../components/OpenAITest';
 import ChatWindow from '../../components/ChatWindow';
-import TeamUploader from '../../components/TeamUploader';
 
-import { analyzeConversationType, shouldShowProjectCard, shouldShowEstimate } from '../../utils/conversationAnalyzer';
-import { searchTeam, getTeamMember, getAllTeamMembers } from '../../utils/teamSearch';
-import { getRealEstimation, calculateAdjustedPrice, getAdjustedTimeline, getAdjustedTeamSize } from '../../utils/realEstimations';
+import { analyzeConversationType, shouldShowProjectCard } from '../../utils/conversationAnalyzer';
+import { searchTeam } from '../../utils/teamSearch';
+import { getRealEstimation } from '../../utils/realEstimations';
 import { calculateRealisticEstimation, generateCompanyBasedPhases } from '../../utils/companyEstimations';
 import { getContactPersonForProject, getContactEmailForProject, getDesignersForProject } from '../../utils/teamUtils';
 
@@ -991,20 +986,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         onClearSession={handleClearSession}
       />
       
-       {/* Team Uploader - тільки для адміністраторів */}
-       <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
-         <TeamUploader />
-       </div>
-       
-       {/* API Key Test - для тестування OpenAI API */}
-       <div className="px-4 py-2 bg-green-50 dark:bg-green-900/20 border-b border-green-200 dark:border-green-800">
-         <ApiKeyTest />
-       </div>
-       
-       {/* OpenAI Test - повний тест всіх API */}
-       <div className="px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-200 dark:border-orange-800">
-         <OpenAITest />
-       </div>
        
       
       {/* Main Content Area - під хедером */}
