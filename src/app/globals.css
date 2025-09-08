@@ -109,11 +109,11 @@
 
   /* Космічна тема - картка ТАКА Ж ЯК У ТЕМНІЙ ТЕМІ */
   .cosmic .bg-white {
-    background-color: hsl(var(--card)) !important;
+    background-color: #1f2937 !important;
   }
 
   .cosmic .cosmic-bg {
-    background-color: hsl(var(--card)) !important;
+    background-color: #1f2937 !important;
   }
 
   .cosmic .border-gray-200 {
