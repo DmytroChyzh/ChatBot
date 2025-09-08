@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import VoiceChat from './VoiceChat';
 import AlternativeVoiceChat from './AlternativeVoiceChat';
 
 interface InputBoxProps {
@@ -101,12 +100,7 @@ const InputBox: React.FC<InputBoxProps> = ({
           </svg>
         </button>
 
-        {/* Кнопка голосового чату (OpenAI Realtime) */}
-        <VoiceChat 
-          disabled={loading || disabled}
-        />
-
-        {/* Альтернативний голосовий чат (Web Speech API) */}
+        {/* Голосовий чат (Web Speech API) */}
         <AlternativeVoiceChat 
           disabled={loading || disabled}
           onTranscript={onChange}
