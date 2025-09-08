@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import VoicePermissionHelper from './VoicePermissionHelper';
 
 interface VoiceDictationProps {
   onTextReceived: (text: string) => void;
@@ -16,6 +17,7 @@ const VoiceDictation: React.FC<VoiceDictationProps> = ({
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPermissionHelper, setShowPermissionHelper] = useState(false);
   const recognitionRef = useRef<any>(null);
 
   // Перевіряємо підтримку браузера
@@ -66,13 +68,20 @@ const VoiceDictation: React.FC<VoiceDictationProps> = ({
             setError(language === 'uk' ? 'Не чути мови. Спробуйте ще раз.' : 'No speech detected. Please try again.');
             break;
           case 'audio-capture':
-            setError(language === 'uk' ? 'Помилка доступу до мікрофона.' : 'Microphone access error.');
+            setError(language === 'uk' ? 'Помилка доступу до мікрофона. Перевірте налаштування браузера.' : 'Microphone access error. Check browser settings.');
             break;
           case 'not-allowed':
             setError(language === 'uk' ? 'Дозвіл на мікрофон не надано.' : 'Microphone permission denied.');
+            setShowPermissionHelper(true);
+            break;
+          case 'service-not-allowed':
+            setError(language === 'uk' ? 'Сервіс розпізнавання мови заблоковано. Спробуйте HTTPS.' : 'Speech recognition service blocked. Try HTTPS.');
+            break;
+          case 'network':
+            setError(language === 'uk' ? 'Помилка мережі. Перевірте інтернет-з\'єднання.' : 'Network error. Check internet connection.');
             break;
           default:
-            setError(language === 'uk' ? 'Помилка розпізнавання мови.' : 'Speech recognition error.');
+            setError(language === 'uk' ? `Помилка розпізнавання мови: ${event.error}` : `Speech recognition error: ${event.error}`);
         }
       };
 
@@ -88,11 +97,15 @@ const VoiceDictation: React.FC<VoiceDictationProps> = ({
     if (recognitionRef.current && !disabled) {
       try {
         setError(null);
+        console.log('Starting voice dictation...');
         recognitionRef.current.start();
       } catch (error) {
         console.error('Error starting voice dictation:', error);
-        setError(language === 'uk' ? 'Не вдалося запустити диктовку.' : 'Failed to start dictation.');
+        setError(language === 'uk' ? 'Не вдалося запустити диктовку. Перевірте дозволи браузера.' : 'Failed to start dictation. Check browser permissions.');
       }
+    } else if (!recognitionRef.current) {
+      console.error('Speech recognition not initialized');
+      setError(language === 'uk' ? 'Розпізнавання мови не ініціалізовано.' : 'Speech recognition not initialized.');
     }
   };
 
@@ -198,6 +211,12 @@ const VoiceDictation: React.FC<VoiceDictationProps> = ({
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-red-500"></div>
         </div>
       )}
+
+      {/* Показуємо помічник з дозволами */}
+      <VoicePermissionHelper 
+        isVisible={showPermissionHelper}
+        onClose={() => setShowPermissionHelper(false)}
+      />
     </div>
   );
 };
