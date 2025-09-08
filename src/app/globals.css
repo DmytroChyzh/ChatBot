@@ -169,14 +169,14 @@
     background-color: hsl(0 0% 25%) !important;
   }
 
-  /* Космічна тема - темний текст для читабельності на світлому фоні */
+  /* Космічна тема - заголовки секцій БІЛІ */
   .cosmic .bg-gray-50 .text-blue-800,
   .cosmic .bg-gray-50 .text-green-800,
   .cosmic .bg-gray-50 .text-purple-800,
   .cosmic .bg-blue-50 .text-blue-800,
   .cosmic .bg-green-50 .text-green-800,
   .cosmic .bg-purple-50 .text-purple-800 {
-    color: hsl(0 0% 10%) !important;
+    color: #ffffff !important;
   }
 
   .cosmic .bg-gray-50 .text-blue-200,
@@ -185,10 +185,10 @@
   .cosmic .bg-blue-50 .text-blue-200,
   .cosmic .bg-green-50 .text-green-200,
   .cosmic .bg-purple-50 .text-purple-200 {
-    color: hsl(0 0% 15%) !important;
+    color: #ffffff !important;
   }
 
-  /* Космічна тема - всі тексти в секціях темні для читабельності */
+  /* Космічна тема - всі тексти в секціях БІЛІ для читабельності */
   .cosmic .bg-gray-50 .text-gray-700,
   .cosmic .bg-gray-50 .text-gray-600,
   .cosmic .bg-gray-50 .text-gray-500,
@@ -201,17 +201,17 @@
   .cosmic .bg-purple-50 .text-gray-700,
   .cosmic .bg-purple-50 .text-gray-600,
   .cosmic .bg-purple-50 .text-gray-500 {
-    color: hsl(0 0% 10%) !important;
+    color: #ffffff !important;
   }
 
-  /* Космічна тема - кольорові тексти в секціях */
+  /* Космічна тема - кольорові тексти в секціях БІЛІ */
   .cosmic .bg-gray-50 .text-blue-700,
   .cosmic .bg-gray-50 .text-green-700,
   .cosmic .bg-gray-50 .text-purple-700,
   .cosmic .bg-blue-50 .text-blue-700,
   .cosmic .bg-green-50 .text-green-700,
   .cosmic .bg-purple-50 .text-purple-700 {
-    color: hsl(0 0% 15%) !important;
+    color: #ffffff !important;
   }
 
   /* Космічна тема - іконки в секціях білі або оранжеві */
