@@ -706,7 +706,9 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         }
 
         // Отримуємо реальний естімейт з бази даних компанії
+        console.log('Input parameters:', { projectType, complexity, features, specialRequirements });
         const companyEstimation = calculateRealisticEstimation(projectType, complexity, features, specialRequirements);
+        console.log('Company estimation result:', companyEstimation);
         
         // Також отримуємо старий естімейт для fallback
         const realEstimation = getRealEstimation(projectType, complexity);
@@ -719,6 +721,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             minPrice: companyEstimation.minPrice,
             maxPrice: companyEstimation.maxPrice
           };
+          console.log('Adjusted price:', adjustedPrice);
           
           // Звужуємо діапазон з кожним кроком
           const narrowingFactor = Math.max(0.1, 1 - (estimateStep * 0.15)); // Звужуємо на 15% за крок
@@ -726,10 +729,11 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             min: Math.round(adjustedPrice.minPrice * (1 - narrowingFactor)),
             max: Math.round(adjustedPrice.maxPrice * (1 - narrowingFactor))
           };
+          console.log('Current range after narrowing:', currentRange, 'narrowing factor:', narrowingFactor);
 
-          // Отримуємо скоригований timeline та розмір команди
-          const timeline = getAdjustedTimeline(realEstimation, features);
-          const teamSize = getAdjustedTeamSize(realEstimation, features);
+          // Отримуємо скоригований timeline та розмір команди з нової системи
+          const timeline = companyEstimation.timeline;
+          const teamSize = companyEstimation.teamSize;
 
           // Визначаємо команду
           const team = {
@@ -740,6 +744,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
 
           // Визначаємо фази з детальною інформацією на основі даних компанії
           const phases = generateCompanyBasedPhases(projectType, complexity, adjustedPrice.minHours, adjustedPrice.maxHours, adjustedPrice.minPrice, adjustedPrice.maxPrice, language);
+          console.log('Generated phases:', phases);
 
           const estimate: ProjectEstimate = {
             currentRange,
