@@ -168,6 +168,15 @@
     background-color: #4A2C7B !important;
   }
 
+  /* Космічна тема - білий текст в допоміжних кнопках */
+  .cosmic button[class*="bg-[#2D225A]"] {
+    color: #ffffff !important;
+  }
+
+  .cosmic button[class*="text-[#6030FE]"] {
+    color: #ffffff !important;
+  }
+
   /* Космічна тема - додаткові кольори ТАКІ Ж ЯК У ТЕМНІЙ ТЕМІ */
   .cosmic .text-gray-300 {
     color: hsl(var(--muted-foreground)) !important;
