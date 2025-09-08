@@ -177,13 +177,13 @@
     color: #ffffff !important;
   }
 
-  /* Космічна тема - темніший фіолетовий для повідомлень клієнта */
+  /* Космічна тема - такий самий фіолетовий як в темній темі */
   .cosmic .bg-\[\#6030FE\] {
-    background-color: #4A2C7B !important;
+    background-color: #3C2780 !important;
   }
 
   .cosmic .dark\:bg-\[\#3C2780\] {
-    background-color: #3A1C6B !important;
+    background-color: #3C2780 !important;
   }
 
   /* Космічна тема - додаткові кольори ТАКІ Ж ЯК У ТЕМНІЙ ТЕМІ */
