@@ -85,6 +85,28 @@
     --input-bg: 0 0% 16%;
   }
 
+  /* Космічна тема - примусово темні кольори */
+  .cosmic .bg-white {
+    background-color: hsl(var(--card)) !important;
+    color: hsl(var(--card-foreground)) !important;
+  }
+
+  .cosmic .text-gray-800 {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .cosmic .text-gray-900 {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .cosmic .bg-gray-50 {
+    background-color: hsl(var(--card)) !important;
+  }
+
+  .cosmic .bg-gray-100 {
+    background-color: hsl(var(--card)) !important;
+  }
+
   /* Космічна тема - прозорий фон для анімації */
   .cosmic body {
     background: transparent !important;
