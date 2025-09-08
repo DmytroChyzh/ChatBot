@@ -32,6 +32,7 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
 
   const ELEVENLABS_API_KEY = process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY || 'sk_61908dfd38eb151e87df080ede12f8b12f03232fa79048c4';
   const VOICE_ID = 'pNInz6obpgDQGcFmaJgB'; // Adam voice (default)
+  const AGENT_ID = 'default'; // Default agent ID for ElevenLabs
 
   useEffect(() => {
     return () => {
@@ -102,10 +103,11 @@ const ElevenLabsVoiceChat: React.FC<ElevenLabsVoiceChatProps> = ({
       // Setup audio analysis for visualization
       await setupAudioAnalysis(stream);
       
-      // Create WebSocket connection to ElevenLabs
-      const wsUrl = `wss://api.elevenlabs.io/v1/convai/conversation?key=${ELEVENLABS_API_KEY}`;
-      console.log('ElevenLabs: Connecting to:', wsUrl);
-      const ws = new WebSocket(wsUrl);
+      // Try Text-to-Speech API instead of Conversational AI
+      // Conversational AI requires agent creation first
+      console.log('ElevenLabs: Using Text-to-Speech API instead of Conversational AI');
+      setError('ElevenLabs Conversational AI потребує створення агента. Використовуйте синю кнопку для голосового запису.');
+      return;
       
       ws.onopen = () => {
         console.log('Connected to ElevenLabs');
