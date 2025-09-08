@@ -398,7 +398,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
         onClick={startRecording}
         disabled={disabled || isListening}
         className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 border-0 ${
-          'bg-blue-500 hover:bg-blue-600 text-white'
+          'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         title="Натисніть щоб почати запис"
       >
