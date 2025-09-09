@@ -283,6 +283,13 @@
     background: transparent !important;
   }
 
+  /* Космічна тема - блюр ефект для хедера */
+  .cosmic header {
+    backdrop-filter: blur(12px) !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
   /* Космічні анімації */
   .cosmic .animate-pulse {
     animation: cosmic-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;

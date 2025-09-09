@@ -35,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
   }, [showLanguageDropdown]);
   
   return (
-  <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] h-24 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''} ${theme === 'dark' ? 'header-dark' : ''} ${theme === 'cosmic' ? 'header-cosmic' : ''}`}>
+  <header className={`fixed top-0 left-0 z-20 transition-all duration-300 bg-[hsl(var(--header-bg))] backdrop-blur-md bg-opacity-80 h-24 ${small ? 'w-full max-w-[calc(100vw-440px)]' : 'w-full'} ${className || ''} ${theme === 'dark' ? 'header-dark' : ''} ${theme === 'cosmic' ? 'header-cosmic' : ''}`}>
     <div className="relative w-full">
       {/* Logo */}
       
