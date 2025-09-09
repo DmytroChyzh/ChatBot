@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Message, ChatSession, ProjectEstimate } from '../../types/chat';
+import { Message, ChatSession, ProjectEstimate, ProjectCardState } from '../../types/chat';
 import { 
   createChatSession, 
   addMessageToSession, 

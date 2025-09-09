@@ -18,6 +18,7 @@ import {
   ProjectCardState, 
   Message,
   ProjectSummary,
+  ConversationType,
   ProjectEstimates,
   ResearchHighlights
 } from '../types/chat'
