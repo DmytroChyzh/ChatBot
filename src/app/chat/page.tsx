@@ -373,9 +373,26 @@ export default function ChatPage() {
       // Створюємо новий об'єкт сесії
       const newSession: ChatSession = {
         id: newSessionId,
-        contact: contact,
+        metadata: {
+          sessionId: newSessionId,
+          userId: contact.email,
+          userName: contact.name,
+          userEmail: contact.email,
+          status: 'active',
+          startedAt: new Date(),
+          totalMessages: 0,
+          lastActivity: new Date()
+        },
         messages: [],
-        projectCard: null,
+        projectCard: {
+          workerStatus: {
+            summarizer: 'idle',
+            estimator: 'idle',
+            researcher: 'idle'
+          }
+        } as ProjectCardState,
+        conversationType: 'general',
+        estimateStep: 0,
         createdAt: new Date(),
         updatedAt: new Date()
       };
