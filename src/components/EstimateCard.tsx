@@ -93,18 +93,18 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md bg-white dark:bg-gray-800 cosmic-bg rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col estimate-card-scrollbar relative z-10">
+    <div className="w-full max-w-md bg-white dark:bg-gray-800 cosmic-bg rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col estimate-card-scrollbar relative z-10 lg:max-w-md max-w-none">
       {/* Заголовок */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-            <Target className="w-6 h-6 text-white" />
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-4 lg:px-6 py-3 lg:py-4">
+        <div className="flex items-center gap-2 lg:gap-3">
+          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <Target className="w-4 h-4 lg:w-6 lg:h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white">
+            <h3 className="text-base lg:text-lg font-bold text-white">
               {language === 'uk' ? 'Естімейт Проекту' : 'Project Estimate'}
             </h3>
-            <p className="text-sm text-white/80">
+            <p className="text-xs lg:text-sm text-white/80">
               {language === 'uk' ? 'Живий розрахунок вартості' : 'Live cost calculation'}
             </p>
           </div>
@@ -112,7 +112,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
       </div>
 
       {/* Основна інформація */}
-      <div className="p-6 space-y-6 flex-1 overflow-y-auto">
+      <div className="p-4 lg:p-6 space-y-4 lg:space-y-6 flex-1 overflow-y-auto">
         {/* Діапазон цін */}
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -285,16 +285,17 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
         </div>
 
         {/* CTA кнопка та пояснення - завжди внизу */}
-        <div className="p-6 pt-0 space-y-4">
+        <div className="p-4 lg:p-6 pt-0 space-y-3 lg:space-y-4">
           <button
             onClick={() => {
               console.log('Contact manager button clicked!');
               onContactManager();
             }}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-2 lg:py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl text-sm lg:text-base"
           >
             <Phone className="w-4 h-4" />
-            {language === 'uk' ? 'Зв\'язатися з менеджером' : 'Contact Manager'}
+            <span className="hidden sm:inline">{language === 'uk' ? 'Зв\'язатися з менеджером' : 'Contact Manager'}</span>
+            <span className="sm:hidden">{language === 'uk' ? 'Зв\'язатися' : 'Contact'}</span>
           </button>
 
           {/* Пояснення */}

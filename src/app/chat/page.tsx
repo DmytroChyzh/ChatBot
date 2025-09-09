@@ -1081,11 +1081,15 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                 />
               </div>
             </div>
+            {/* Mobile spacing for estimate card */}
+            {showProjectSidebar && projectEstimate && (
+              <div className="lg:hidden h-64"></div>
+            )}
           </div>
         </div>
-        {/* Estimate Card Sidebar */}
+        {/* Estimate Card Sidebar - Desktop only */}
         {showProjectSidebar && projectEstimate && (
-          <div className="flex flex-col flex-shrink-0 w-96">
+          <div className="hidden lg:flex flex-col flex-shrink-0 w-96">
             <EstimateCard
               estimate={projectEstimate}
               estimateStep={estimateStep}
@@ -1096,6 +1100,21 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           </div>
         )}
       </div>
+
+      {/* Mobile Estimate Card - Fixed at bottom */}
+      {showProjectSidebar && projectEstimate && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-background border-t border-border">
+          <div className="max-h-64 overflow-y-auto">
+            <EstimateCard
+              estimate={projectEstimate}
+              estimateStep={estimateStep}
+              conversationType={conversationType}
+              onContactManager={handleContactManager}
+              isVisible={true}
+            />
+          </div>
+        </div>
+      )}
 
 
     </div>
