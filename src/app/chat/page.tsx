@@ -95,6 +95,7 @@ export default function ChatPage() {
   const [conversationType, setConversationType] = useState<'general' | 'project' | 'estimate'>('general');
   const [estimateStep, setEstimateStep] = useState(0);
   const [projectEstimate, setProjectEstimate] = useState<ProjectEstimate | null>(null);
+  const [showEstimateCard, setShowEstimateCard] = useState(false);
 
   
   
@@ -1065,6 +1066,21 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             </div>
             <div className="w-full flex justify-center">
               <div style={{ width: '100%', maxWidth: 900 }}>
+                {/* Estimate Card Toggle Button */}
+                {showProjectSidebar && projectEstimate && (
+                  <div className="flex justify-center mb-4">
+                    <button
+                      onClick={() => setShowEstimateCard(!showEstimateCard)}
+                      className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                      </svg>
+                      {showEstimateCard ? t('estimate.hide') : t('estimate.show')}
+                    </button>
+                  </div>
+                )}
+                
                 <InputBox
                   value={input}
                   onChange={setInput}
@@ -1082,13 +1098,13 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
               </div>
             </div>
             {/* Mobile spacing for estimate card */}
-            {showProjectSidebar && projectEstimate && (
+            {showProjectSidebar && projectEstimate && showEstimateCard && (
               <div className="lg:hidden h-64"></div>
             )}
           </div>
         </div>
         {/* Estimate Card Sidebar - Desktop only */}
-        {showProjectSidebar && projectEstimate && (
+        {showProjectSidebar && projectEstimate && showEstimateCard && (
           <div className="hidden lg:flex flex-col flex-shrink-0 w-96">
             <EstimateCard
               estimate={projectEstimate}
@@ -1102,7 +1118,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
       </div>
 
       {/* Mobile Estimate Card - Fixed at bottom */}
-      {showProjectSidebar && projectEstimate && (
+      {showProjectSidebar && projectEstimate && showEstimateCard && (
         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-background border-t border-border">
           <div className="max-h-64 overflow-y-auto">
             <EstimateCard
