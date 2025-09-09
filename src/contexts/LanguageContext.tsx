@@ -20,8 +20,6 @@ const translations = {
     'header.title': 'Cieden Assistant',
     'header.clearSession': 'Clear session',
     'header.startOver': 'Start Over',
-    'estimate.show': 'Show Estimate',
-    'estimate.hide': 'Hide Estimate',
     'header.lightTheme': 'Light theme',
     'header.darkTheme': 'Dark theme',
     'header.cosmicTheme': 'Cosmic theme',
@@ -79,6 +77,10 @@ const translations = {
     'projectCard.completionMessage': 'Project Card Complete! 🎉',
     'projectCard.completionDescription': 'Your project information is ready. Click the button below to send it to our team.',
     'projectCard.sendProject': 'Send Project',
+    
+    // Estimate
+    'estimate.show': 'Your Estimate',
+    'estimate.hide': 'Hide Estimate',
     'projectCard.saveSuccessMessage': 'Thank you for completing your project card! 🎉 Our team has received your information and will contact you soon to discuss the next steps.',
     
     // Chat Messages
@@ -109,8 +111,6 @@ const translations = {
     'header.title': 'Асистент',
     'header.clearSession': 'Очистити сесію',
     'header.startOver': 'Почати заново',
-    'estimate.show': 'Показати естімейт',
-    'estimate.hide': 'Приховати естімейт',
     'header.lightTheme': 'Світла тема',
     'header.darkTheme': 'Темна тема',
     'header.cosmicTheme': 'Космічна тема',
@@ -168,6 +168,10 @@ const translations = {
     'projectCard.completionMessage': 'Картка проєкту завершена! 🎉',
     'projectCard.completionDescription': 'Інформація про ваш проєкт готова. Натисніть кнопку нижче, щоб надіслати її нашій команді.',
     'projectCard.sendProject': 'Надіслати проєкт',
+    
+    // Estimate
+    'estimate.show': 'Ваш естімейт',
+    'estimate.hide': 'Сховати естімейт',
     'projectCard.saveSuccessMessage': 'Дякуємо за завершення картки проєкту! 🎉 Наша команда отримала вашу інформацію та зв\'яжеться з вами найближчим часом для обговорення наступних кроків.',
     
     // Chat Messages
