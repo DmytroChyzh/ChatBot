@@ -220,8 +220,10 @@ export default function ChatPage() {
       setConversationType(newType);
     }
     
-    // Перевіряємо чи питання про команду
-    if (isTeamQuestion(input)) {
+    // Перевіряємо чи питання про команду (тільки для team та portfolio)
+    if (input.includes('team') || input.includes('команда') || 
+        input.includes('portfolio') || input.includes('портфоліо') ||
+        isTeamQuestion(input)) {
       const teamAnswer = handleTeamQuestion(input);
       
       // Додаємо відповідь про команду
@@ -278,13 +280,16 @@ export default function ChatPage() {
     // Автоматично встановлюємо тип розмови для проектних запитів
     if (value.includes('new project') || value.includes('новий проєкт') || 
         value.includes('redesign') || value.includes('редизайн') ||
-        value.includes('estimate') || value.includes('естімейт')) {
+        value.includes('estimate') || value.includes('естімейт') ||
+        value.includes('consultation') || value.includes('консультація')) {
       console.log('Setting conversationType to project for:', value);
       setConversationType('project');
     }
     
-    // Перевіряємо чи питання про команду
-    if (isTeamQuestion(value)) {
+    // Перевіряємо чи питання про команду (тільки для team та portfolio)
+    if (value.includes('team') || value.includes('команда') || 
+        value.includes('portfolio') || value.includes('портфоліо') ||
+        isTeamQuestion(value)) {
       const teamAnswer = handleTeamQuestion(value);
       
       // Додаємо відповідь про команду
