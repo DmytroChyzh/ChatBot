@@ -66,10 +66,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       }
     };
     
-    checkSupport();
-  }, [language]);
-
-  const initializeSpeech = () => {
+    const initializeSpeech = () => {
     try {
       // Ініціалізуємо розпізнавання мови
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -164,6 +161,9 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       console.error('Speech initialization error:', error);
       setErrorWithTimeout('Помилка ініціалізації голосових функцій');
     }
+    };
+    
+    checkSupport();
     
     // Очищаємо таймер при розмонтуванні
     return () => {
