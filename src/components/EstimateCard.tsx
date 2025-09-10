@@ -43,6 +43,7 @@ interface EstimateCardProps {
   conversationType: 'general' | 'project' | 'estimate';
   onContactManager: () => void;
   isVisible: boolean;
+  hideHeader?: boolean; // New prop to hide header in modal
 }
 
 const EstimateCard: React.FC<EstimateCardProps> = ({ 
@@ -50,7 +51,8 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
   estimateStep,
   conversationType,
   onContactManager, 
-  isVisible 
+  isVisible,
+  hideHeader = false
 }) => {
   const { t, language } = useLanguage();
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
@@ -95,21 +97,23 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
   return (
     <div className="w-full max-w-md bg-white dark:bg-gray-800 cosmic-bg rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col estimate-card-scrollbar relative z-10 lg:max-w-md max-w-none">
       {/* Заголовок */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-4 lg:px-6 py-3 lg:py-4">
-        <div className="flex items-center gap-2 lg:gap-3">
-          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white/20 rounded-full flex items-center justify-center">
-            <Target className="w-4 h-4 lg:w-6 lg:h-6 text-white" />
-          </div>
-          <div>
-            <h3 className="text-base lg:text-lg font-bold text-white">
-              {language === 'uk' ? 'Естімейт Проекту' : 'Project Estimate'}
-            </h3>
-            <p className="text-xs lg:text-sm text-white/80">
-              {language === 'uk' ? 'Живий розрахунок вартості' : 'Live cost calculation'}
-            </p>
+      {!hideHeader && (
+        <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-4 lg:px-6 py-3 lg:py-4">
+          <div className="flex items-center gap-2 lg:gap-3">
+            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white/20 rounded-full flex items-center justify-center">
+              <Target className="w-4 h-4 lg:w-6 lg:h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-base lg:text-lg font-bold text-white">
+                {language === 'uk' ? 'Естімейт Проекту' : 'Project Estimate'}
+              </h3>
+              <p className="text-xs lg:text-sm text-white/80">
+                {language === 'uk' ? 'Живий розрахунок вартості' : 'Live cost calculation'}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Основна інформація */}
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6 flex-1 overflow-y-auto">

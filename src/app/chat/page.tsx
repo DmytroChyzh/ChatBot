@@ -97,6 +97,26 @@ export default function ChatPage() {
   const [projectEstimate, setProjectEstimate] = useState<ProjectEstimate | null>(null);
   const [showMobileEstimate, setShowMobileEstimate] = useState(false);
 
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showMobileEstimate) {
+        setShowMobileEstimate(false);
+      }
+    };
+
+    if (showMobileEstimate) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showMobileEstimate]);
+
   
   
   // Get last AI response for speech synthesis
@@ -1113,17 +1133,44 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         )}
       </div>
 
-      {/* Mobile Estimate Card - Above input */}
+      {/* Mobile Estimate Modal - Full screen popup */}
       {showProjectSidebar && projectEstimate && showMobileEstimate && (
-        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-30 bg-background border border-border rounded-xl shadow-lg">
-          <div className="max-h-80 overflow-y-auto">
-            <EstimateCard
-              estimate={projectEstimate}
-              estimateStep={estimateStep}
-              conversationType={conversationType}
-              onContactManager={handleContactManager}
-              isVisible={true}
-            />
+        <div 
+          className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+          onClick={() => setShowMobileEstimate(false)}
+        >
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            <div 
+              className="w-full max-w-md bg-background rounded-xl shadow-2xl max-h-[90vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <h3 className="text-lg font-semibold text-foreground">
+                  {language === 'uk' ? 'Естімейт Проекту' : 'Project Estimate'}
+                </h3>
+                <button
+                  onClick={() => setShowMobileEstimate(false)}
+                  className="p-2 hover:bg-muted rounded-lg transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Modal Content */}
+              <div className="overflow-y-auto max-h-[calc(90vh-80px)]">
+                <EstimateCard
+                  estimate={projectEstimate}
+                  estimateStep={estimateStep}
+                  conversationType={conversationType}
+                  onContactManager={handleContactManager}
+                  isVisible={true}
+                  hideHeader={true}
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}
