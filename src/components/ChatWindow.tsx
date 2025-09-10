@@ -87,10 +87,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               <span>{t('chat.assistant')}</span>
             </div>
             <div className="rounded-3xl px-5 py-4 shadow-md bg-card text-foreground flex items-center justify-center gap-2 transition-colors duration-300" style={{ minHeight: 40 }}>
-              <div className="flex space-x-1 items-center">
-                <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0s' }}></span>
-                <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></span>
-                <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></span>
+              <div className="flex space-x-1 items-center overflow-hidden">
+                <span className="w-2 h-2 bg-muted-foreground rounded-full animate-pulse" style={{ animationDelay: '0s' }}></span>
+                <span className="w-2 h-2 bg-muted-foreground rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></span>
+                <span className="w-2 h-2 bg-muted-foreground rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></span>
               </div>
             </div>
           </div>
