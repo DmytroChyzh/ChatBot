@@ -49,10 +49,10 @@ const DictationMode: React.FC<DictationModeProps> = ({
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = true; // Безперервне розпізнавання
       recognitionRef.current.interimResults = true; // Проміжні результати
-      // Автоматичне визначення мови
-      recognitionRef.current.lang = 'auto';
-      console.log('Dictation language set to: auto-detection');
-      recognitionRef.current.maxAlternatives = 1;
+      // Підтримка багатьох мов
+      recognitionRef.current.lang = 'en-US'; // Базова мова
+      recognitionRef.current.maxAlternatives = 3; // Більше альтернатив для кращого розпізнавання
+      console.log('Dictation language set to: multi-language support');
 
       recognitionRef.current.onstart = () => {
         console.log('Dictation started');
@@ -65,9 +65,11 @@ const DictationMode: React.FC<DictationModeProps> = ({
         let finalTranscript = '';
         
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
+          const result = event.results[i];
+          // Використовуємо найкращий результат з альтернатив
+          const transcript = result[0].transcript;
           
-          if (event.results[i].isFinal) {
+          if (result.isFinal) {
             finalTranscript += transcript + ' ';
           } else {
             interimTranscript += transcript;
@@ -83,7 +85,12 @@ const DictationMode: React.FC<DictationModeProps> = ({
         const currentText = fullTranscript + finalTranscript + interimTranscript;
         setTranscript(currentText);
         
-        console.log('Dictation result:', { finalTranscript, interimTranscript, currentText });
+        console.log('Dictation result:', { 
+          finalTranscript, 
+          interimTranscript, 
+          currentText,
+          confidence: event.results[event.results.length - 1]?.[0]?.confidence 
+        });
       };
 
       recognitionRef.current.onerror = (event: any) => {
@@ -94,19 +101,19 @@ const DictationMode: React.FC<DictationModeProps> = ({
             console.log('Dictation was aborted - normal behavior');
             break;
           case 'no-speech':
-            setError('Не чути мови. Спробуйте ще раз.');
+            setError('No speech detected. Please try again.');
             break;
           case 'audio-capture':
-            setError('Помилка доступу до мікрофона.');
+            setError('Microphone access error.');
             break;
           case 'not-allowed':
-            setError('Дозвіл на мікрофон не надано.');
+            setError('Microphone permission denied.');
             break;
           case 'network':
-            setError('Помилка мережі. Перевірте підключення.');
+            setError('Network error. Check your connection.');
             break;
           default:
-            setError(`Помилка диктування: ${event.error}`);
+            setError(`Dictation error: ${event.error}`);
         }
         
         setIsListening(false);
@@ -122,7 +129,7 @@ const DictationMode: React.FC<DictationModeProps> = ({
       setIsSupported(true);
     } catch (error) {
       console.error('Dictation initialization error:', error);
-      setError('Помилка ініціалізації диктування');
+      setError('Dictation initialization error');
       setIsSupported(false);
     }
   };
@@ -150,7 +157,7 @@ const DictationMode: React.FC<DictationModeProps> = ({
       recognitionRef.current.start();
     } catch (error) {
       console.error('Error starting dictation:', error);
-      setError('Не вдалося запустити диктування');
+      setError('Failed to start dictation');
       setIsListening(false);
     }
   };
@@ -249,13 +256,13 @@ const DictationMode: React.FC<DictationModeProps> = ({
               <line x1="8" y1="23" x2="16" y2="23"/>
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Диктування не підтримується</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">Ваш браузер не підтримує голосове диктування</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Dictation not supported</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">Your browser doesn't support voice dictation</p>
           <button
             onClick={handleCancel}
             className="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-2xl transition-colors duration-200"
           >
-            Повернутися
+            Go back
           </button>
         </div>
       </div>
@@ -291,10 +298,10 @@ const DictationMode: React.FC<DictationModeProps> = ({
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {isListening ? 'Диктування...' : 'Готовий до диктування'}
+              {isListening ? 'Dictating...' : 'Ready for dictation'}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {isListening ? 'Говоріть будь-якою мовою, я розумію' : 'Натисніть щоб почати'}
+              {isListening ? 'Speak any language, I understand' : 'Click to start'}
             </p>
           </div>
         </div>
@@ -303,7 +310,7 @@ const DictationMode: React.FC<DictationModeProps> = ({
           <button
             onClick={handleCancel}
             className="w-10 h-10 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-colors duration-200"
-            title="Скасувати"
+            title="Cancel"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/>
@@ -315,7 +322,7 @@ const DictationMode: React.FC<DictationModeProps> = ({
             onClick={handleConfirm}
             disabled={!transcript.trim()}
             className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Підтвердити"
+            title="Confirm"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20,6 9,17 4,12"/>
@@ -353,7 +360,7 @@ const DictationMode: React.FC<DictationModeProps> = ({
         ) : (
           <div className="flex items-center justify-center h-[100px] text-gray-500 dark:text-gray-400">
             <p className="text-center">
-              {isListening ? 'Говоріть, щоб побачити текст...' : 'Натисніть щоб почати диктування'}
+              {isListening ? 'Speak to see text...' : 'Click to start dictation'}
             </p>
           </div>
         )}
