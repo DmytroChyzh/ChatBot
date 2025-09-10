@@ -179,7 +179,7 @@ const InputBox: React.FC<InputBoxProps> = ({
       
       {/* Voice Input - всередині input box */}
       {isVoiceInputVisible && (
-        <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-3xl flex items-center justify-center z-50">
+        <div className="absolute inset-0 bg-gray-800/90 backdrop-blur-sm rounded-3xl flex items-center justify-center z-50">
           <ChatGPTVoiceInput 
             disabled={loading || disabled}
             onTranscript={(text) => {

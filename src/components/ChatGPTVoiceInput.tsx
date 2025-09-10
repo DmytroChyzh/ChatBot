@@ -209,7 +209,9 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
     
     try {
       // Створюємо MediaRecorder для запису
-      const mediaRecorder = new MediaRecorder(streamRef.current);
+      const mediaRecorder = new MediaRecorder(streamRef.current, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
       const audioChunks: Blob[] = [];
       
       mediaRecorder.ondataavailable = (event) => {
@@ -219,17 +221,21 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
       };
       
       // Записуємо аудіо
-      mediaRecorder.start();
+      mediaRecorder.start(100); // Збираємо дані кожні 100мс
       
-      // Зупиняємо через 3 секунди (або можна додати кнопку зупинки)
+      // Зупиняємо через 5 секунд
       setTimeout(() => {
-        mediaRecorder.stop();
-      }, 3000);
+        if (mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+        }
+      }, 5000);
       
       mediaRecorder.onstop = async () => {
         try {
           // Створюємо Blob з аудіо даних
           const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          
+          console.log('Audio blob size:', audioBlob.size);
           
           if (audioBlob.size < 1000) {
             setError('Запис занадто короткий');
@@ -242,6 +248,8 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
           formData.append('audio', audioBlob, 'recording.webm');
           formData.append('language', language);
           
+          console.log('Sending to Whisper API...');
+          
           // Відправляємо на Whisper API
           const response = await fetch('/api/speech-to-text', {
             method: 'POST',
@@ -249,17 +257,19 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
           });
           
           if (!response.ok) {
-            throw new Error('Помилка розпізнавання мови');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Помилка розпізнавання мови');
           }
           
           const result = await response.json();
+          console.log('Whisper result:', result);
           
           if (result.text && result.text.trim()) {
             setStatus('sent');
             
             // Відправляємо результат
             if (onTranscript) {
-              onTranscript(result.text);
+              onTranscript(result.text.trim());
             }
           } else {
             setError('Не вдалося розпізнати мову');
@@ -267,7 +277,7 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
           
         } catch (error) {
           console.error('Error processing audio:', error);
-          setError('Помилка обробки аудіо');
+          setError('Помилка обробки аудіо: ' + (error instanceof Error ? error.message : 'Невідома помилка'));
         } finally {
           setIsProcessing(false);
           cleanup();
@@ -313,20 +323,36 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
       case 'processing': return 'Обробка...';
       case 'cancelled': return 'Скасовано';
       case 'sent': return 'Відправлено';
-      default: return 'Натисніть + для голосового вводу';
+      default: return 'Готово до запису';
     }
   };
 
   return (
-    <div className={`w-full h-full flex items-center justify-between px-4 ${className}`}>
+    <div className={`w-full h-full flex flex-col items-center justify-center px-4 ${className}`}>
       {/* Canvas для анімації хвилі */}
-      <div className="flex-1 mx-4 h-12">
+      <div className="flex-1 w-full h-12 mb-2">
         <canvas
           ref={canvasRef}
           className="w-full h-full"
           style={{ width: '100%', height: '100%' }}
         />
       </div>
+
+      {/* Статус текст */}
+      <div className="text-center mb-2">
+        <p className="text-sm text-gray-300" aria-live="polite">
+          {getStatusText()}
+        </p>
+      </div>
+
+      {/* Помилка */}
+      {error && (
+        <div className="text-center mb-2">
+          <p className="text-sm text-red-400" aria-live="assertive">
+            {error}
+          </p>
+        </div>
+      )}
 
       {/* Кнопки X і ✓ */}
       <div className="flex items-center gap-2">
