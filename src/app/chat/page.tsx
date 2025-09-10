@@ -15,7 +15,6 @@ import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
 import ChatWindow from '../../components/ChatWindow';
 import CosmicBackground from '../../components/CosmicBackground';
-import VoiceChatButton from '../../components/VoiceChatButton';
 import VoiceChat from '../../components/VoiceChat';
 
 import { analyzeConversationType, shouldShowProjectCard } from '../../utils/conversationAnalyzer';
@@ -1104,15 +1103,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                   </div>
                 )}
                 
-                {/* Voice Chat Button */}
-                {contactSubmitted && !isProjectComplete && (
-                  <div className="w-full max-w-[900px] mx-auto mb-4">
-                    <VoiceChatButton 
-                      onClick={() => setShowVoiceChat(true)}
-                      disabled={isLoading}
-                    />
-                  </div>
-                )}
                 
                 <InputBox
                   value={input}
@@ -1127,6 +1117,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                       await addMessageToSession(sessionId, message);
                     }
                   }}
+                  onStartVoiceChat={() => setShowVoiceChat(true)}
                 />
               </div>
             </div>

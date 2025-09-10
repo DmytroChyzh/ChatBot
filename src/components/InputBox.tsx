@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import VoiceDictationButton from './VoiceDictationButton';
 import DictationMode from './DictationMode';
+import VoiceChatButton from './VoiceChatButton';
 
 interface InputBoxProps {
   value: string;
@@ -12,6 +13,7 @@ interface InputBoxProps {
   projectComplete?: boolean;
   sessionId?: string | null;
   onAddMessage?: (message: { role: 'user' | 'assistant', content: string, timestamp: Date }) => Promise<void>;
+  onStartVoiceChat?: () => void;
 }
 
 const InputBox: React.FC<InputBoxProps> = ({ 
@@ -22,7 +24,8 @@ const InputBox: React.FC<InputBoxProps> = ({
   disabled, 
   projectComplete,
   sessionId,
-  onAddMessage
+  onAddMessage,
+  onStartVoiceChat
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useLanguage();
@@ -142,6 +145,15 @@ const InputBox: React.FC<InputBoxProps> = ({
           onStartDictation={handleStartDictation}
           isDictating={isDictating}
         />
+
+        {/* Voice Chat Button */}
+        {onStartVoiceChat && (
+          <VoiceChatButton 
+            onClick={onStartVoiceChat}
+            disabled={loading || disabled}
+            className="w-11 h-11"
+          />
+        )}
 
         </div>
       </div>
