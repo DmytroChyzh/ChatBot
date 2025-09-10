@@ -23,12 +23,14 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   const [transcript, setTranscript] = useState('');
   const [fullTranscript, setFullTranscript] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [showRecordingUI, setShowRecordingUI] = useState(false);
   const [finalTranscript, setFinalTranscript] = useState('');
   const [audioLevel, setAudioLevel] = useState(0);
   const [errorTimeout, setErrorTimeout] = useState<NodeJS.Timeout | null>(null);
   
-  const recognitionRef = useRef<any>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
   
   // Функція для встановлення помилки з автоматичним очищенням
   const setErrorWithTimeout = (errorMessage: string) => {
@@ -53,131 +55,13 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Перевіряємо підтримку браузера
+    // Перевіряємо підтримку MediaRecorder
     const checkSupport = () => {
-      const hasRecognition = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
-      const hasSynthesis = 'speechSynthesis' in window;
+      const hasMediaRecorder = 'MediaRecorder' in window;
+      const hasGetUserMedia = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
       
-      console.log('Speech support check:', { hasRecognition, hasSynthesis });
-      setIsSupported(hasRecognition && hasSynthesis);
-      
-      if (hasRecognition && hasSynthesis) {
-        initializeSpeech();
-      }
-    };
-    
-    const initializeSpeech = () => {
-    try {
-      // Ініціалізуємо розпізнавання мови
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true; // Безперервне розпізнавання
-      recognitionRef.current.interimResults = true; // Показуємо проміжні результати
-      // Встановлюємо мову для розпізнавання
-      if (language === 'uk') {
-        // Спробуємо різні варіанти української мови
-        const ukrainianVariants = ['uk-UA', 'uk', 'ru-UA', 'ru-RU'];
-        let languageSet = false;
-        
-        for (const lang of ukrainianVariants) {
-          try {
-            recognitionRef.current.lang = lang;
-            console.log(`Speech recognition language set to: ${lang}`);
-            languageSet = true;
-            break;
-          } catch (error) {
-            console.log(`Language ${lang} not supported, trying next...`);
-          }
-        }
-        
-        if (!languageSet) {
-          console.log('No Ukrainian variant supported, falling back to English');
-          recognitionRef.current.lang = 'en-US';
-        }
-      } else {
-        recognitionRef.current.lang = 'en-US';
-        console.log('Speech recognition language set to: en-US');
-      }
-
-      recognitionRef.current.onstart = () => {
-        console.log('Speech recognition started');
-        setIsListening(true);
-        setError(null);
-      };
-
-      recognitionRef.current.onresult = (event: any) => {
-        let interimTranscript = '';
-        let newFinalTranscript = '';
-        
-        // Обробляємо всі результати
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          
-          if (event.results[i].isFinal) {
-            newFinalTranscript += transcript + ' ';
-          } else {
-            interimTranscript += transcript;
-          }
-        }
-        
-        // Оновлюємо повний текст
-        if (newFinalTranscript) {
-          setFullTranscript(prev => prev + newFinalTranscript);
-        }
-        
-        // Показуємо проміжний текст під час запису
-        setTranscript(interimTranscript);
-        
-        console.log('Speech recognized:', { newFinalTranscript, interimTranscript });
-      };
-
-      recognitionRef.current.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
-        setIsListening(false);
-        setIsRecording(false);
-        setShowRecordingUI(false);
-        stopAudioAnalysis();
-        
-        // Очищаємо всі транскрипти при помилці
-        setTranscript('');
-        setFullTranscript('');
-        setFinalTranscript('');
-        
-        switch (event.error) {
-          case 'no-speech':
-            setErrorWithTimeout('Не чути мови. Спробуйте ще раз.');
-            break;
-          case 'audio-capture':
-            setErrorWithTimeout('Помилка доступу до мікрофона.');
-            break;
-          case 'not-allowed':
-            setErrorWithTimeout('Дозвіл на мікрофон не надано.');
-            break;
-          case 'language-not-supported':
-            setErrorWithTimeout('Українська мова не підтримується. Спробуйте англійську.');
-            break;
-          default:
-            setErrorWithTimeout(`Помилка розпізнавання: ${event.error}`);
-        }
-      };
-
-      recognitionRef.current.onend = () => {
-        console.log('Speech recognition ended');
-        setIsListening(false);
-        setIsRecording(false);
-        // Не закриваємо UI автоматично - залишаємо для підтвердження
-        stopAudioAnalysis();
-        // Показуємо фінальний текст
-        setFinalTranscript(fullTranscript + transcript);
-      };
-
-      // Ініціалізуємо синтез мови
-      synthesisRef.current = window.speechSynthesis;
-      
-    } catch (error) {
-      console.error('Speech initialization error:', error);
-      setErrorWithTimeout('Помилка ініціалізації голосових функцій');
-    }
+      console.log('MediaRecorder support check:', { hasMediaRecorder, hasGetUserMedia });
+      setIsSupported(hasMediaRecorder && hasGetUserMedia);
     };
     
     checkSupport();
@@ -204,29 +88,10 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       return;
     }
     
-    if (disabled) {
+    if (disabled || isProcessing) {
       return;
     }
-    
-    // Перевіряємо чи вже записуємо
-    if (isRecording) {
-      console.log('Already recording, ignoring start request');
-      return;
-    }
-    
-    if (!recognitionRef.current) {
-      setErrorWithTimeout('Розпізнавання мови не ініціалізовано');
-      return;
-    }
-    
-    // Перевіряємо чи вже працює розпізнавання
-    if (recognitionRef.current.state === 'started' || isListening) {
-      console.log('Speech recognition already started, stopping first');
-      recognitionRef.current.stop();
-      // Чекаємо трохи перед перезапуском
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-    
+
     try {
       setError(null);
       setTranscript('');
@@ -235,51 +100,118 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       setIsRecording(true);
       setShowRecordingUI(true);
       
-      // Отримуємо доступ до мікрофона для аналізу аудіо
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Отримуємо доступ до мікрофона
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 16000
+        } 
+      });
+
+      // Налаштовуємо аналіз аудіо для візуалізації
       await setupAudioAnalysis(stream);
+
+      // Налаштовуємо MediaRecorder
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
       
-      recognitionRef.current.start();
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        await processAudio();
+      };
+
+      // Починаємо запис
+      mediaRecorder.start(100); // Збираємо дані кожні 100мс
+      
     } catch (error) {
-      console.error('Error starting speech recognition:', error);
-      setErrorWithTimeout('Не вдалося запустити розпізнавання мови');
+      console.error('Error starting recording:', error);
+      setErrorWithTimeout('Не вдалося запустити запис');
       setIsRecording(false);
       setShowRecordingUI(false);
       stopAudioAnalysis();
-      // Очищаємо транскрипти при помилці
-      setTranscript('');
-      setFullTranscript('');
-      setFinalTranscript('');
     }
   };
 
   const stopRecording = () => {
-    if (recognitionRef.current && isRecording) {
-      recognitionRef.current.stop();
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
       setIsRecording(false);
       setShowRecordingUI(false);
       stopAudioAnalysis();
     }
   };
 
+  const processAudio = async () => {
+    if (audioChunksRef.current.length === 0) {
+      setErrorWithTimeout('Немає аудіо даних для обробки');
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      
+      // Створюємо Blob з аудіо даних
+      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+      
+      // Створюємо FormData для відправки
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'recording.webm');
+      formData.append('language', language);
+
+      // Відправляємо на наш API endpoint
+      const response = await fetch('/api/speech-to-text', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Помилка розпізнавання мови');
+      }
+
+      const result = await response.json();
+      
+      if (result.text && result.text.trim()) {
+        setTranscript(result.text);
+        setFinalTranscript(result.text);
+      } else {
+        setErrorWithTimeout('Не вдалося розпізнати мову');
+      }
+
+    } catch (error) {
+      console.error('Error processing audio:', error);
+      setErrorWithTimeout(error instanceof Error ? error.message : 'Помилка обробки аудіо');
+    } finally {
+      setIsProcessing(false);
+      audioChunksRef.current = [];
+    }
+  };
+
   const confirmRecording = () => {
-    const finalText = finalTranscript || (fullTranscript + transcript);
-    if (finalText.trim() && onTranscript) {
-      onTranscript(finalText.trim());
-      console.log('Final transcript sent to parent:', finalText.trim());
+    if (transcript.trim() && onTranscript) {
+      onTranscript(transcript.trim());
     }
     setShowRecordingUI(false);
     setIsRecording(false);
     stopAudioAnalysis();
-    // Очищаємо всі транскрипти для наступного використання
     setTranscript('');
     setFullTranscript('');
     setFinalTranscript('');
   };
 
   const cancelRecording = () => {
-    if (recognitionRef.current && isRecording) {
-      recognitionRef.current.stop();
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
     }
     setIsRecording(false);
     setShowRecordingUI(false);
@@ -287,6 +219,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     setTranscript('');
     setFullTranscript('');
     setFinalTranscript('');
+    audioChunksRef.current = [];
   };
 
 
@@ -399,14 +332,22 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
             </div>
           </div>
 
-          {/* Центральна частина - Текст (під час запису і після) */}
-          {(transcript || finalTranscript) && (
-            <div className="flex-1 mx-4">
+          {/* Центральна частина - Текст або статус */}
+          <div className="flex-1 mx-4">
+            {isProcessing ? (
               <div className="text-sm text-foreground text-center">
-                {finalTranscript || transcript}
+                Обробка...
               </div>
-            </div>
-          )}
+            ) : transcript ? (
+              <div className="text-sm text-foreground text-center">
+                {transcript}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground text-center">
+                Говоріть...
+              </div>
+            )}
+          </div>
 
           {/* Права частина - Кнопки управління */}
           <div className="flex items-center gap-2">
@@ -425,7 +366,8 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
             {/* Кнопка підтвердження */}
             <button
               onClick={confirmRecording}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 text-white transition-all duration-200"
+              disabled={isProcessing || !transcript}
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               title="Підтвердити запис"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -447,17 +389,26 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
         className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 ${
           isRecording
             ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
+            : isProcessing
+            ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
             : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+        } ${disabled || isProcessing ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         title={
           isRecording
             ? 'Натисніть щоб зупинити'
-            : 'Натисніть для голосового чату'
+            : isProcessing
+            ? 'Обробка аудіо...'
+            : 'Натисніть для голосового чату (Whisper)'
         }
       >
         {isRecording ? (
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="6" y="6" width="12" height="12" rx="2"/>
+          </svg>
+        ) : isProcessing ? (
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-6.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-6.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
           </svg>
         ) : (
           <svg

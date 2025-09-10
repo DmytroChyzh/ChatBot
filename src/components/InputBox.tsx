@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import AlternativeVoiceChat from './AlternativeVoiceChat';
 import HybridVoiceChat from './HybridVoiceChat';
-import WhisperVoiceChat from './WhisperVoiceChat';
 import VoiceWaveIndicator from './VoiceWaveIndicator';
 
 interface InputBoxProps {
@@ -134,13 +133,7 @@ const InputBox: React.FC<InputBoxProps> = ({
           </svg>
         </button>
 
-        {/* Whisper Voice Chat (OpenAI Whisper - підтримує всі мови) */}
-        <WhisperVoiceChat 
-          disabled={loading || disabled}
-          onTranscript={onChange}
-        />
-
-        {/* Голосовий чат (Web Speech API) */}
+        {/* Голосовий чат (Whisper API - підтримує всі мови) */}
         <AlternativeVoiceChat 
           disabled={loading || disabled}
           onTranscript={onChange}
