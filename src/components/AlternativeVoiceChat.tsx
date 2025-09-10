@@ -173,21 +173,11 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     }
   };
 
-  const handleMouseDown = () => {
-    if (!disabled && !isRecording) {
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
       startRecording();
-    }
-  };
-
-  const handleMouseUp = () => {
-    if (isRecording) {
-      stopRecording();
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (isRecording) {
-      stopRecording();
     }
   };
 
@@ -281,21 +271,17 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     <div className="relative">
       <button
         type="button"
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        onTouchStart={handleMouseDown}
-        onTouchEnd={handleMouseUp}
+        onClick={toggleRecording}
         disabled={disabled}
-        className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 select-none ${
+        className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 ${
           isRecording
             ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
             : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         title={
           isRecording
-            ? 'Відпустіть щоб зупинити'
-            : 'Натисніть і тримайте для голосового чату'
+            ? 'Натисніть щоб зупинити'
+            : 'Натисніть для голосового чату'
         }
       >
         {isRecording ? (
@@ -303,22 +289,13 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
             <rect x="6" y="6" width="12" height="12" rx="2"/>
           </svg>
         ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            <line x1="12" y1="19" x2="12" y2="23"/>
-            <line x1="8" y1="23" x2="16" y2="23"/>
-          </svg>
+          <div className="flex items-center gap-0.5">
+            <div className="w-0.5 h-2 bg-white rounded-full animate-wave-pulse" style={{ animationDelay: '0s' }}></div>
+            <div className="w-0.5 h-3 bg-white rounded-full animate-wave-pulse" style={{ animationDelay: '0.1s' }}></div>
+            <div className="w-0.5 h-4 bg-white rounded-full animate-wave-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-0.5 h-3 bg-white rounded-full animate-wave-pulse" style={{ animationDelay: '0.3s' }}></div>
+            <div className="w-0.5 h-2 bg-white rounded-full animate-wave-pulse" style={{ animationDelay: '0.4s' }}></div>
+          </div>
         )}
       </button>
 
