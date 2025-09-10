@@ -23,6 +23,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   const [transcript, setTranscript] = useState('');
   const [fullTranscript, setFullTranscript] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [showRecordingUI, setShowRecordingUI] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   
   const recognitionRef = useRef<any>(null);
@@ -113,6 +114,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
         console.log('Speech recognition ended');
         setIsListening(false);
         setIsRecording(false);
+        setShowRecordingUI(false);
         stopAudioAnalysis();
       };
 
@@ -145,6 +147,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       setTranscript('');
       setFullTranscript('');
       setIsRecording(true);
+      setShowRecordingUI(true);
       
       // Отримуємо доступ до мікрофона для аналізу аудіо
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -155,6 +158,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       console.error('Error starting speech recognition:', error);
       setError('Не вдалося запустити розпізнавання мови');
       setIsRecording(false);
+      setShowRecordingUI(false);
     }
   };
 
@@ -162,6 +166,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     if (recognitionRef.current && isRecording) {
       recognitionRef.current.stop();
       setIsRecording(false);
+      setShowRecordingUI(false);
       stopAudioAnalysis();
       
       // Відправляємо весь накопичений текст
@@ -173,12 +178,26 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     }
   };
 
-  const toggleRecording = () => {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      startRecording();
+  const confirmRecording = () => {
+    const finalText = fullTranscript + transcript;
+    if (finalText.trim() && onTranscript) {
+      onTranscript(finalText.trim());
+      console.log('Final transcript sent to parent:', finalText.trim());
     }
+    setShowRecordingUI(false);
+    setIsRecording(false);
+    stopAudioAnalysis();
+  };
+
+  const cancelRecording = () => {
+    if (recognitionRef.current && isRecording) {
+      recognitionRef.current.stop();
+    }
+    setIsRecording(false);
+    setShowRecordingUI(false);
+    stopAudioAnalysis();
+    setTranscript('');
+    setFullTranscript('');
   };
 
 
@@ -267,22 +286,86 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   }
 
 
+  // Показуємо UI запису в input
+  if (showRecordingUI) {
+    return (
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm rounded-3xl flex items-center justify-center z-50">
+        <div className="bg-background rounded-2xl p-4 max-w-sm w-full mx-4 border border-border">
+          {/* Заголовок */}
+          <div className="text-center mb-3">
+            <h3 className="text-sm font-semibold text-foreground">
+              Голосовий запис
+            </h3>
+          </div>
+
+          {/* Хвилі звуку */}
+          <div className="flex items-center justify-center mb-4">
+            <div className="flex items-center space-x-1">
+              {[...Array(10)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-1 bg-muted-foreground rounded-full transition-all duration-150"
+                  style={{
+                    height: `${Math.max(4, (audioLevel * 20) + Math.random() * 8)}px`,
+                    animationDelay: `${i * 50}ms`
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Текст розпізнавання */}
+          {transcript && (
+            <div className="mb-3 p-2 bg-muted rounded-lg">
+              <div className="text-xs text-muted-foreground mb-1">
+                Розпізнано:
+              </div>
+              <div className="text-sm text-foreground max-h-16 overflow-y-auto">
+                {transcript}
+              </div>
+            </div>
+          )}
+
+          {/* Кнопки управління */}
+          <div className="flex items-center justify-between">
+            {/* Кнопка скасування */}
+            <button
+              onClick={cancelRecording}
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
+              title="Скасувати запис"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+
+            {/* Кнопка підтвердження */}
+            <button
+              onClick={confirmRecording}
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors"
+              title="Підтвердити запис"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20,6 9,17 4,12"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative">
       <button
         type="button"
-        onClick={toggleRecording}
+        onClick={startRecording}
         disabled={disabled}
         className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 ${
-          isRecording
-            ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
-            : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
+          'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
-        title={
-          isRecording
-            ? 'Натисніть щоб зупинити'
-            : 'Натисніть для голосового чату'
-        }
+        title="Натисніть для голосового чату"
       >
         {isRecording ? (
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
