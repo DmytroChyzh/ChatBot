@@ -261,19 +261,29 @@ const InputBox: React.FC<InputBoxProps> = ({
   // If project is completed, show message instead of input
   if (projectComplete) {
     return (
-      <div className="w-full max-w-[900px] mx-auto my-6 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-3xl px-8 py-6 transition-colors duration-300 shadow-lg">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+      <>
+        {/* Voice Chat Robot */}
+        <VoiceChatRobot
+          isActive={isVoiceChatActive}
+          isListening={isListening}
+          isSpeaking={isSpeaking}
+          isProcessing={isProcessing}
+        />
+        
+        <div className="w-full max-w-[900px] mx-auto my-6 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-3xl px-8 py-6 transition-colors duration-300 shadow-lg">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">{t('chat.projectCompleted')}</h3>
           </div>
-          <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">{t('chat.projectCompleted')}</h3>
+          <p className="text-green-700 dark:text-green-300">
+            {t('chat.projectCompletedMessage')}
+          </p>
         </div>
-        <p className="text-green-700 dark:text-green-300">
-          {t('chat.projectCompletedMessage')}
-        </p>
-      </div>
+      </>
     );
   }
 
