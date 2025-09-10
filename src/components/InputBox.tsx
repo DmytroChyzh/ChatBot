@@ -3,7 +3,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import VoiceDictationButton from './VoiceDictationButton';
 import DictationMode from './DictationMode';
 import VoiceChatButton from './VoiceChatButton';
-import VoiceChatRobot from './VoiceChatRobot';
+import Robot3D from './Robot3D';
 import VoiceWaveIndicator from './VoiceWaveIndicator';
 
 interface InputBoxProps {
@@ -262,8 +262,8 @@ const InputBox: React.FC<InputBoxProps> = ({
   if (projectComplete) {
     return (
       <>
-        {/* Voice Chat Robot */}
-        <VoiceChatRobot
+        {/* 3D Robot */}
+        <Robot3D
           isActive={isVoiceChatActive}
           isListening={isListening}
           isSpeaking={isSpeaking}
@@ -291,8 +291,8 @@ const InputBox: React.FC<InputBoxProps> = ({
   if (isDictating) {
     return (
       <>
-        {/* Voice Chat Robot */}
-        <VoiceChatRobot
+        {/* 3D Robot */}
+        <Robot3D
           isActive={isVoiceChatActive}
           isListening={isListening}
           isSpeaking={isSpeaking}
