@@ -3,6 +3,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 import VoiceDictationButton from './VoiceDictationButton';
 import DictationMode from './DictationMode';
 import VoiceChatButton from './VoiceChatButton';
+import VoiceChatRobot from './VoiceChatRobot';
+import VoiceWaveIndicator from './VoiceWaveIndicator';
 
 interface InputBoxProps {
   value: string;
@@ -30,6 +32,19 @@ const InputBox: React.FC<InputBoxProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useLanguage();
   const [isDictating, setIsDictating] = useState(false);
+  
+  // Voice Chat states
+  const [isVoiceChatActive, setIsVoiceChatActive] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [audioLevel, setAudioLevel] = useState(0);
+  
+  // Voice Chat refs
+  const recognitionRef = useRef<any>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
 
   // Handle dictation start
   const handleStartDictation = () => {
@@ -46,6 +61,186 @@ const InputBox: React.FC<InputBoxProps> = ({
   const handleDictationCancel = () => {
     setIsDictating(false);
   };
+
+  // Voice Chat handlers
+  const handleStartVoiceChat = async () => {
+    if (isVoiceChatActive) {
+      // Stop voice chat
+      stopVoiceChat();
+    } else {
+      // Start voice chat
+      await startVoiceChat();
+    }
+  };
+
+  const startVoiceChat = async () => {
+    try {
+      setIsVoiceChatActive(true);
+      setIsListening(true);
+      
+      // Initialize speech recognition
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'auto';
+
+      recognitionRef.current.onstart = () => {
+        console.log('Voice chat started');
+        setIsListening(true);
+      };
+
+      recognitionRef.current.onresult = async (event: any) => {
+        let finalTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript + ' ';
+          }
+        }
+        
+        if (finalTranscript.trim()) {
+          console.log('Voice chat transcript:', finalTranscript);
+          
+          // Add user message
+          if (onAddMessage) {
+            await onAddMessage({
+              role: 'user',
+              content: finalTranscript.trim(),
+              timestamp: new Date()
+            });
+          }
+          
+          // Process with AI
+          await processWithAI(finalTranscript.trim());
+        }
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Voice chat error:', event.error);
+        if (event.error !== 'aborted') {
+          setIsListening(false);
+        }
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+
+      // Start listening
+      recognitionRef.current.start();
+      
+    } catch (error) {
+      console.error('Error starting voice chat:', error);
+      setIsVoiceChatActive(false);
+      setIsListening(false);
+    }
+  };
+
+  const stopVoiceChat = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    setIsVoiceChatActive(false);
+    setIsListening(false);
+    setIsSpeaking(false);
+    setIsProcessing(false);
+  };
+
+  const processWithAI = async (text: string) => {
+    try {
+      setIsProcessing(true);
+      setIsListening(false);
+      
+      const response = await fetch('/api/ai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: text,
+          conversationHistory: [],
+          sessionId: sessionId || 'voice-chat'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('AI API error');
+      }
+
+      const result = await response.json();
+      
+      if (result.content) {
+        // Add assistant message
+        if (onAddMessage) {
+          await onAddMessage({
+            role: 'assistant',
+            content: result.content,
+            timestamp: new Date()
+          });
+        }
+        
+        // Convert to speech
+        await convertToSpeech(result.content);
+      }
+      
+    } catch (error) {
+      console.error('Error processing with AI:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const convertToSpeech = async (text: string) => {
+    try {
+      setIsSpeaking(true);
+      
+      const response = await fetch('/api/text-to-speech', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: text,
+          language: 'en'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('TTS API error');
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      
+      audio.onended = () => {
+        setIsSpeaking(false);
+        // Restart listening
+        if (isVoiceChatActive) {
+          setTimeout(() => {
+            if (recognitionRef.current) {
+              recognitionRef.current.start();
+            }
+          }, 500);
+        }
+      };
+
+      await audio.play();
+    } catch (error) {
+      console.error('Error converting to speech:', error);
+      setIsSpeaking(false);
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
 
   // Auto-grow textarea
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -95,12 +290,29 @@ const InputBox: React.FC<InputBoxProps> = ({
   }
 
   return (
-    <div className="w-full max-w-[900px] mx-auto my-6">
+    <>
+      {/* Voice Chat Robot */}
+      <VoiceChatRobot
+        isActive={isVoiceChatActive}
+        isListening={isListening}
+        isSpeaking={isSpeaking}
+        isProcessing={isProcessing}
+      />
       
-      <div
-        className="w-full bg-[hsl(var(--input-bg))] border-2 border-accent rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-md focus-within:ring-2 focus-within:ring-accent"
-        style={{ position: 'relative' }}
-      >
+      <div className="w-full max-w-[900px] mx-auto my-6">
+        {/* Voice Wave Indicator */}
+        <VoiceWaveIndicator
+          isActive={isVoiceChatActive}
+          isListening={isListening}
+          isSpeaking={isSpeaking}
+          isProcessing={isProcessing}
+          audioLevel={audioLevel}
+        />
+        
+        <div
+          className="w-full bg-[hsl(var(--input-bg))] border-2 border-accent rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-md focus-within:ring-2 focus-within:ring-accent"
+          style={{ position: 'relative' }}
+        >
       <textarea
         ref={textareaRef}
         value={value}
@@ -147,16 +359,14 @@ const InputBox: React.FC<InputBoxProps> = ({
         />
 
         {/* Voice Chat Button */}
-        {onStartVoiceChat && (
-          <VoiceChatButton 
-            onClick={onStartVoiceChat}
-            disabled={loading || disabled}
-          />
-        )}
+        <VoiceChatButton 
+          onClick={handleStartVoiceChat}
+          disabled={loading || disabled}
+        />
 
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -15,7 +15,6 @@ import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
 import ChatWindow from '../../components/ChatWindow';
 import CosmicBackground from '../../components/CosmicBackground';
-import VoiceChat from '../../components/VoiceChat';
 
 import { analyzeConversationType, shouldShowProjectCard } from '../../utils/conversationAnalyzer';
 import { searchTeam } from '../../utils/teamSearch';
@@ -97,7 +96,6 @@ export default function ChatPage() {
   const [estimateStep, setEstimateStep] = useState(0);
   const [projectEstimate, setProjectEstimate] = useState<ProjectEstimate | null>(null);
   const [showMobileEstimate, setShowMobileEstimate] = useState(false);
-  const [showVoiceChat, setShowVoiceChat] = useState(false);
 
   // Close modal on Escape key
   useEffect(() => {
@@ -1117,7 +1115,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                       await addMessageToSession(sessionId, message);
                     }
                   }}
-                  onStartVoiceChat={() => setShowVoiceChat(true)}
                 />
               </div>
             </div>
@@ -1179,18 +1176,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         </div>
       )}
 
-      {/* Voice Chat Modal */}
-      {showVoiceChat && (
-        <VoiceChat
-          onClose={() => setShowVoiceChat(false)}
-          sessionId={sessionId}
-          onAddMessage={async (message) => {
-            if (sessionId) {
-              await addMessageToSession(sessionId, message);
-            }
-          }}
-        />
-      )}
 
     </div>
   );
