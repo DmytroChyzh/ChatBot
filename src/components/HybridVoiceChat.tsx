@@ -168,8 +168,31 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
 
       recognitionRef.current.onerror = (event) => {
         console.error('HybridVoiceChat: Speech recognition error:', event.error);
-        setError(`Помилка розпізнавання мови: ${event.error}`);
+        
+        // Handle specific error types
+        switch (event.error) {
+          case 'aborted':
+            console.log('Speech recognition was aborted - this is usually normal');
+            // Don't show error for aborted, it's usually intentional
+            break;
+          case 'no-speech':
+            setError('Не чути мови. Спробуйте ще раз.');
+            break;
+          case 'audio-capture':
+            setError('Помилка доступу до мікрофона.');
+            break;
+          case 'not-allowed':
+            setError('Дозвіл на мікрофон не надано.');
+            break;
+          case 'network':
+            setError('Помилка мережі. Перевірте підключення.');
+            break;
+          default:
+            setError(`Помилка розпізнавання мови: ${event.error}`);
+        }
+        
         setIsListening(false);
+        stopAudioAnalysis();
       };
 
       recognitionRef.current.onend = () => {
@@ -352,9 +375,32 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
       // Setup audio analysis for visualization
       await setupAudioAnalysis(stream);
 
-      // Start speech recognition
+      // Start speech recognition with error handling
       if (recognitionRef.current) {
-        recognitionRef.current.start();
+        try {
+          recognitionRef.current.start();
+        } catch (startError) {
+          console.error('Error starting recognition:', startError);
+          if (startError instanceof Error && startError.name === 'InvalidStateError') {
+            console.log('Recognition already started, stopping first...');
+            recognitionRef.current.stop();
+            // Wait a bit and try again
+            setTimeout(() => {
+              if (recognitionRef.current && !isListening) {
+                try {
+                  recognitionRef.current.start();
+                } catch (retryError) {
+                  console.error('Retry failed:', retryError);
+                  setError('Помилка запуску розпізнавання мови');
+                  setIsListening(false);
+                  stopAudioAnalysis();
+                }
+              }
+            }, 200);
+          } else {
+            throw startError;
+          }
+        }
       }
     } catch (error) {
       console.error('HybridVoiceChat: Error starting listening:', error);

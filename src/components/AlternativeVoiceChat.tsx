@@ -95,6 +95,10 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
         setIsListening(false);
         
         switch (event.error) {
+          case 'aborted':
+            console.log('Speech recognition was aborted - this is usually normal');
+            // Don't show error for aborted, it's usually intentional
+            break;
           case 'no-speech':
             setError('Не чути мови. Спробуйте ще раз.');
             break;
@@ -103,6 +107,9 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
             break;
           case 'not-allowed':
             setError('Дозвіл на мікрофон не надано.');
+            break;
+          case 'network':
+            setError('Помилка мережі. Перевірте підключення.');
             break;
           default:
             setError(`Помилка розпізнавання: ${event.error}`);
@@ -150,7 +157,30 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       await setupAudioAnalysis(stream);
       
-      recognitionRef.current.start();
+      try {
+        recognitionRef.current.start();
+      } catch (startError) {
+        console.error('Error starting recognition:', startError);
+        if (startError instanceof Error && startError.name === 'InvalidStateError') {
+          console.log('Recognition already started, stopping first...');
+          recognitionRef.current.stop();
+          // Wait a bit and try again
+          setTimeout(() => {
+            if (recognitionRef.current && !isRecording) {
+              try {
+                recognitionRef.current.start();
+              } catch (retryError) {
+                console.error('Retry failed:', retryError);
+                setError('Помилка запуску розпізнавання мови');
+                setIsRecording(false);
+                stopAudioAnalysis();
+              }
+            }
+          }, 200);
+        } else {
+          throw startError;
+        }
+      }
     } catch (error) {
       console.error('Error starting speech recognition:', error);
       setError('Не вдалося запустити розпізнавання мови');
