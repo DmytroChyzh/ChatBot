@@ -333,59 +333,60 @@ const InputBox: React.FC<InputBoxProps> = ({
           className="w-full bg-[hsl(var(--input-bg))] border-2 border-accent rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-md focus-within:ring-2 focus-within:ring-accent"
           style={{ position: 'relative' }}
         >
-      <textarea
-        ref={textareaRef}
-        value={value}
-        onChange={handleInput}
-        onKeyDown={handleKeyDown}
-        placeholder={t('chat.inputPlaceholder')}
-        rows={1}
-        className="bg-transparent border-none outline-none resize-none text-base text-foreground min-h-[48px] max-h-[220px] leading-[1.5] pt-5 pb-0 px-0 w-full box-border placeholder-muted-foreground transition-colors duration-300"
-        disabled={loading || disabled}
-        autoComplete="off"
-      />
-      <div
-        className="flex flex-row-reverse items-end gap-2 pb-4 w-full"
-      >
-        {/* Літачок */}
-        <button
-          type="button"
-          onClick={() => value.trim() && !loading && !disabled && onSend()}
-          disabled={loading || disabled}
-          className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-muted/80 transition-colors duration-300 opacity-100 pointer-events-auto"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#8B8B93"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-gray-400 transition-colors duration-300"
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={handleInput}
+            onKeyDown={handleKeyDown}
+            placeholder={t('chat.inputPlaceholder')}
+            rows={1}
+            className="bg-transparent border-none outline-none resize-none text-base text-foreground min-h-[48px] max-h-[220px] leading-[1.5] pt-5 pb-0 px-0 w-full box-border placeholder-muted-foreground transition-colors duration-300"
+            disabled={loading || disabled}
+            autoComplete="off"
+          />
+          <div
+            className="flex flex-row-reverse items-end gap-2 pb-4 w-full"
           >
-            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-          </svg>
-        </button>
+            {/* Літачок */}
+            <button
+              type="button"
+              onClick={() => value.trim() && !loading && !disabled && onSend()}
+              disabled={loading || disabled}
+              className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-muted/80 transition-colors duration-300 opacity-100 pointer-events-auto"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#8B8B93"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-gray-400 transition-colors duration-300"
+              >
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+            </button>
 
-        {/* Voice Dictation Button */}
-        <VoiceDictationButton 
-          disabled={loading || disabled}
-          onTranscript={onChange}
-          onStartDictation={handleStartDictation}
-          isDictating={isDictating}
-        />
+            {/* Voice Dictation Button */}
+            <VoiceDictationButton 
+              disabled={loading || disabled}
+              onTranscript={onChange}
+              onStartDictation={handleStartDictation}
+              isDictating={isDictating}
+            />
 
-        {/* Voice Chat Button */}
-        <VoiceChatButton 
-          onClick={handleStartVoiceChat}
-          disabled={loading || disabled}
-        />
+            {/* Voice Chat Button */}
+            <VoiceChatButton 
+              onClick={handleStartVoiceChat}
+              disabled={loading || disabled}
+            />
 
+          </div>
+        </div>
       </div>
-    </div>
     </>
   );
 };
