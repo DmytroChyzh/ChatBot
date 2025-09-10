@@ -116,16 +116,16 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
             console.log('Voice chat was aborted - normal behavior');
             break;
           case 'no-speech':
-            setError('Не чути мови. Спробуйте ще раз.');
+            setError('No speech detected. Please try again.');
             break;
           case 'audio-capture':
-            setError('Помилка доступу до мікрофона.');
+            setError('Microphone access error.');
             break;
           case 'not-allowed':
-            setError('Дозвіл на мікрофон не надано.');
+            setError('Microphone permission denied.');
             break;
           default:
-            setError(`Помилка голосового чату: ${event.error}`);
+            setError(`Voice chat error: ${event.error}`);
         }
         
         setIsListening(false);
@@ -140,7 +140,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
       
     } catch (error) {
       console.error('Voice chat initialization error:', error);
-      setError('Помилка ініціалізації голосового чату');
+      setError('Voice chat initialization error');
     }
   };
 
@@ -159,7 +159,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
       recognitionRef.current.start();
     } catch (error) {
       console.error('Error starting voice chat:', error);
-      setError('Не вдалося запустити голосовий чат');
+      setError('Failed to start voice chat');
       setIsListening(false);
     }
   };
@@ -225,46 +225,53 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
         }),
       });
 
+      console.log('AI API response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('AI API error');
+        const errorText = await response.text();
+        console.error('AI API error response:', errorText);
+        throw new Error(`AI API error: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
       console.log('AI response:', result);
-
-      if (result.response) {
-        // Add assistant message
-        const assistantMessage: VoiceMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: result.response,
-          timestamp: new Date()
-        };
-        
-        setMessages(prev => [...prev, assistantMessage]);
-        
-        // Save to backend if callback provided
-        if (onAddMessage) {
-          await onAddMessage({
-            role: 'assistant',
-            content: result.response,
-            timestamp: new Date()
-          });
-        }
-        
-        // Check for estimate keywords
-        if (result.estimate) {
-          setEstimateData(result.estimate);
-          setShowEstimate(true);
-        }
-        
-        // Convert to speech
-        await convertToSpeech(result.response);
+      
+      if (!result.content) {
+        console.error('No content in AI response:', result);
+        throw new Error('No content in AI response');
       }
+
+      // Add assistant message
+      const assistantMessage: VoiceMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: result.content,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, assistantMessage]);
+      
+      // Save to backend if callback provided
+      if (onAddMessage) {
+        await onAddMessage({
+          role: 'assistant',
+          content: result.content,
+          timestamp: new Date()
+        });
+      }
+      
+      // Check for estimate keywords
+      if (result.estimate) {
+        setEstimateData(result.estimate);
+        setShowEstimate(true);
+      }
+      
+      // Convert to speech
+      await convertToSpeech(result.content);
 
     } catch (error) {
       console.error('Error processing with AI:', error);
-      setError('Помилка обробки запиту');
+      setError('Error processing request');
     } finally {
       setIsProcessing(false);
     }
@@ -309,7 +316,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
       await audio.play();
     } catch (error) {
       console.error('Error converting to speech:', error);
-      setError('Помилка озвучування');
+      setError('Speech synthesis error');
       setIsSpeaking(false);
     }
   };
@@ -370,7 +377,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Ceiden Assistant</h2>
               <p className="text-gray-600 dark:text-gray-400">
-                {isListening ? 'Слухаю...' : isSpeaking ? 'Говорю...' : isProcessing ? 'Обробляю...' : 'Готовий до розмови'}
+                {isListening ? 'Listening...' : isSpeaking ? 'Speaking...' : isProcessing ? 'Processing...' : 'Ready to chat'}
               </p>
             </div>
           </div>
@@ -408,8 +415,8 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
                   <line x1="8" y1="23" x2="16" y2="23"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Голосовий чат з Ceiden Assistant</h3>
-              <p className="text-gray-600 dark:text-gray-400">Натисніть кнопку мікрофона, щоб почати розмову</p>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Voice Chat with Ceiden Assistant</h3>
+              <p className="text-gray-600 dark:text-gray-400">Click the microphone button to start conversation</p>
             </div>
           ) : (
             messages.map((message) => (
@@ -509,7 +516,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({
               onClick={handleClose}
               className="px-6 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl transition-colors duration-200"
             >
-              Завершити розмову
+              End conversation
             </button>
           </div>
         </div>
