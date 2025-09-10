@@ -75,12 +75,29 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       recognitionRef.current.interimResults = true; // Показуємо проміжні результати
       // Встановлюємо мову для розпізнавання
       if (language === 'uk') {
-        recognitionRef.current.lang = 'uk-UA';
+        // Спробуємо різні варіанти української мови
+        const ukrainianVariants = ['uk-UA', 'uk', 'ru-UA', 'ru-RU'];
+        let languageSet = false;
+        
+        for (const lang of ukrainianVariants) {
+          try {
+            recognitionRef.current.lang = lang;
+            console.log(`Speech recognition language set to: ${lang}`);
+            languageSet = true;
+            break;
+          } catch (error) {
+            console.log(`Language ${lang} not supported, trying next...`);
+          }
+        }
+        
+        if (!languageSet) {
+          console.log('No Ukrainian variant supported, falling back to English');
+          recognitionRef.current.lang = 'en-US';
+        }
       } else {
         recognitionRef.current.lang = 'en-US';
+        console.log('Speech recognition language set to: en-US');
       }
-      
-      console.log('Speech recognition language set to:', recognitionRef.current.lang);
 
       recognitionRef.current.onstart = () => {
         console.log('Speech recognition started');
@@ -137,7 +154,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
             setErrorWithTimeout('Дозвіл на мікрофон не надано.');
             break;
           case 'language-not-supported':
-            setErrorWithTimeout('Мова не підтримується. Спробуйте англійську.');
+            setErrorWithTimeout('Українська мова не підтримується. Спробуйте англійську.');
             break;
           default:
             setErrorWithTimeout(`Помилка розпізнавання: ${event.error}`);
@@ -200,6 +217,14 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     if (!recognitionRef.current) {
       setErrorWithTimeout('Розпізнавання мови не ініціалізовано');
       return;
+    }
+    
+    // Перевіряємо чи вже працює розпізнавання
+    if (recognitionRef.current.state === 'started' || isListening) {
+      console.log('Speech recognition already started, stopping first');
+      recognitionRef.current.stop();
+      // Чекаємо трохи перед перезапуском
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
     
     try {
