@@ -177,12 +177,16 @@ const InputBox: React.FC<InputBoxProps> = ({
         </div>
       </div>
       
-      {/* Voice Input - показується тільки при натисканні мікрофона */}
+      {/* Voice Input - всередині input box */}
       {isVoiceInputVisible && (
-        <div className="mt-4">
+        <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-3xl flex items-center justify-center z-50">
           <ChatGPTVoiceInput 
             disabled={loading || disabled}
-            onTranscript={onChange}
+            onTranscript={(text) => {
+              onChange(text);
+              setIsVoiceInputVisible(false); // Ховаємо voice input після відправки
+            }}
+            onClose={() => setIsVoiceInputVisible(false)}
           />
         </div>
       )}

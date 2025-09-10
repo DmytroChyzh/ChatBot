@@ -7,12 +7,14 @@ interface ChatGPTVoiceInputProps {
   disabled?: boolean;
   className?: string;
   onTranscript?: (text: string) => void;
+  onClose?: () => void;
 }
 
 const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({ 
   disabled = false,
   className = "",
-  onTranscript
+  onTranscript,
+  onClose
 }) => {
   const { language } = useLanguage();
   const [isRecording, setIsRecording] = useState(false);
@@ -199,24 +201,86 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
 
   // Функція для відправки
   const sendRecording = useCallback(async () => {
-    cleanup();
+    if (!streamRef.current) return;
+    
     setIsRecording(false);
     setStatus('processing');
     setIsProcessing(true);
     
-    // Імітуємо обробку
-    setTimeout(() => {
-      setStatus('sent');
+    try {
+      // Створюємо MediaRecorder для запису
+      const mediaRecorder = new MediaRecorder(streamRef.current);
+      const audioChunks: Blob[] = [];
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      };
+      
+      // Записуємо аудіо
+      mediaRecorder.start();
+      
+      // Зупиняємо через 3 секунди (або можна додати кнопку зупинки)
+      setTimeout(() => {
+        mediaRecorder.stop();
+      }, 3000);
+      
+      mediaRecorder.onstop = async () => {
+        try {
+          // Створюємо Blob з аудіо даних
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          
+          if (audioBlob.size < 1000) {
+            setError('Запис занадто короткий');
+            setIsProcessing(false);
+            return;
+          }
+          
+          // Створюємо FormData для відправки
+          const formData = new FormData();
+          formData.append('audio', audioBlob, 'recording.webm');
+          formData.append('language', language);
+          
+          // Відправляємо на Whisper API
+          const response = await fetch('/api/speech-to-text', {
+            method: 'POST',
+            body: formData,
+          });
+          
+          if (!response.ok) {
+            throw new Error('Помилка розпізнавання мови');
+          }
+          
+          const result = await response.json();
+          
+          if (result.text && result.text.trim()) {
+            setStatus('sent');
+            
+            // Відправляємо результат
+            if (onTranscript) {
+              onTranscript(result.text);
+            }
+          } else {
+            setError('Не вдалося розпізнати мову');
+          }
+          
+        } catch (error) {
+          console.error('Error processing audio:', error);
+          setError('Помилка обробки аудіо');
+        } finally {
+          setIsProcessing(false);
+          cleanup();
+        }
+      };
+      
+    } catch (error) {
+      console.error('Error sending recording:', error);
+      setError('Помилка відправки');
       setIsProcessing(false);
-      
-      // Імітуємо відправку тексту
-      if (onTranscript) {
-        onTranscript('Тестовий текст з голосового вводу');
-      }
-      
-      setTimeout(() => setStatus('idle'), 2000);
-    }, 1000);
-  }, [cleanup, onTranscript]);
+      cleanup();
+    }
+  }, [cleanup, onTranscript, language]);
 
   // Ефект для зміни розміру canvas
   useEffect(() => {
@@ -231,11 +295,16 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
     };
   }, [resizeCanvas, cleanup]);
 
-  // Ефект для початкової анімації
+  // Ефект для початкової анімації та автоматичного старту
   useEffect(() => {
     // Запускаємо початкову анімацію
     drawFrame();
-  }, [drawFrame]);
+    
+    // Автоматично починаємо запис при монтуванні
+    if (!disabled) {
+      startListening();
+    }
+  }, [drawFrame, disabled, startListening]);
 
   // Отримуємо текст статусу
   const getStatusText = () => {
@@ -249,91 +318,49 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
   };
 
   return (
-    <div className={`w-full max-w-[880px] mx-auto ${className}`}>
-      {/* Voice Input Pill */}
-      <div className="relative bg-gray-800 rounded-full px-4 py-3 flex items-center justify-between min-h-[60px]">
-        {/* Кнопка + */}
+    <div className={`w-full h-full flex items-center justify-between px-4 ${className}`}>
+      {/* Canvas для анімації хвилі */}
+      <div className="flex-1 mx-4 h-12">
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full"
+          style={{ width: '100%', height: '100%' }}
+        />
+      </div>
+
+      {/* Кнопки X і ✓ */}
+      <div className="flex items-center gap-2">
         <button
-          onClick={isRecording ? stopListening : startListening}
-          disabled={disabled || isProcessing}
+          onClick={cancelRecording}
+          disabled={!isRecording && !isProcessing}
           className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-            isRecording 
+            isRecording || isProcessing
               ? 'bg-red-500 hover:bg-red-600 text-white' 
-              : 'bg-gray-600 hover:bg-gray-500 text-white'
-          } ${disabled || isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
-          aria-label={isRecording ? 'Зупинити запис' : 'Почати запис'}
+              : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+          }`}
+          aria-label="Скасувати"
         >
-          {isRecording ? (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="6" y="6" width="12" height="12" rx="2"/>
-            </svg>
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-          )}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
         </button>
 
-        {/* Canvas для анімації хвилі */}
-        <div className="flex-1 mx-4 h-12">
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full"
-            style={{ width: '100%', height: '100%' }}
-          />
-        </div>
-
-        {/* Кнопки X і ✓ */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={cancelRecording}
-            disabled={!isRecording && !isProcessing}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-              isRecording || isProcessing
-                ? 'bg-red-500 hover:bg-red-600 text-white' 
-                : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-            }`}
-            aria-label="Скасувати"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-
-          <button
-            onClick={sendRecording}
-            disabled={!isRecording && !isProcessing}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-              isRecording || isProcessing
-                ? 'bg-green-500 hover:bg-green-600 text-white' 
-                : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-            }`}
-            aria-label="Відправити"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="20,6 9,17 4,12"/>
-            </svg>
-          </button>
-        </div>
+        <button
+          onClick={sendRecording}
+          disabled={!isRecording && !isProcessing}
+          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+            isRecording || isProcessing
+              ? 'bg-green-500 hover:bg-green-600 text-white' 
+              : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+          }`}
+          aria-label="Відправити"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="20,6 9,17 4,12"/>
+          </svg>
+        </button>
       </div>
-
-      {/* Статус текст */}
-      <div className="mt-2 text-center">
-        <p className="text-sm text-gray-400" aria-live="polite">
-          {getStatusText()}
-        </p>
-      </div>
-
-      {/* Помилка */}
-      {error && (
-        <div className="mt-2 text-center">
-          <p className="text-sm text-red-400" aria-live="assertive">
-            {error}
-          </p>
-        </div>
-      )}
     </div>
   );
 };
