@@ -280,12 +280,22 @@ const InputBox: React.FC<InputBoxProps> = ({
   // Show dictation mode if active
   if (isDictating) {
     return (
-      <div className="w-full max-w-[900px] mx-auto my-6">
-        <DictationMode
-          onConfirm={handleDictationConfirm}
-          onCancel={handleDictationCancel}
+      <>
+        {/* Voice Chat Robot */}
+        <VoiceChatRobot
+          isActive={isVoiceChatActive}
+          isListening={isListening}
+          isSpeaking={isSpeaking}
+          isProcessing={isProcessing}
         />
-      </div>
+        
+        <div className="w-full max-w-[900px] mx-auto my-6">
+          <DictationMode
+            onConfirm={handleDictationConfirm}
+            onCancel={handleDictationCancel}
+          />
+        </div>
+      </>
     );
   }
 
