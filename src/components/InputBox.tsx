@@ -384,8 +384,8 @@ const InputBox: React.FC<InputBoxProps> = ({
           disabled={loading || disabled}
         />
 
-        </div>
       </div>
+    </div>
     </>
   );
 };
