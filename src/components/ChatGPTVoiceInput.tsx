@@ -97,13 +97,14 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
       analyserRef.current.getByteFrequencyData(dataArrayRef.current);
       
       // Оновлюємо бари з реальними даними
-      const barWidth = width / 36;
       const dataStep = Math.floor(dataArrayRef.current.length / 36);
       
       for (let i = 0; i < 36; i++) {
         const dataIndex = i * dataStep;
         const value = dataArrayRef.current[dataIndex] / 255;
-        barsRef.current[i] = Math.max(barsRef.current[i] * decayRef.current, value);
+        // Додаємо трохи випадковості для більш живої анімації
+        const randomFactor = 0.8 + Math.random() * 0.4;
+        barsRef.current[i] = Math.max(barsRef.current[i] * decayRef.current, value * randomFactor);
       }
     } else {
       // Затухання барів
@@ -229,6 +230,12 @@ const ChatGPTVoiceInput: React.FC<ChatGPTVoiceInputProps> = ({
       cleanup();
     };
   }, [resizeCanvas, cleanup]);
+
+  // Ефект для початкової анімації
+  useEffect(() => {
+    // Запускаємо початкову анімацію
+    drawFrame();
+  }, [drawFrame]);
 
   // Отримуємо текст статусу
   const getStatusText = () => {

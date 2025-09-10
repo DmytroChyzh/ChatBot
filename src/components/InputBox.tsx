@@ -30,6 +30,7 @@ const InputBox: React.FC<InputBoxProps> = ({
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [isVoiceInputVisible, setIsVoiceInputVisible] = useState(false);
 
   // Track voice activity
   useEffect(() => {
@@ -133,11 +134,31 @@ const InputBox: React.FC<InputBoxProps> = ({
           </svg>
         </button>
 
-        {/* Голосовий чат (ChatGPT стиль) */}
-        <ChatGPTVoiceInput 
+        {/* Голосовий чат (кнопка мікрофона) */}
+        <button
+          type="button"
+          onClick={() => setIsVoiceInputVisible(!isVoiceInputVisible)}
           disabled={loading || disabled}
-          onTranscript={onChange}
-        />
+          className="w-11 h-11 flex items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white transition-all duration-200"
+          title="Голосовий ввід"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
 
           {/* Hybrid Voice Chat (ElevenLabs + OpenAI) */}
           <HybridVoiceChat 
@@ -155,6 +176,16 @@ const InputBox: React.FC<InputBoxProps> = ({
           />
         </div>
       </div>
+      
+      {/* Voice Input - показується тільки при натисканні мікрофона */}
+      {isVoiceInputVisible && (
+        <div className="mt-4">
+          <ChatGPTVoiceInput 
+            disabled={loading || disabled}
+            onTranscript={onChange}
+          />
+        </div>
+      )}
     </div>
   );
 };
