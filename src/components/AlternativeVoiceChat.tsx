@@ -24,6 +24,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   const [fullTranscript, setFullTranscript] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [showRecordingUI, setShowRecordingUI] = useState(false);
+  const [finalTranscript, setFinalTranscript] = useState('');
   const [audioLevel, setAudioLevel] = useState(0);
   
   const recognitionRef = useRef<any>(null);
@@ -66,29 +67,28 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
 
       recognitionRef.current.onresult = (event: any) => {
         let interimTranscript = '';
-        let finalTranscript = '';
+        let newFinalTranscript = '';
         
         // Обробляємо всі результати
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript;
           
           if (event.results[i].isFinal) {
-            finalTranscript += transcript + ' ';
+            newFinalTranscript += transcript + ' ';
           } else {
             interimTranscript += transcript;
           }
         }
         
         // Оновлюємо повний текст
-        if (finalTranscript) {
-          setFullTranscript(prev => prev + finalTranscript);
+        if (newFinalTranscript) {
+          setFullTranscript(prev => prev + newFinalTranscript);
         }
         
-        // Показуємо поточний текст (проміжний + фінальний)
-        const currentText = fullTranscript + finalTranscript + interimTranscript;
-        setTranscript(currentText);
+        // Показуємо тільки проміжний текст під час запису
+        setTranscript(interimTranscript);
         
-        console.log('Speech recognized:', { finalTranscript, interimTranscript, currentText });
+        console.log('Speech recognized:', { newFinalTranscript, interimTranscript });
       };
 
       recognitionRef.current.onerror = (event: any) => {
@@ -114,8 +114,10 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
         console.log('Speech recognition ended');
         setIsListening(false);
         setIsRecording(false);
-        setShowRecordingUI(false);
+        // Не закриваємо UI автоматично - залишаємо для підтвердження
         stopAudioAnalysis();
+        // Показуємо фінальний текст
+        setFinalTranscript(fullTranscript + transcript);
       };
 
       // Ініціалізуємо синтез мови
@@ -180,7 +182,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   };
 
   const confirmRecording = () => {
-    const finalText = fullTranscript + transcript;
+    const finalText = finalTranscript || (fullTranscript + transcript);
     if (finalText.trim() && onTranscript) {
       onTranscript(finalText.trim());
       console.log('Final transcript sent to parent:', finalText.trim());
@@ -188,9 +190,10 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     setShowRecordingUI(false);
     setIsRecording(false);
     stopAudioAnalysis();
-    // Очищаємо транскрипт для наступного використання
+    // Очищаємо всі транскрипти для наступного використання
     setTranscript('');
     setFullTranscript('');
+    setFinalTranscript('');
   };
 
   const cancelRecording = () => {
@@ -202,6 +205,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     stopAudioAnalysis();
     setTranscript('');
     setFullTranscript('');
+    setFinalTranscript('');
   };
 
 
@@ -296,9 +300,9 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   if (showRecordingUI) {
     return (
       <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-3xl flex items-center justify-center z-50">
-        <div className="w-full h-full flex flex-col items-center justify-center px-4 py-3">
-          {/* Voice лінії (компактні як в ChatGPT) */}
-          <div className="flex items-center justify-center mb-4">
+        <div className="w-full h-full flex items-center justify-between px-4">
+          {/* Ліва частина - Voice лінії */}
+          <div className="flex items-center">
             <div className="flex items-center space-x-1">
               {[...Array(8)].map((_, i) => (
                 <div
@@ -314,27 +318,24 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
             </div>
           </div>
 
-          {/* Текст розпізнавання (компактний як в ChatGPT) */}
-          {transcript && (
-            <div className="mb-4 p-3 bg-muted/30 rounded-lg w-full max-w-lg">
-              <div className="text-xs text-muted-foreground mb-2 text-center">
-                Розпізнано:
-              </div>
+          {/* Центральна частина - Текст (тільки після завершення запису) */}
+          {finalTranscript && !isRecording && (
+            <div className="flex-1 mx-4">
               <div className="text-sm text-foreground text-center">
-                {transcript}
+                {finalTranscript}
               </div>
             </div>
           )}
 
-          {/* Кнопки управління (компактні як в ChatGPT) */}
-          <div className="flex items-center justify-center gap-4">
+          {/* Права частина - Кнопки управління */}
+          <div className="flex items-center gap-2">
             {/* Кнопка скасування */}
             <button
               onClick={cancelRecording}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
               title="Скасувати запис"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/>
                 <line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
@@ -343,10 +344,10 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
             {/* Кнопка підтвердження */}
             <button
               onClick={confirmRecording}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 text-white transition-all duration-200"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 text-white transition-all duration-200"
               title="Підтвердити запис"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20,6 9,17 4,12"/>
               </svg>
             </button>
