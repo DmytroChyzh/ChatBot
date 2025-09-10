@@ -400,16 +400,28 @@
     }
   }
 
-  @keyframes cosmic-nebula {
-    0%, 100% {
-      opacity: 0.1;
-      transform: scale(0.8) rotate(0deg);
-    }
-    50% {
-      opacity: 0.3;
-      transform: scale(1.2) rotate(180deg);
-    }
+@keyframes cosmic-nebula {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(0.8) rotate(0deg);
   }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+/* Voice wave animations */
+@keyframes wave-pulse {
+  0%, 100% {
+    transform: scaleY(0.3);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
 }
 
 @layer base {

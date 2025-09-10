@@ -63,6 +63,8 @@ interface HybridVoiceChatProps {
   onResponse?: (text: string) => void;
   sessionId?: string | null;
   onAddMessage?: (message: { role: 'user' | 'assistant', content: string, timestamp: Date }) => Promise<void>;
+  onListeningChange?: (isListening: boolean) => void;
+  onSpeakingChange?: (isSpeaking: boolean) => void;
 }
 
 const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
@@ -71,12 +73,27 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
   onTranscript,
   onResponse,
   sessionId,
-  onAddMessage
+  onAddMessage,
+  onListeningChange,
+  onSpeakingChange
 }) => {
   const { language } = useLanguage();
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+
+  // Notify parent components of state changes
+  useEffect(() => {
+    if (onListeningChange) {
+      onListeningChange(isListening);
+    }
+  }, [isListening, onListeningChange]);
+
+  useEffect(() => {
+    if (onSpeakingChange) {
+      onSpeakingChange(isSpeaking);
+    }
+  }, [isSpeaking, onSpeakingChange]);
   const [error, setError] = useState<string | null>(null);
   const [transcript, setTranscript] = useState('');
 
