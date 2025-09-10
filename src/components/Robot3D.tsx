@@ -54,12 +54,13 @@ const RobotModel: React.FC<{
   // Eye glow effect
   useEffect(() => {
     if (eyeRef.current) {
+      const material = eyeRef.current.material as THREE.MeshBasicMaterial;
       if (isListening || isSpeaking || isProcessing) {
-        eyeRef.current.material.emissive = new THREE.Color(0x00ff00);
-        eyeRef.current.material.emissiveIntensity = 0.5;
+        material.emissive = new THREE.Color(0x00ff00);
+        material.emissiveIntensity = 0.5;
       } else {
-        eyeRef.current.material.emissive = new THREE.Color(0x000000);
-        eyeRef.current.material.emissiveIntensity = 0;
+        material.emissive = new THREE.Color(0x000000);
+        material.emissiveIntensity = 0;
       }
     }
   }, [isListening, isSpeaking, isProcessing]);
