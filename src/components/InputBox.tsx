@@ -136,6 +136,7 @@ const InputBox: React.FC<InputBoxProps> = ({
             onListeningChange={setIsListening}
             onSpeakingChange={setIsSpeaking}
           />
+        </div>
       </div>
     </div>
   );
