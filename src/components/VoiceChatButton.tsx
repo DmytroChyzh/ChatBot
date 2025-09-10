@@ -17,13 +17,14 @@ const VoiceChatButton: React.FC<VoiceChatButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-[#651FFF] to-[#FF6B35] hover:from-[#5A1AE6] hover:to-[#E55A2B] text-white rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${className}`}
+      className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 select-none bg-gradient-to-r from-[#651FFF] to-[#FF6B35] hover:from-[#5A1AE6] hover:to-[#E55A2B] text-white ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
+      title="Use voice mode"
     >
       <div className="relative">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -43,11 +44,6 @@ const VoiceChatButton: React.FC<VoiceChatButtonProps> = ({
         {/* Animated sound waves */}
         <div className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full animate-ping"></div>
         <div className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
-      </div>
-      
-      <div className="text-left">
-        <div className="font-semibold text-lg">Використати голосовий режим</div>
-        <div className="text-sm opacity-90">Розмова з Ceiden Assistant</div>
       </div>
     </button>
   );

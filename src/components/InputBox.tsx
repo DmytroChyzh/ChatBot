@@ -151,7 +151,6 @@ const InputBox: React.FC<InputBoxProps> = ({
           <VoiceChatButton 
             onClick={onStartVoiceChat}
             disabled={loading || disabled}
-            className="w-11 h-11"
           />
         )}
 
