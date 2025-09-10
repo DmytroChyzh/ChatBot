@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import VoiceDictationButton from './VoiceDictationButton';
 
 interface InputBoxProps {
   value: string;
@@ -104,6 +105,12 @@ const InputBox: React.FC<InputBoxProps> = ({
             <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
           </svg>
         </button>
+
+        {/* Voice Dictation Button */}
+        <VoiceDictationButton 
+          disabled={loading || disabled}
+          onTranscript={onChange}
+        />
 
         </div>
       </div>
