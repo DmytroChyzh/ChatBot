@@ -168,18 +168,31 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       formData.append('audio', audioBlob, 'recording.webm');
       formData.append('language', language);
 
+      console.log('Sending audio to Whisper API...', {
+        audioSize: audioBlob.size,
+        language: language
+      });
+
       // Відправляємо на наш API endpoint
       const response = await fetch('/api/speech-to-text', {
         method: 'POST',
         body: formData,
       });
 
+      console.log('Whisper API response status:', response.status);
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Помилка розпізнавання мови');
+        console.error('Whisper API error:', errorData);
+        
+        // Fallback на Web Speech API якщо Whisper не працює
+        console.log('Falling back to Web Speech API...');
+        await fallbackToWebSpeech();
+        return;
       }
 
       const result = await response.json();
+      console.log('Whisper API result:', result);
       
       if (result.text && result.text.trim()) {
         setTranscript(result.text);
@@ -190,10 +203,51 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
 
     } catch (error) {
       console.error('Error processing audio:', error);
-      setErrorWithTimeout(error instanceof Error ? error.message : 'Помилка обробки аудіо');
+      console.log('Falling back to Web Speech API...');
+      await fallbackToWebSpeech();
     } finally {
       setIsProcessing(false);
       audioChunksRef.current = [];
+    }
+  };
+
+  const fallbackToWebSpeech = async () => {
+    try {
+      console.log('Using Web Speech API fallback...');
+      
+      // Використовуємо Web Speech API як fallback
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        setErrorWithTimeout('Голосові функції не підтримуються в цьому браузері');
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = language === 'uk' ? 'uk-UA' : 'en-US';
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript && transcript.trim()) {
+          setTranscript(transcript);
+          setFinalTranscript(transcript);
+        } else {
+          setErrorWithTimeout('Не вдалося розпізнати мову');
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error('Web Speech API error:', event.error);
+        setErrorWithTimeout(`Помилка розпізнавання: ${event.error}`);
+      };
+
+      // Запускаємо розпізнавання
+      recognition.start();
+      
+    } catch (error) {
+      console.error('Web Speech API fallback error:', error);
+      setErrorWithTimeout('Помилка обробки аудіо');
     }
   };
 

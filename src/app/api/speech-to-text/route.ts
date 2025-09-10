@@ -2,19 +2,37 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('Speech-to-text API called');
+    
     const formData = await request.formData();
     const audioFile = formData.get('audio') as File;
     const language = formData.get('language') as string || 'auto';
 
+    console.log('Received data:', { 
+      hasAudioFile: !!audioFile, 
+      audioFileSize: audioFile?.size, 
+      audioFileType: audioFile?.type,
+      language 
+    });
+
     if (!audioFile) {
+      console.error('No audio file provided');
       return NextResponse.json({ error: 'No audio file provided' }, { status: 400 });
+    }
+
+    if (audioFile.size === 0) {
+      console.error('Audio file is empty');
+      return NextResponse.json({ error: 'Audio file is empty' }, { status: 400 });
     }
 
     // Перевіряємо чи є API ключ
     const openaiApiKey = process.env.OPENAI_API_KEY;
     if (!openaiApiKey) {
+      console.error('OpenAI API key not configured');
       return NextResponse.json({ error: 'OpenAI API key not configured' }, { status: 500 });
     }
+
+    console.log('OpenAI API key found, processing audio...');
 
     // Конвертуємо File в Buffer
     const audioBuffer = Buffer.from(await audioFile.arrayBuffer());
@@ -58,6 +76,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Викликаємо OpenAI Whisper API
+    console.log('Calling OpenAI Whisper API with language:', whisperLanguage);
+    
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
@@ -75,16 +95,20 @@ export async function POST(request: NextRequest) {
       })(),
     });
 
+    console.log('OpenAI API response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.text();
       console.error('OpenAI Whisper API error:', errorData);
       return NextResponse.json({ 
         error: 'Speech recognition failed',
-        details: errorData 
+        details: errorData,
+        status: response.status
       }, { status: response.status });
     }
 
     const result = await response.json();
+    console.log('OpenAI API result:', result);
     
     return NextResponse.json({
       text: result.text,
