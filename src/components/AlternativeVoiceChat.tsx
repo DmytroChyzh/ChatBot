@@ -28,6 +28,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   const [finalTranscript, setFinalTranscript] = useState('');
   const [audioLevel, setAudioLevel] = useState(0);
   const [errorTimeout, setErrorTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [testMode, setTestMode] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -82,6 +83,24 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     }
   };
 
+  const testMicrophone = async () => {
+    try {
+      console.log('Testing microphone...');
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log('Microphone test successful:', {
+        audioTracks: stream.getAudioTracks().length,
+        trackSettings: stream.getAudioTracks()[0]?.getSettings()
+      });
+      
+      // Зупиняємо тест
+      stream.getTracks().forEach(track => track.stop());
+      setErrorWithTimeout('Мікрофон працює! Спробуйте голосовий чат.');
+    } catch (error) {
+      console.error('Microphone test failed:', error);
+      setErrorWithTimeout('Помилка доступу до мікрофона');
+    }
+  };
+
   const startRecording = async () => {
     if (!isSupported) {
       setErrorWithTimeout('Голосові функції не підтримуються в цьому браузері');
@@ -109,6 +128,11 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
         } 
       });
 
+      console.log('Microphone access granted:', {
+        audioTracks: stream.getAudioTracks().length,
+        trackSettings: stream.getAudioTracks()[0]?.getSettings()
+      });
+
       // Налаштовуємо аналіз аудіо для візуалізації
       await setupAudioAnalysis(stream);
 
@@ -123,6 +147,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data);
+          console.log('Audio chunk received:', event.data.size, 'bytes');
         }
       };
 
@@ -152,7 +177,13 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   };
 
   const processAudio = async () => {
+    console.log('Processing audio...', {
+      chunksCount: audioChunksRef.current.length,
+      totalSize: audioChunksRef.current.reduce((sum, chunk) => sum + chunk.size, 0)
+    });
+
     if (audioChunksRef.current.length === 0) {
+      console.error('No audio chunks to process');
       setErrorWithTimeout('Немає аудіо даних для обробки');
       return;
     }
@@ -162,6 +193,17 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       
       // Створюємо Blob з аудіо даних
       const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+      console.log('Created audio blob:', {
+        size: audioBlob.size,
+        type: audioBlob.type
+      });
+
+      // Перевіряємо мінімальний розмір аудіо
+      if (audioBlob.size < 1000) { // Менше 1KB
+        console.error('Audio too short:', audioBlob.size, 'bytes');
+        setErrorWithTimeout('Запис занадто короткий. Спробуйте говорити довше.');
+        return;
+      }
       
       // Створюємо FormData для відправки
       const formData = new FormData();
@@ -436,6 +478,18 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
 
   return (
     <div className="relative">
+      {/* Тестова кнопка для debugging */}
+      {process.env.NODE_ENV === 'development' && (
+        <button
+          type="button"
+          onClick={testMicrophone}
+          className="absolute -top-12 left-0 w-8 h-8 bg-gray-500 hover:bg-gray-600 text-white rounded-full text-xs"
+          title="Тест мікрофона"
+        >
+          T
+        </button>
+      )}
+      
       <button
         type="button"
         onClick={toggleRecording}
