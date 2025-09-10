@@ -370,11 +370,21 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
     setIsListening(false);
   };
 
-  const toggleListening = () => {
+  const handleMouseDown = () => {
+    if (!disabled && !isProcessing && !isListening) {
+      startListening();
+    }
+  };
+
+  const handleMouseUp = () => {
     if (isListening) {
       stopListening();
-    } else {
-      startListening();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isListening) {
+      stopListening();
     }
   };
 
@@ -382,9 +392,13 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
     <div className="relative">
       <button
         type="button"
-        onClick={toggleListening}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleMouseDown}
+        onTouchEnd={handleMouseUp}
         disabled={disabled || isProcessing}
-        className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 ${
+        className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 select-none ${
           isListening
             ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
             : isProcessing
@@ -392,15 +406,15 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
             : isSpeaking
             ? 'bg-green-500 hover:bg-green-600 text-white animate-pulse'
             : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
-        } ${disabled || isProcessing ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+        } ${disabled || isProcessing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
         title={
           isListening
-            ? 'Зупинити прослуховування'
+            ? 'Відпустіть щоб зупинити'
             : isProcessing
             ? 'Обробка запиту...'
             : isSpeaking
             ? 'Озвучування відповіді...'
-            : 'Гібридний голосовий чат (ElevenLabs + OpenAI)'
+            : 'Натисніть і тримайте для голосового чату'
         }
       >
         {isListening ? (

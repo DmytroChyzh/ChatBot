@@ -23,7 +23,6 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   const [transcript, setTranscript] = useState('');
   const [fullTranscript, setFullTranscript] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [showRecordingUI, setShowRecordingUI] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   
   const recognitionRef = useRef<any>(null);
@@ -114,7 +113,6 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
         console.log('Speech recognition ended');
         setIsListening(false);
         setIsRecording(false);
-        setShowRecordingUI(false);
         stopAudioAnalysis();
       };
 
@@ -147,7 +145,6 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       setTranscript('');
       setFullTranscript('');
       setIsRecording(true);
-      setShowRecordingUI(true);
       
       // Отримуємо доступ до мікрофона для аналізу аудіо
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -158,7 +155,6 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       console.error('Error starting speech recognition:', error);
       setError('Не вдалося запустити розпізнавання мови');
       setIsRecording(false);
-      setShowRecordingUI(false);
     }
   };
 
@@ -166,7 +162,6 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     if (recognitionRef.current && isRecording) {
       recognitionRef.current.stop();
       setIsRecording(false);
-      setShowRecordingUI(false);
       stopAudioAnalysis();
       
       // Відправляємо весь накопичений текст
@@ -178,20 +173,24 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     }
   };
 
-  const cancelRecording = () => {
-    if (recognitionRef.current && isRecording) {
-      recognitionRef.current.stop();
-      setIsRecording(false);
-      setShowRecordingUI(false);
-      stopAudioAnalysis();
-      setTranscript('');
-      setFullTranscript('');
+  const handleMouseDown = () => {
+    if (!disabled && !isRecording) {
+      startRecording();
     }
   };
 
-  const confirmRecording = () => {
-    stopRecording();
+  const handleMouseUp = () => {
+    if (isRecording) {
+      stopRecording();
+    }
   };
+
+  const handleMouseLeave = () => {
+    if (isRecording) {
+      stopRecording();
+    }
+  };
+
 
   const setupAudioAnalysis = async (stream: MediaStream) => {
     try {
@@ -277,147 +276,50 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     );
   }
 
-  // Показуємо UI запису як в ChatGPT
-  if (showRecordingUI) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4">
-          {/* Заголовок */}
-          <div className="text-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Голосовий запис
-            </h3>
-          </div>
-
-          {/* Хвилі звуку */}
-          <div className="flex items-center justify-center mb-6">
-            <div className="flex items-center space-x-1">
-              {[...Array(20)].map((_, i) => (
-                <div
-                  key={i}
-                  className="w-1 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-150"
-                  style={{
-                    height: `${Math.max(4, (audioLevel * 40) + Math.random() * 10)}px`,
-                    animationDelay: `${i * 50}ms`
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Текст розпізнавання */}
-          {transcript && (
-            <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                Розпізнано:
-              </div>
-              <div className="text-gray-900 dark:text-white max-h-20 overflow-y-auto">
-                {transcript}
-              </div>
-            </div>
-          )}
-
-          {/* Кнопки управління */}
-          <div className="flex items-center justify-between">
-            {/* Кнопка скасування */}
-            <button
-              onClick={cancelRecording}
-              className="w-12 h-12 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
-              title="Скасувати запис"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-
-            {/* Кнопка озвучування (якщо є текст) */}
-            {transcript && (
-              <button
-                onClick={() => speakText(transcript)}
-                className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-colors"
-                title="Озвучити текст"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                </svg>
-              </button>
-            )}
-
-            {/* Кнопка зупинки/підтвердження */}
-            <button
-              onClick={confirmRecording}
-              className="w-12 h-12 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors"
-              title="Підтвердити запис"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20,6 9,17 4,12"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="relative">
       <button
         type="button"
-        onClick={startRecording}
-        disabled={disabled || isListening}
-        className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 border-0 ${
-          'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
-        title="Натисніть щоб почати запис"
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleMouseDown}
+        onTouchEnd={handleMouseUp}
+        disabled={disabled}
+        className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 select-none ${
+          isRecording
+            ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
+            : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
+        title={
+          isRecording
+            ? 'Відпустіть щоб зупинити'
+            : 'Натисніть і тримайте для голосового чату'
+        }
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-          <line x1="12" y1="19" x2="12" y2="23"/>
-          <line x1="8" y1="23" x2="16" y2="23"/>
-        </svg>
+        {isRecording ? (
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="6" y="6" width="12" height="12" rx="2"/>
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        )}
       </button>
 
       {/* Показуємо помилку */}
