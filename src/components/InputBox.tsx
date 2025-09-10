@@ -1,8 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import AlternativeVoiceChat from './AlternativeVoiceChat';
-import HybridVoiceChat from './HybridVoiceChat';
-import VoiceWaveIndicator from './VoiceWaveIndicator';
 
 interface InputBoxProps {
   value: string;
@@ -27,23 +24,6 @@ const InputBox: React.FC<InputBoxProps> = ({
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useLanguage();
-  const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isVoiceActive, setIsVoiceActive] = useState(false);
-
-  // Track voice activity
-  useEffect(() => {
-    if (isListening || isSpeaking) {
-      setIsVoiceActive(true);
-    } else {
-      // Hide after a delay when both listening and speaking stop
-      const timer = setTimeout(() => {
-        setIsVoiceActive(false);
-      }, 1000); // 1 second delay
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isListening, isSpeaking]);
 
 
   // Auto-grow textarea
@@ -83,14 +63,6 @@ const InputBox: React.FC<InputBoxProps> = ({
 
   return (
     <div className="w-full max-w-[900px] mx-auto my-6">
-      {/* Voice Wave Indicator - Only show when voice is active */}
-      {isVoiceActive && (
-        <VoiceWaveIndicator 
-          isListening={isListening}
-          isSpeaking={isSpeaking}
-          className="mb-3"
-        />
-      )}
       
       <div
         className="w-full bg-[hsl(var(--input-bg))] border-2 border-accent rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-md focus-within:ring-2 focus-within:ring-accent"
@@ -133,26 +105,6 @@ const InputBox: React.FC<InputBoxProps> = ({
           </svg>
         </button>
 
-        {/* Голосовий чат (Web Speech API) */}
-        <AlternativeVoiceChat 
-          disabled={loading || disabled}
-          onTranscript={onChange}
-        />
-
-          {/* Hybrid Voice Chat (ElevenLabs + OpenAI) */}
-          <HybridVoiceChat 
-            disabled={loading || disabled}
-            onTranscript={onChange}
-            onResponse={(text) => {
-              // Handle AI response
-              console.log('Hybrid AI Response:', text);
-              setIsSpeaking(false);
-            }}
-            sessionId={sessionId}
-            onAddMessage={onAddMessage}
-            onListeningChange={setIsListening}
-            onSpeakingChange={setIsSpeaking}
-          />
         </div>
       </div>
     </div>
