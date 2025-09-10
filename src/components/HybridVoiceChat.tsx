@@ -339,11 +339,20 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
   };
 
   const startListening = async () => {
-    if (disabled || isListening || isProcessing) return;
+    if (disabled || isListening || isProcessing) {
+      console.log('HybridVoiceChat: Cannot start - disabled:', disabled, 'isListening:', isListening, 'isProcessing:', isProcessing);
+      return;
+    }
 
     try {
       setError(null);
       console.log('HybridVoiceChat: Starting listening...');
+
+      // Check if recognition is available
+      if (!recognitionRef.current) {
+        setError('Розпізнавання мови не ініціалізовано');
+        return;
+      }
 
       // Get microphone access
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -353,12 +362,10 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
       await setupAudioAnalysis(stream);
 
       // Start speech recognition
-      if (recognitionRef.current) {
-        recognitionRef.current.start();
-      }
+      recognitionRef.current.start();
     } catch (error) {
       console.error('HybridVoiceChat: Error starting listening:', error);
-      setError('Не вдалося отримати доступ до мікрофона');
+      setError(`Помилка: ${error.message || 'Не вдалося отримати доступ до мікрофона'}`);
     }
   };
 

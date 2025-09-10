@@ -292,17 +292,17 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   // Показуємо UI запису прямо в input
   if (showRecordingUI) {
     return (
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm rounded-3xl flex items-center justify-center z-50">
-        <div className="bg-background/95 rounded-2xl p-3 max-w-xs w-full mx-2 border border-border shadow-lg">
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-3xl flex items-center justify-center z-50">
+        <div className="w-full h-full flex flex-col items-center justify-center p-4">
           {/* Voice лінії */}
-          <div className="flex items-center justify-center mb-3">
+          <div className="flex items-center justify-center mb-4">
             <div className="flex items-center space-x-1">
               {[...Array(8)].map((_, i) => (
                 <div
                   key={i}
                   className="w-1 bg-gradient-to-t from-purple-500 to-blue-500 rounded-full transition-all duration-150"
                   style={{
-                    height: `${Math.max(6, (audioLevel * 25) + Math.random() * 12)}px`,
+                    height: `${Math.max(8, (audioLevel * 30) + Math.random() * 15)}px`,
                     animationDelay: `${i * 80}ms`,
                     animation: 'wave-pulse 1.2s ease-in-out infinite'
                   }}
@@ -313,25 +313,25 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
 
           {/* Текст розпізнавання */}
           {transcript && (
-            <div className="mb-3 p-2 bg-muted/50 rounded-lg">
-              <div className="text-xs text-muted-foreground mb-1">
+            <div className="mb-4 p-3 bg-muted/30 rounded-lg w-full max-w-md">
+              <div className="text-xs text-muted-foreground mb-2 text-center">
                 Розпізнано:
               </div>
-              <div className="text-sm text-foreground max-h-12 overflow-y-auto">
+              <div className="text-sm text-foreground text-center">
                 {transcript}
               </div>
             </div>
           )}
 
           {/* Кнопки управління */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center gap-4">
             {/* Кнопка скасування */}
             <button
               onClick={cancelRecording}
-              className="w-7 h-7 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
               title="Скасувати запис"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/>
                 <line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
@@ -340,10 +340,10 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
             {/* Кнопка підтвердження */}
             <button
               onClick={confirmRecording}
-              className="w-7 h-7 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors"
               title="Підтвердити запис"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20,6 9,17 4,12"/>
               </svg>
             </button>
