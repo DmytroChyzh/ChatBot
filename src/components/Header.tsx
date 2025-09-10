@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, mounted, small, cla
       {/* Logo */}
       
       {/* Header Content */}
-      <div className="absolute left-4 lg:left-16 right-4 lg:right-16 top-6 flex items-center justify-between">
+      <div className="absolute left-4 lg:left-16 right-4 lg:right-16 top-2 flex items-center justify-between">
         <Image
           src={theme === 'dark' || theme === 'cosmic' ? '/images/logoWhite.svg' : '/images/logoDark.svg'}
           alt="Cieden Logo"
