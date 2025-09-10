@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import AlternativeVoiceChat from './AlternativeVoiceChat';
+import ChatGPTVoiceInput from './ChatGPTVoiceInput';
 import HybridVoiceChat from './HybridVoiceChat';
 import VoiceWaveIndicator from './VoiceWaveIndicator';
 
@@ -133,8 +133,8 @@ const InputBox: React.FC<InputBoxProps> = ({
           </svg>
         </button>
 
-        {/* Голосовий чат (Whisper API - підтримує всі мови) */}
-        <AlternativeVoiceChat 
+        {/* Голосовий чат (ChatGPT стиль) */}
+        <ChatGPTVoiceInput 
           disabled={loading || disabled}
           onTranscript={onChange}
         />
