@@ -19,7 +19,7 @@ const VoiceWaveIndicator: React.FC<VoiceWaveIndicatorProps> = ({
   const getState = () => {
     if (isListening) return 'listening';
     if (isSpeaking) return 'speaking';
-    return 'idle';
+    return 'listening'; // Default to listening when component is shown
   };
 
   const state = getState();
@@ -51,17 +51,6 @@ const VoiceWaveIndicator: React.FC<VoiceWaveIndicatorProps> = ({
           color: 'text-purple-500',
           bgColor: 'bg-purple-500/20'
         };
-      default:
-        return {
-          icon: (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="6" y="4" width="4" height="16"/>
-              <rect x="14" y="4" width="4" height="16"/>
-            </svg>
-          ),
-          color: 'text-gray-400',
-          bgColor: 'bg-gray-400/20'
-        };
     }
   };
 
@@ -73,9 +62,8 @@ const VoiceWaveIndicator: React.FC<VoiceWaveIndicatorProps> = ({
     const waveCount = 5;
     
     for (let i = 0; i < waveCount; i++) {
-      const height = state === 'idle' ? 2 : 
-                    state === 'listening' ? 8 + Math.sin(Date.now() * 0.01 + i) * 4 :
-                    state === 'speaking' ? 12 + Math.sin(Date.now() * 0.008 + i) * 6 : 2;
+      const height = state === 'listening' ? 8 + Math.sin(Date.now() * 0.01 + i) * 4 :
+                    state === 'speaking' ? 12 + Math.sin(Date.now() * 0.008 + i) * 6 : 8;
       
       waves.push(
         <div
@@ -84,7 +72,7 @@ const VoiceWaveIndicator: React.FC<VoiceWaveIndicatorProps> = ({
           style={{
             height: `${height}px`,
             animationDelay: `${i * 0.1}s`,
-            animation: state !== 'idle' ? 'wave-pulse 1.5s ease-in-out infinite' : 'none'
+            animation: 'wave-pulse 1.5s ease-in-out infinite'
           }}
         />
       );
@@ -108,7 +96,6 @@ const VoiceWaveIndicator: React.FC<VoiceWaveIndicatorProps> = ({
       <div className={`text-sm font-medium ${color}`}>
         {state === 'listening' && 'Ви говорите...'}
         {state === 'speaking' && 'Асистент відповідає...'}
-        {state === 'idle' && 'Готово до розмови'}
       </div>
     </div>
   );
