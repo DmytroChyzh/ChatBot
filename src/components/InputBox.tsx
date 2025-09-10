@@ -311,8 +311,8 @@ const InputBox: React.FC<InputBoxProps> = ({
 
   return (
     <>
-      {/* Voice Chat Robot */}
-      <VoiceChatRobot
+      {/* 3D Robot */}
+      <Robot3D
         isActive={isVoiceChatActive}
         isListening={isListening}
         isSpeaking={isSpeaking}
