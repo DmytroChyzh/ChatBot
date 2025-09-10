@@ -57,7 +57,14 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = true; // Безперервне розпізнавання
       recognitionRef.current.interimResults = true; // Показуємо проміжні результати
-      recognitionRef.current.lang = language === 'uk' ? 'uk-UA' : 'en-US';
+      // Встановлюємо мову для розпізнавання
+      if (language === 'uk') {
+        recognitionRef.current.lang = 'uk-UA';
+      } else {
+        recognitionRef.current.lang = 'en-US';
+      }
+      
+      console.log('Speech recognition language set to:', recognitionRef.current.lang);
 
       recognitionRef.current.onstart = () => {
         console.log('Speech recognition started');
@@ -85,7 +92,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
           setFullTranscript(prev => prev + newFinalTranscript);
         }
         
-        // Показуємо тільки проміжний текст під час запису
+        // Показуємо проміжний текст під час запису
         setTranscript(interimTranscript);
         
         console.log('Speech recognized:', { newFinalTranscript, interimTranscript });
@@ -94,6 +101,9 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       recognitionRef.current.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
+        setIsRecording(false);
+        setShowRecordingUI(false);
+        stopAudioAnalysis();
         
         switch (event.error) {
           case 'no-speech':
@@ -104,6 +114,9 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
             break;
           case 'not-allowed':
             setError('Дозвіл на мікрофон не надано.');
+            break;
+          case 'language-not-supported':
+            setError('Мова не підтримується. Спробуйте англійську.');
             break;
           default:
             setError(`Помилка розпізнавання: ${event.error}`);
@@ -301,16 +314,16 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
     return (
       <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-3xl flex items-center justify-center z-50">
         <div className="w-full h-full flex items-center justify-between px-4">
-          {/* Ліва частина - Voice лінії */}
+          {/* Ліва частина - Voice лінії (менші) */}
           <div className="flex items-center">
-            <div className="flex items-center space-x-1">
-              {[...Array(8)].map((_, i) => (
+            <div className="flex items-center space-x-0.5">
+              {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="w-1 bg-gradient-to-t from-purple-500 to-blue-500 rounded-full transition-all duration-150"
+                  className="w-0.5 bg-gradient-to-t from-purple-500 to-blue-500 rounded-full transition-all duration-150"
                   style={{
-                    height: `${Math.max(6, (audioLevel * 25) + Math.random() * 12)}px`,
-                    animationDelay: `${i * 80}ms`,
+                    height: `${Math.max(4, (audioLevel * 15) + Math.random() * 8)}px`,
+                    animationDelay: `${i * 100}ms`,
                     animation: 'wave-pulse 1.2s ease-in-out infinite'
                   }}
                 />
@@ -318,11 +331,11 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
             </div>
           </div>
 
-          {/* Центральна частина - Текст (тільки після завершення запису) */}
-          {finalTranscript && !isRecording && (
+          {/* Центральна частина - Текст (під час запису і після) */}
+          {(transcript || finalTranscript) && (
             <div className="flex-1 mx-4">
               <div className="text-sm text-foreground text-center">
-                {finalTranscript}
+                {finalTranscript || transcript}
               </div>
             </div>
           )}
