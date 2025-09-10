@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import VoiceDictationButton from './VoiceDictationButton';
+import DictationMode from './DictationMode';
 
 interface InputBoxProps {
   value: string;
@@ -25,7 +26,23 @@ const InputBox: React.FC<InputBoxProps> = ({
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useLanguage();
+  const [isDictating, setIsDictating] = useState(false);
 
+  // Handle dictation start
+  const handleStartDictation = () => {
+    setIsDictating(true);
+  };
+
+  // Handle dictation confirm
+  const handleDictationConfirm = (text: string) => {
+    onChange(text);
+    setIsDictating(false);
+  };
+
+  // Handle dictation cancel
+  const handleDictationCancel = () => {
+    setIsDictating(false);
+  };
 
   // Auto-grow textarea
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -58,6 +75,18 @@ const InputBox: React.FC<InputBoxProps> = ({
         <p className="text-green-700 dark:text-green-300">
           {t('chat.projectCompletedMessage')}
         </p>
+      </div>
+    );
+  }
+
+  // Show dictation mode if active
+  if (isDictating) {
+    return (
+      <div className="w-full max-w-[900px] mx-auto my-6">
+        <DictationMode
+          onConfirm={handleDictationConfirm}
+          onCancel={handleDictationCancel}
+        />
       </div>
     );
   }
@@ -110,6 +139,8 @@ const InputBox: React.FC<InputBoxProps> = ({
         <VoiceDictationButton 
           disabled={loading || disabled}
           onTranscript={onChange}
+          onStartDictation={handleStartDictation}
+          isDictating={isDictating}
         />
 
         </div>

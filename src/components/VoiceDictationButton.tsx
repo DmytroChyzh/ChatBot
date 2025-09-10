@@ -7,12 +7,16 @@ interface VoiceDictationButtonProps {
   disabled?: boolean;
   className?: string;
   onTranscript?: (text: string) => void;
+  onStartDictation?: () => void;
+  isDictating?: boolean;
 }
 
 const VoiceDictationButton: React.FC<VoiceDictationButtonProps> = ({ 
   disabled = false,
   className = "",
-  onTranscript
+  onTranscript,
+  onStartDictation,
+  isDictating = false
 }) => {
   const { language } = useLanguage();
   const [isListening, setIsListening] = useState(false);
@@ -212,20 +216,20 @@ const VoiceDictationButton: React.FC<VoiceDictationButtonProps> = ({
     <div className="relative">
       <button
         type="button"
-        onClick={isListening ? stopListening : startListening}
-        disabled={disabled}
+        onClick={isDictating ? undefined : (onStartDictation || (() => {}))}
+        disabled={disabled || isDictating}
         className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 select-none ${
-          isListening
-            ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
+          isDictating
+            ? 'bg-gray-400 text-white cursor-not-allowed'
             : 'bg-gradient-to-r from-[#651FFF] to-[#FF6B35] hover:from-[#5A1AE6] hover:to-[#E55A2B] text-white'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
         title={
-          isListening
-            ? 'Натисніть щоб зупинити диктування'
+          isDictating
+            ? 'Диктування активне'
             : 'Натисніть для диктування тексту'
         }
       >
-        {isListening ? (
+        {isDictating ? (
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="6" y="6" width="12" height="12" rx="2"/>
           </svg>
