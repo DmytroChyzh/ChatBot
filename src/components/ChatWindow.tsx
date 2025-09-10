@@ -36,7 +36,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   
   return (
   <div
-    className="flex-1 overflow-y-auto w-full px-0 py-8 transition-colors duration-300 relative"
+    className="flex-1 overflow-y-auto w-full px-4 lg:px-0 py-8 transition-colors duration-300 relative"
     style={{
       display: 'flex',
       flexDirection: 'column',

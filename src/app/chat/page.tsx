@@ -1064,7 +1064,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                 estimateStep={estimateStep}
               />
             </div>
-            <div className="w-full flex justify-center">
+            <div className="w-full flex justify-center px-4 lg:px-0">
               <div style={{ width: '100%', maxWidth: 900 }}>
                 {/* Mobile Estimate Toggle Button */}
                 {showProjectSidebar && projectEstimate && (
@@ -1097,10 +1097,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
                 />
               </div>
             </div>
-            {/* Mobile spacing for estimate card */}
-            {showProjectSidebar && projectEstimate && showMobileEstimate && (
-              <div className="lg:hidden h-64"></div>
-            )}
           </div>
         </div>
         {/* Estimate Card Sidebar - Desktop only */}
@@ -1117,10 +1113,10 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         )}
       </div>
 
-      {/* Mobile Estimate Card - Fixed at bottom */}
+      {/* Mobile Estimate Card - Above input */}
       {showProjectSidebar && projectEstimate && showMobileEstimate && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-background border-t border-border">
-          <div className="max-h-64 overflow-y-auto">
+        <div className="lg:hidden fixed bottom-20 left-4 right-4 z-30 bg-background border border-border rounded-xl shadow-lg">
+          <div className="max-h-80 overflow-y-auto">
             <EstimateCard
               estimate={projectEstimate}
               estimateStep={estimateStep}
