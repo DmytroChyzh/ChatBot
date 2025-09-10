@@ -339,20 +339,11 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
   };
 
   const startListening = async () => {
-    if (disabled || isListening || isProcessing) {
-      console.log('HybridVoiceChat: Cannot start - disabled:', disabled, 'isListening:', isListening, 'isProcessing:', isProcessing);
-      return;
-    }
+    if (disabled || isListening || isProcessing) return;
 
     try {
       setError(null);
       console.log('HybridVoiceChat: Starting listening...');
-
-      // Check if recognition is available
-      if (!recognitionRef.current) {
-        setError('Розпізнавання мови не ініціалізовано');
-        return;
-      }
 
       // Get microphone access
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -362,10 +353,12 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
       await setupAudioAnalysis(stream);
 
       // Start speech recognition
-      recognitionRef.current.start();
+      if (recognitionRef.current) {
+        recognitionRef.current.start();
+      }
     } catch (error) {
       console.error('HybridVoiceChat: Error starting listening:', error);
-      setError(`Помилка: ${error.message || 'Не вдалося отримати доступ до мікрофона'}`);
+      setError('Не вдалося отримати доступ до мікрофона');
     }
   };
 
@@ -377,11 +370,21 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
     setIsListening(false);
   };
 
-  const toggleListening = () => {
+  const handleMouseDown = () => {
+    if (!disabled && !isProcessing && !isListening) {
+      startListening();
+    }
+  };
+
+  const handleMouseUp = () => {
     if (isListening) {
       stopListening();
-    } else {
-      startListening();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isListening) {
+      stopListening();
     }
   };
 
@@ -389,9 +392,13 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
     <div className="relative">
       <button
         type="button"
-        onClick={toggleListening}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleMouseDown}
+        onTouchEnd={handleMouseUp}
         disabled={disabled || isProcessing}
-        className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 ${
+        className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 select-none ${
           isListening
             ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
             : isProcessing
@@ -399,15 +406,15 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
             : isSpeaking
             ? 'bg-green-500 hover:bg-green-600 text-white animate-pulse'
             : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
-        } ${disabled || isProcessing ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+        } ${disabled || isProcessing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
         title={
           isListening
-            ? 'Натисніть щоб зупинити'
+            ? 'Відпустіть щоб зупинити'
             : isProcessing
             ? 'Обробка запиту...'
             : isSpeaking
             ? 'Озвучування відповіді...'
-            : 'Натисніть для голосового чату'
+            : 'Натисніть і тримайте для голосового чату'
         }
       >
         {isListening ? (
@@ -420,21 +427,20 @@ const HybridVoiceChat: React.FC<HybridVoiceChatProps> = ({
             <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-6.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
           </svg>
         ) : isSpeaking ? (
-          <div className="flex items-center gap-0.5">
-            <div className="w-0.5 h-2 bg-white rounded-full animate-wave-pulse" style={{ animationDelay: '0s' }}></div>
-            <div className="w-0.5 h-3 bg-white rounded-full animate-wave-pulse" style={{ animationDelay: '0.1s' }}></div>
-            <div className="w-0.5 h-4 bg-white rounded-full animate-wave-pulse" style={{ animationDelay: '0.2s' }}></div>
-            <div className="w-0.5 h-3 bg-white rounded-full animate-wave-pulse" style={{ animationDelay: '0.3s' }}></div>
-            <div className="w-0.5 h-2 bg-white rounded-full animate-wave-pulse" style={{ animationDelay: '0.4s' }}></div>
-          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+            <path d="M3 6l3 3 3-3 3 3 3-3"/>
+          </svg>
         ) : (
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <circle cx="12" cy="16" r="1"/>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            <path d="M12 1v3"/>
-            <path d="M6 3l1.5 1.5"/>
-            <path d="M17.5 4.5L19 3"/>
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+            <path d="M3 6l3 3 3-3 3 3 3-3"/>
           </svg>
         )}
       </button>

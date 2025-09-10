@@ -30,13 +30,10 @@ const VoiceWaveIndicator: React.FC<VoiceWaveIndicatorProps> = ({
       case 'listening':
         return {
           icon: (
-            <div className="flex items-center gap-0.5">
-              <div className="w-0.5 h-3 bg-gradient-to-t from-blue-500 to-cyan-500 rounded-full animate-wave-pulse" style={{ animationDelay: '0s' }}></div>
-              <div className="w-0.5 h-4 bg-gradient-to-t from-cyan-500 to-blue-500 rounded-full animate-wave-pulse" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-0.5 h-5 bg-gradient-to-t from-blue-500 to-cyan-500 rounded-full animate-wave-pulse" style={{ animationDelay: '0.2s' }}></div>
-              <div className="w-0.5 h-4 bg-gradient-to-t from-cyan-500 to-blue-500 rounded-full animate-wave-pulse" style={{ animationDelay: '0.3s' }}></div>
-              <div className="w-0.5 h-3 bg-gradient-to-t from-blue-500 to-cyan-500 rounded-full animate-wave-pulse" style={{ animationDelay: '0.4s' }}></div>
-            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="7" r="4"/>
+              <path d="M5.5 21a7.5 7.5 0 0 1 13 0"/>
+            </svg>
           ),
           color: 'text-blue-500',
           bgColor: 'bg-blue-500/20'
@@ -44,13 +41,13 @@ const VoiceWaveIndicator: React.FC<VoiceWaveIndicatorProps> = ({
       case 'speaking':
         return {
           icon: (
-            <div className="flex items-center gap-0.5">
-              <div className="w-0.5 h-2 bg-gradient-to-t from-purple-500 to-pink-500 rounded-full animate-wave-pulse" style={{ animationDelay: '0s' }}></div>
-              <div className="w-0.5 h-3 bg-gradient-to-t from-pink-500 to-purple-500 rounded-full animate-wave-pulse" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-0.5 h-4 bg-gradient-to-t from-purple-500 to-blue-500 rounded-full animate-wave-pulse" style={{ animationDelay: '0.2s' }}></div>
-              <div className="w-0.5 h-3 bg-gradient-to-t from-blue-500 to-purple-500 rounded-full animate-wave-pulse" style={{ animationDelay: '0.3s' }}></div>
-              <div className="w-0.5 h-2 bg-gradient-to-t from-purple-500 to-pink-500 rounded-full animate-wave-pulse" style={{ animationDelay: '0.4s' }}></div>
-            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+              <path d="M3 6l3 3 3-3 3 3 3-3"/>
+            </svg>
           ),
           color: 'text-purple-500',
           bgColor: 'bg-purple-500/20'
