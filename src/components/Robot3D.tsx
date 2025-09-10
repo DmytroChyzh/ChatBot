@@ -18,7 +18,7 @@ const RobotModel: React.FC<{
   isSpeaking: boolean; 
   isProcessing: boolean; 
 }> = ({ isListening, isSpeaking, isProcessing }) => {
-  const { scene } = useGLTF('/robot.glb');
+  const { scene } = useGLTF('/humanoid-robot-ai-realistic/source/model.glb');
   const meshRef = useRef<THREE.Group>(null);
   const eyeRef = useRef<THREE.Mesh>(null);
   
