@@ -21,7 +21,6 @@ const DictationMode: React.FC<DictationModeProps> = ({
   const [transcript, setTranscript] = useState('');
   const [fullTranscript, setFullTranscript] = useState('');
   const [audioLevel, setAudioLevel] = useState(0);
-  const [currentLang, setCurrentLang] = useState(language);
   
   const recognitionRef = useRef<any>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -50,10 +49,9 @@ const DictationMode: React.FC<DictationModeProps> = ({
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = true; // Безперервне розпізнавання
       recognitionRef.current.interimResults = true; // Проміжні результати
-      // Визначаємо мову на основі налаштувань користувача
-      const detectedLang = currentLang === 'uk' ? 'uk-UA' : 'en-US';
-      recognitionRef.current.lang = detectedLang;
-      console.log('Dictation language set to:', detectedLang);
+      // Автоматичне визначення мови
+      recognitionRef.current.lang = 'auto';
+      console.log('Dictation language set to: auto-detection');
       recognitionRef.current.maxAlternatives = 1;
 
       recognitionRef.current.onstart = () => {
@@ -296,32 +294,12 @@ const DictationMode: React.FC<DictationModeProps> = ({
               {isListening ? 'Диктування...' : 'Готовий до диктування'}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {isListening ? `Говоріть ${currentLang === 'uk' ? 'українською' : 'англійською'}, я слухаю` : 'Натисніть щоб почати'}
+              {isListening ? 'Говоріть будь-якою мовою, я розумію' : 'Натисніть щоб почати'}
             </p>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
-          {/* Language Toggle */}
-          <button
-            onClick={() => {
-              const newLang = currentLang === 'uk' ? 'en' : 'uk';
-              setCurrentLang(newLang);
-              // Restart recognition with new language
-              if (isListening) {
-                stopListening();
-                setTimeout(() => {
-                  initializeSpeech();
-                  startListening();
-                }, 100);
-              }
-            }}
-            className="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm transition-colors duration-200"
-            title="Переключити мову"
-          >
-            {currentLang === 'uk' ? '🇺🇦 UK' : '🇺🇸 EN'}
-          </button>
-          
           <button
             onClick={handleCancel}
             className="w-10 h-10 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-colors duration-200"
