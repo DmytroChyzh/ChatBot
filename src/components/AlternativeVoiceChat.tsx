@@ -26,8 +26,27 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
   const [showRecordingUI, setShowRecordingUI] = useState(false);
   const [finalTranscript, setFinalTranscript] = useState('');
   const [audioLevel, setAudioLevel] = useState(0);
+  const [errorTimeout, setErrorTimeout] = useState<NodeJS.Timeout | null>(null);
   
   const recognitionRef = useRef<any>(null);
+  
+  // Функція для встановлення помилки з автоматичним очищенням
+  const setErrorWithTimeout = (errorMessage: string) => {
+    // Очищаємо попередній таймер
+    if (errorTimeout) {
+      clearTimeout(errorTimeout);
+    }
+    
+    setError(errorMessage);
+    
+    // Встановлюємо новий таймер для очищення помилки через 5 секунд
+    const timeout = setTimeout(() => {
+      setError(null);
+      setErrorTimeout(null);
+    }, 5000);
+    
+    setErrorTimeout(timeout);
+  };
   const synthesisRef = useRef<SpeechSynthesis | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -105,21 +124,26 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
         setShowRecordingUI(false);
         stopAudioAnalysis();
         
+        // Очищаємо всі транскрипти при помилці
+        setTranscript('');
+        setFullTranscript('');
+        setFinalTranscript('');
+        
         switch (event.error) {
           case 'no-speech':
-            setError('Не чути мови. Спробуйте ще раз.');
+            setErrorWithTimeout('Не чути мови. Спробуйте ще раз.');
             break;
           case 'audio-capture':
-            setError('Помилка доступу до мікрофона.');
+            setErrorWithTimeout('Помилка доступу до мікрофона.');
             break;
           case 'not-allowed':
-            setError('Дозвіл на мікрофон не надано.');
+            setErrorWithTimeout('Дозвіл на мікрофон не надано.');
             break;
           case 'language-not-supported':
-            setError('Мова не підтримується. Спробуйте англійську.');
+            setErrorWithTimeout('Мова не підтримується. Спробуйте англійську.');
             break;
           default:
-            setError(`Помилка розпізнавання: ${event.error}`);
+            setErrorWithTimeout(`Помилка розпізнавання: ${event.error}`);
         }
       };
 
@@ -138,9 +162,16 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       
     } catch (error) {
       console.error('Speech initialization error:', error);
-      setError('Помилка ініціалізації голосових функцій');
+      setErrorWithTimeout('Помилка ініціалізації голосових функцій');
     }
-  };
+    
+    // Очищаємо таймер при розмонтуванні
+    return () => {
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
+      }
+    };
+  }, [language]);
 
   const toggleRecording = async () => {
     if (isRecording) {
@@ -152,7 +183,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
 
   const startRecording = async () => {
     if (!isSupported) {
-      setError('Голосові функції не підтримуються в цьому браузері');
+      setErrorWithTimeout('Голосові функції не підтримуються в цьому браузері');
       return;
     }
     
@@ -160,8 +191,14 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       return;
     }
     
+    // Перевіряємо чи вже записуємо
+    if (isRecording) {
+      console.log('Already recording, ignoring start request');
+      return;
+    }
+    
     if (!recognitionRef.current) {
-      setError('Розпізнавання мови не ініціалізовано');
+      setErrorWithTimeout('Розпізнавання мови не ініціалізовано');
       return;
     }
     
@@ -169,6 +206,7 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       setError(null);
       setTranscript('');
       setFullTranscript('');
+      setFinalTranscript('');
       setIsRecording(true);
       setShowRecordingUI(true);
       
@@ -179,9 +217,14 @@ const AlternativeVoiceChat: React.FC<AlternativeVoiceChatProps> = ({
       recognitionRef.current.start();
     } catch (error) {
       console.error('Error starting speech recognition:', error);
-      setError('Не вдалося запустити розпізнавання мови');
+      setErrorWithTimeout('Не вдалося запустити розпізнавання мови');
       setIsRecording(false);
       setShowRecordingUI(false);
+      stopAudioAnalysis();
+      // Очищаємо транскрипти при помилці
+      setTranscript('');
+      setFullTranscript('');
+      setFinalTranscript('');
     }
   };
 
