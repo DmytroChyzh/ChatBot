@@ -54,7 +54,7 @@ const RobotModel: React.FC<{
   // Eye glow effect
   useEffect(() => {
     if (eyeRef.current) {
-      const material = eyeRef.current.material as THREE.MeshBasicMaterial;
+      const material = eyeRef.current.material as THREE.MeshStandardMaterial;
       if (isListening || isSpeaking || isProcessing) {
         material.emissive = new THREE.Color(0x00ff00);
         material.emissiveIntensity = 0.5;
@@ -71,7 +71,7 @@ const RobotModel: React.FC<{
       {/* Add glowing eyes */}
       <mesh ref={eyeRef} position={[0, 0.5, 0.8]}>
         <sphereGeometry args={[0.1, 16, 16]} />
-        <meshBasicMaterial color="#00ff00" />
+        <meshStandardMaterial color="#00ff00" emissive="#00ff00" emissiveIntensity={0.5} />
       </mesh>
     </group>
   );
