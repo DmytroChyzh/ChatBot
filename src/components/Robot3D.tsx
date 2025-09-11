@@ -28,26 +28,29 @@ const RobotModel: React.FC<{
     
     const time = state.clock.getElapsedTime();
     
-    // Base floating animation
-    meshRef.current.position.y = Math.sin(time * 2) * 0.1;
-    meshRef.current.rotation.y = Math.sin(time * 0.5) * 0.1;
+    // Base floating animation - slower and more subtle
+    meshRef.current.position.y = Math.sin(time * 0.8) * 0.05;
+    meshRef.current.rotation.y = Math.sin(time * 0.3) * 0.05;
     
-    // Listening animation - more active movement
+    // Listening animation - gentle head movement only
     if (isListening) {
-      meshRef.current.rotation.x = Math.sin(time * 4) * 0.2;
-      meshRef.current.scale.setScalar(1 + Math.sin(time * 6) * 0.05);
+      meshRef.current.rotation.x = Math.sin(time * 1.5) * 0.1;
+      // No body movement during listening
     }
     
-    // Speaking animation - mouth movement simulation
+    // Speaking animation - NO movement, only eye glow
     if (isSpeaking) {
-      meshRef.current.rotation.z = Math.sin(time * 8) * 0.1;
-      meshRef.current.scale.setScalar(1 + Math.sin(time * 10) * 0.1);
+      // Robot stays still while speaking - only eyes glow
+      meshRef.current.rotation.x = 0;
+      meshRef.current.rotation.y = 0;
+      meshRef.current.rotation.z = 0;
+      meshRef.current.scale.setScalar(1);
     }
     
-    // Processing animation - thinking pose
+    // Processing animation - gentle thinking pose
     if (isProcessing) {
-      meshRef.current.rotation.y += 0.02;
-      meshRef.current.position.y = Math.sin(time * 3) * 0.15;
+      meshRef.current.rotation.y += 0.01; // Slower rotation
+      meshRef.current.position.y = Math.sin(time * 1.2) * 0.08;
     }
   });
 
@@ -66,7 +69,7 @@ const RobotModel: React.FC<{
   }, [isListening, isSpeaking, isProcessing]);
 
   return (
-    <group ref={meshRef} scale={2} position={[0, -1.5, 0]}>
+    <group ref={meshRef} scale={3.5} position={[0, -2, 0]}>
       <primitive object={scene} />
       {/* Add glowing eyes */}
       <mesh ref={eyeRef} position={[0, 0.5, 0.8]}>
@@ -87,7 +90,7 @@ const Robot3D: React.FC<Robot3DProps> = ({
   if (!isActive) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 w-[300px] h-[400px] z-50 pointer-events-none">
+    <div className="fixed bottom-0 left-0 w-[400px] h-[500px] z-50 pointer-events-none">
       <Canvas
         camera={{ position: [0, 1, 5], fov: 35 }}
         style={{ background: 'transparent' }}
