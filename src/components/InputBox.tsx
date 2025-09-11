@@ -87,6 +87,7 @@ const InputBox: React.FC<InputBoxProps> = ({
       // Wait a bit for cleanup
       await new Promise(resolve => setTimeout(resolve, 100));
       
+      console.log('Setting isVoiceChatActive to true');
       setIsVoiceChatActive(true);
       setIsListening(true);
       
@@ -148,7 +149,7 @@ const InputBox: React.FC<InputBoxProps> = ({
       };
 
       recognitionRef.current.onend = () => {
-        console.log('Voice recognition ended - isSpeaking:', isSpeaking, 'isProcessing:', isProcessing);
+        console.log('Voice recognition ended - isSpeaking:', isSpeaking, 'isProcessing:', isProcessing, 'isVoiceChatActive:', isVoiceChatActive);
         setIsListening(false);
         // Restart recognition if voice chat is still active and AI is not speaking
         if (isVoiceChatActive && !isSpeaking && !isProcessing) {
@@ -163,7 +164,7 @@ const InputBox: React.FC<InputBoxProps> = ({
             }
           }, 100);
         } else {
-          console.log('Not restarting recognition - AI is speaking or processing');
+          console.log('Not restarting recognition - AI is speaking or processing or voice chat not active');
         }
       };
 
@@ -200,6 +201,7 @@ const InputBox: React.FC<InputBoxProps> = ({
     }
     
     // Reset all states
+    console.log('Setting isVoiceChatActive to false in stopVoiceChat');
     setIsVoiceChatActive(false);
     setIsListening(false);
     setIsSpeaking(false);
