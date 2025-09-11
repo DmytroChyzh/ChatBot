@@ -210,6 +210,8 @@ const InputBox: React.FC<InputBoxProps> = ({
   };
 
   const processWithAI = async (text: string) => {
+    let hasTTSContent = false;
+    
     try {
       setIsProcessing(true);
       setIsListening(false);
@@ -239,6 +241,8 @@ const InputBox: React.FC<InputBoxProps> = ({
       const result = await response.json();
       
       if (result.content) {
+        hasTTSContent = true;
+        
         // Add assistant message
         if (onAddMessage) {
           await onAddMessage({
@@ -256,7 +260,11 @@ const InputBox: React.FC<InputBoxProps> = ({
       console.error('Error processing with AI:', error);
     } finally {
       setIsProcessing(false);
-      // Don't set isListening here - convertToSpeech will handle it
+      // If no TTS content, set listening state immediately
+      if (isVoiceChatActive && !hasTTSContent) {
+        console.log('No TTS content, setting listening state');
+        setIsListening(true);
+      }
     }
   };
 
