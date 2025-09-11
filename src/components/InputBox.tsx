@@ -76,11 +76,23 @@ const InputBox: React.FC<InputBoxProps> = ({
 
   const startVoiceChat = async () => {
     try {
+      console.log('Starting voice chat...');
+      
+      // First stop any existing voice chat
+      stopVoiceChat();
+      
+      // Wait a bit for cleanup
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       setIsVoiceChatActive(true);
       setIsListening(true);
       
       // Initialize speech recognition
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        throw new Error('Speech recognition not supported');
+      }
+      
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
@@ -130,22 +142,44 @@ const InputBox: React.FC<InputBoxProps> = ({
 
       // Start listening
       recognitionRef.current.start();
+      console.log('Voice chat started successfully');
       
     } catch (error) {
       console.error('Error starting voice chat:', error);
-      setIsVoiceChatActive(false);
-      setIsListening(false);
+      // Clean up on error
+      stopVoiceChat();
     }
   };
 
   const stopVoiceChat = () => {
+    console.log('Stopping voice chat...');
+    
+    // Stop speech recognition
     if (recognitionRef.current) {
       recognitionRef.current.stop();
+      recognitionRef.current = null;
     }
+    
+    // Stop any ongoing audio
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+    
+    // Cancel any ongoing animation frames
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+    
+    // Reset all states
     setIsVoiceChatActive(false);
     setIsListening(false);
     setIsSpeaking(false);
     setIsProcessing(false);
+    setAudioLevel(0);
+    
+    console.log('Voice chat stopped successfully');
   };
 
   const processWithAI = async (text: string) => {
