@@ -69,7 +69,7 @@ const RobotModel: React.FC<{
   }, [isListening, isSpeaking, isProcessing]);
 
   return (
-    <group ref={meshRef} scale={3.5} position={[0, -2, 0]}>
+    <group ref={meshRef} scale={2.5} position={[0, -1.5, 0]}>
       <primitive object={scene} />
       {/* Add glowing eyes */}
       <mesh ref={eyeRef} position={[0, 0.5, 0.8]}>
@@ -90,7 +90,7 @@ const Robot3D: React.FC<Robot3DProps> = ({
   if (!isActive) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 w-[400px] h-[500px] z-50 pointer-events-none">
+    <div className="fixed bottom-0 left-0 w-[350px] h-[450px] z-50 pointer-events-none">
       <Canvas
         camera={{ position: [0, 1, 5], fov: 35 }}
         style={{ background: 'transparent' }}
