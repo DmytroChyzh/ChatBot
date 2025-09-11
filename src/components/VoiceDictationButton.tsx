@@ -221,7 +221,7 @@ const VoiceDictationButton: React.FC<VoiceDictationButtonProps> = ({
         className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 select-none ${
           isDictating
             ? 'bg-gray-400 text-white cursor-not-allowed'
-            : 'bg-gradient-to-r from-[#651FFF] to-[#FF6B35] hover:from-[#5A1AE6] hover:to-[#E55A2B] text-white'
+            : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
         title={
           isDictating
@@ -257,7 +257,7 @@ const VoiceDictationButton: React.FC<VoiceDictationButtonProps> = ({
       {isListening && (
         <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-[#651FFF] to-[#FF6B35] transition-all duration-75 ease-out"
+            className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-75 ease-out"
             style={{ width: `${audioLevel * 100}%` }}
           ></div>
         </div>
