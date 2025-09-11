@@ -256,6 +256,7 @@ const InputBox: React.FC<InputBoxProps> = ({
       console.error('Error processing with AI:', error);
     } finally {
       setIsProcessing(false);
+      // Don't set isListening here - convertToSpeech will handle it
     }
   };
 
@@ -308,11 +309,24 @@ const InputBox: React.FC<InputBoxProps> = ({
           }, 1000); // 1 second delay to let user prepare
         }
       };
+      
+      audio.onerror = (error) => {
+        console.error('Audio playback error:', error);
+        setIsSpeaking(false);
+        // If audio fails, still set listening state
+        if (isVoiceChatActive) {
+          setIsListening(true);
+        }
+      };
 
       await audio.play();
     } catch (error) {
       console.error('Error converting to speech:', error);
       setIsSpeaking(false);
+      // If TTS fails, still set listening state
+      if (isVoiceChatActive) {
+        setIsListening(true);
+      }
     }
   };
 
