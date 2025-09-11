@@ -293,12 +293,14 @@ const InputBox: React.FC<InputBoxProps> = ({
         console.log('AI finished speaking, preparing to listen...');
         setIsSpeaking(false);
         
-        // Wait a bit before restarting listening to give user time
+        // Set listening state immediately to show "Speak now!" 
         if (isVoiceChatActive) {
+          setIsListening(true);
+          
+          // Wait a bit before actually starting recognition to give user time
           setTimeout(() => {
             if (isVoiceChatActive && !isSpeaking && !isProcessing) {
               console.log('Restarting listening after AI finished...');
-              setIsListening(true);
               if (recognitionRef.current) {
                 recognitionRef.current.start();
               }
