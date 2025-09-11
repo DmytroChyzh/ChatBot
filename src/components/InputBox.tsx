@@ -78,8 +78,11 @@ const InputBox: React.FC<InputBoxProps> = ({
     try {
       console.log('Starting voice chat...');
       
-      // First stop any existing voice chat
-      stopVoiceChat();
+      // Clean up any existing recognition without changing isVoiceChatActive
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
       
       // Wait a bit for cleanup
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -104,16 +107,18 @@ const InputBox: React.FC<InputBoxProps> = ({
       };
 
       recognitionRef.current.onresult = async (event: any) => {
+        console.log('Voice recognition result:', event);
         let finalTranscript = '';
         
         for (let i = event.resultIndex; i < event.results.length; i++) {
+          console.log(`Result ${i}:`, event.results[i][0].transcript, 'isFinal:', event.results[i].isFinal);
           if (event.results[i].isFinal) {
             finalTranscript += event.results[i][0].transcript + ' ';
           }
         }
         
         if (finalTranscript.trim()) {
-          console.log('Voice chat transcript:', finalTranscript);
+          console.log('Voice chat final transcript:', finalTranscript);
           
           // Add user message
           if (onAddMessage) {
@@ -137,7 +142,17 @@ const InputBox: React.FC<InputBoxProps> = ({
       };
 
       recognitionRef.current.onend = () => {
+        console.log('Voice recognition ended');
         setIsListening(false);
+        // Restart recognition if voice chat is still active
+        if (isVoiceChatActive && !isSpeaking && !isProcessing) {
+          console.log('Restarting voice recognition...');
+          setTimeout(() => {
+            if (recognitionRef.current && isVoiceChatActive) {
+              recognitionRef.current.start();
+            }
+          }, 100);
+        }
       };
 
       // Start listening
