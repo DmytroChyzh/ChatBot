@@ -19,11 +19,11 @@ const VoiceChatButton: React.FC<VoiceChatButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 select-none ${
-        isActive 
-          ? 'bg-red-500 hover:bg-red-600' 
-          : 'bg-gradient-to-r from-[#651FFF] to-[#FF6B35] hover:from-[#5A1AE6] hover:to-[#E55A2B]'
-      } text-white ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
+            className={`w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 select-none ${
+              isActive
+                ? 'bg-red-500 hover:bg-red-600'
+                : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600'
+            } text-white ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
       title={isActive ? "End voice chat" : "Start voice chat"}
     >
       <div className="relative">
