@@ -319,40 +319,29 @@ const InputBox: React.FC<InputBoxProps> = ({
       
       audio.onended = () => {
         console.log('AI finished speaking, showing continue button...');
-        console.log('audio.onended - isVoiceChatActive:', isVoiceChatActive);
         setIsSpeaking(false);
         
-        // Show continue button instead of automatic transition
-        if (isVoiceChatActive) {
-          console.log('Showing continue voice chat button');
-          setShowContinueButton(true);
-          console.log('setShowContinueButton(true) called');
-        } else {
-          console.log('Voice chat not active, not showing continue button');
-        }
+        // Always show continue button after AI finishes speaking
+        console.log('Showing continue voice chat button');
+        setShowContinueButton(true);
+        console.log('setShowContinueButton(true) called');
       };
       
       audio.onerror = (error) => {
         console.error('Audio playback error:', error);
-        console.log('audio.onerror - isVoiceChatActive:', isVoiceChatActive);
         setIsSpeaking(false);
         // If audio fails, show continue button
-        if (isVoiceChatActive) {
-          console.log('Showing continue button due to audio error');
-          setShowContinueButton(true);
-        }
+        console.log('Showing continue button due to audio error');
+        setShowContinueButton(true);
       };
 
       await audio.play();
     } catch (error) {
       console.error('Error converting to speech:', error);
-      console.log('convertToSpeech catch - isVoiceChatActive:', isVoiceChatActive);
       setIsSpeaking(false);
       // If TTS fails, show continue button
-      if (isVoiceChatActive) {
-        console.log('Showing continue button due to TTS error');
-        setShowContinueButton(true);
-      }
+      console.log('Showing continue button due to TTS error');
+      setShowContinueButton(true);
     }
   };
 
@@ -468,12 +457,6 @@ const InputBox: React.FC<InputBoxProps> = ({
           />
         )}
         
-        {/* Debug info */}
-        {isVoiceChatActive && (
-          <div className="text-xs text-gray-500 mb-2">
-            Debug: isListening={isListening.toString()}, isSpeaking={isSpeaking.toString()}, isProcessing={isProcessing.toString()}, showContinueButton={showContinueButton.toString()}
-          </div>
-        )}
         
         <div
           className="w-full bg-[hsl(var(--input-bg))] border-2 border-accent rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-md focus-within:ring-2 focus-within:ring-accent"
