@@ -27,10 +27,10 @@ const VoiceWaveIndicator: React.FC<VoiceWaveIndicatorProps> = ({
   };
 
   const getStatusColor = () => {
-    if (isListening) return 'text-green-500';
-    if (isSpeaking) return 'text-blue-500';
-    if (isProcessing) return 'text-yellow-500';
-    return 'text-purple-500';
+    if (isListening) return 'text-[#651FFF]';
+    if (isSpeaking) return 'text-[#FF6B35]';
+    if (isProcessing) return 'text-[#651FFF]';
+    return 'text-[#651FFF]';
   };
 
   return (

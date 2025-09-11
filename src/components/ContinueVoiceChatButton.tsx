@@ -18,8 +18,8 @@ const ContinueVoiceChatButton: React.FC<ContinueVoiceChatButtonProps> = ({
         disabled={disabled}
         className={`
           w-full flex items-center justify-center gap-3 px-6 py-3 rounded-2xl border-2
-          bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600
-          border-green-300 dark:border-green-700
+          bg-gradient-to-r from-[#651FFF] to-[#FF6B35] hover:from-[#5A1AE6] hover:to-[#E55A2B]
+          border-[#651FFF] dark:border-[#651FFF]
           text-white font-medium text-lg
           transition-all duration-300 ease-in-out
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'}

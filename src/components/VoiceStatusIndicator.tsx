@@ -22,9 +22,9 @@ const VoiceStatusIndicator: React.FC<VoiceStatusIndicatorProps> = ({
       return {
         icon: "🎤",
         text: "Speak now...",
-        color: "text-green-500",
-        bgColor: "bg-green-100 dark:bg-green-900/30",
-        borderColor: "border-green-300 dark:border-green-700"
+        color: "text-white",
+        bgColor: "bg-gradient-to-r from-[#651FFF] to-[#FF6B35]",
+        borderColor: "border-[#651FFF]"
       };
     }
     
@@ -32,9 +32,9 @@ const VoiceStatusIndicator: React.FC<VoiceStatusIndicatorProps> = ({
       return {
         icon: "🔊",
         text: "AI is speaking...",
-        color: "text-blue-500",
-        bgColor: "bg-blue-100 dark:bg-blue-900/30",
-        borderColor: "border-blue-300 dark:border-blue-700"
+        color: "text-white",
+        bgColor: "bg-gradient-to-r from-[#FF6B35] to-[#651FFF]",
+        borderColor: "border-[#FF6B35]"
       };
     }
     
@@ -42,9 +42,9 @@ const VoiceStatusIndicator: React.FC<VoiceStatusIndicatorProps> = ({
       return {
         icon: "🤔",
         text: "AI is thinking...",
-        color: "text-yellow-500",
-        bgColor: "bg-yellow-100 dark:bg-yellow-900/30",
-        borderColor: "border-yellow-300 dark:border-yellow-700"
+        color: "text-white",
+        bgColor: "bg-gradient-to-r from-[#651FFF] to-[#FF6B35]",
+        borderColor: "border-[#651FFF]"
       };
     }
     
@@ -78,9 +78,9 @@ const VoiceStatusIndicator: React.FC<VoiceStatusIndicatorProps> = ({
         {/* Animated dots for active states */}
         {(isListening || isSpeaking || isProcessing) && (
           <div className="flex gap-1 ml-auto">
-            <div className={`w-2 h-2 rounded-full ${status.color.replace('text-', 'bg-')} animate-bounce`} style={{ animationDelay: '0ms' }}></div>
-            <div className={`w-2 h-2 rounded-full ${status.color.replace('text-', 'bg-')} animate-bounce`} style={{ animationDelay: '150ms' }}></div>
-            <div className={`w-2 h-2 rounded-full ${status.color.replace('text-', 'bg-')} animate-bounce`} style={{ animationDelay: '300ms' }}></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '0ms' }}></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '150ms' }}></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '300ms' }}></div>
           </div>
         )}
       </div>
