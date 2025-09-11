@@ -259,11 +259,14 @@ const InputBox: React.FC<InputBoxProps> = ({
     } catch (error) {
       console.error('Error processing with AI:', error);
     } finally {
+      console.log('processWithAI finally - hasTTSContent:', hasTTSContent, 'isVoiceChatActive:', isVoiceChatActive);
       setIsProcessing(false);
       // If no TTS content, set listening state immediately
       if (isVoiceChatActive && !hasTTSContent) {
         console.log('No TTS content, setting listening state');
         setIsListening(true);
+      } else {
+        console.log('Has TTS content, convertToSpeech will handle listening state');
       }
     }
   };
@@ -300,10 +303,12 @@ const InputBox: React.FC<InputBoxProps> = ({
       
       audio.onended = () => {
         console.log('AI finished speaking, preparing to listen...');
+        console.log('audio.onended - isVoiceChatActive:', isVoiceChatActive);
         setIsSpeaking(false);
         
         // Set listening state immediately to show "Speak now!" 
         if (isVoiceChatActive) {
+          console.log('Setting isListening to true in audio.onended');
           setIsListening(true);
           
           // Wait a bit before actually starting recognition to give user time
@@ -315,14 +320,18 @@ const InputBox: React.FC<InputBoxProps> = ({
               }
             }
           }, 1000); // 1 second delay to let user prepare
+        } else {
+          console.log('Voice chat not active, not setting listening state');
         }
       };
       
       audio.onerror = (error) => {
         console.error('Audio playback error:', error);
+        console.log('audio.onerror - isVoiceChatActive:', isVoiceChatActive);
         setIsSpeaking(false);
         // If audio fails, still set listening state
         if (isVoiceChatActive) {
+          console.log('Setting isListening to true in audio.onerror');
           setIsListening(true);
         }
       };
@@ -330,9 +339,11 @@ const InputBox: React.FC<InputBoxProps> = ({
       await audio.play();
     } catch (error) {
       console.error('Error converting to speech:', error);
+      console.log('convertToSpeech catch - isVoiceChatActive:', isVoiceChatActive);
       setIsSpeaking(false);
       // If TTS fails, still set listening state
       if (isVoiceChatActive) {
+        console.log('Setting isListening to true in convertToSpeech catch');
         setIsListening(true);
       }
     }
