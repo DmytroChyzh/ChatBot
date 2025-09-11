@@ -78,9 +78,9 @@ const VoiceStatusIndicator: React.FC<VoiceStatusIndicatorProps> = ({
         {/* Animated dots for active states */}
         {(isListening || isSpeaking || isProcessing) && (
           <div className="flex gap-1 ml-auto">
-            <div className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '0ms' }}></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '150ms' }}></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" style={{ animationDelay: '0ms' }}></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" style={{ animationDelay: '200ms' }}></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" style={{ animationDelay: '400ms' }}></div>
           </div>
         )}
       </div>

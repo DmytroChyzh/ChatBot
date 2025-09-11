@@ -65,8 +65,8 @@ const VoiceWaveIndicator: React.FC<VoiceWaveIndicatorProps> = ({
                   ${isSpeaking ? 'animate-bounce' : ''}
                 `}
                 style={{
-                  height: `${8 + (audioLevel * 20) + Math.sin(Date.now() / 100 + i) * 4}px`,
-                  animationDelay: `${i * 0.1}s`
+                  height: `${8 + (audioLevel * 15) + Math.sin(Date.now() / 200 + i) * 2}px`,
+                  animationDelay: `${i * 0.15}s`
                 }}
               />
             ))}
