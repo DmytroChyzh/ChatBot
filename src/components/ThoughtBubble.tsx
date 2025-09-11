@@ -21,8 +21,8 @@ const ThoughtBubble: React.FC<ThoughtBubbleProps> = ({
         icon: "🤔",
         text: "Thinking...",
         color: "text-white",
-        bgColor: "bg-gradient-to-r from-[#651FFF] to-[#FF6B35]",
-        borderColor: "border-[#651FFF]"
+        bgColor: "bg-gradient-to-r from-purple-500 to-blue-500",
+        borderColor: "border-purple-500"
       };
     }
     
@@ -31,8 +31,8 @@ const ThoughtBubble: React.FC<ThoughtBubbleProps> = ({
         icon: "💬",
         text: "Speaking...",
         color: "text-white",
-        bgColor: "bg-gradient-to-r from-[#FF6B35] to-[#651FFF]",
-        borderColor: "border-[#FF6B35]"
+        bgColor: "bg-gradient-to-r from-purple-500 to-blue-500",
+        borderColor: "border-purple-500"
       };
     }
     
