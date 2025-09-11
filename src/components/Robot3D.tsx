@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import ThoughtBubble from './ThoughtBubble';
 
 interface Robot3DProps {
   isActive: boolean;
@@ -93,6 +94,13 @@ const Robot3D: React.FC<Robot3DProps> = ({
         {/* Controls - disabled for UI */}
         <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
       </Canvas>
+      
+      {/* Thought Bubble */}
+      <ThoughtBubble
+        isVisible={isProcessing || isSpeaking}
+        isThinking={isProcessing}
+        isSpeaking={isSpeaking}
+      />
       
       {/* Status indicator */}
       <div className="absolute bottom-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
