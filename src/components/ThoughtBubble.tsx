@@ -20,9 +20,9 @@ const ThoughtBubble: React.FC<ThoughtBubbleProps> = ({
       return {
         icon: "🤔",
         text: "Thinking...",
-        color: "text-yellow-600",
-        bgColor: "bg-yellow-100 dark:bg-yellow-900/50",
-        borderColor: "border-yellow-300 dark:border-yellow-700"
+        color: "text-white",
+        bgColor: "bg-gradient-to-r from-[#651FFF] to-[#FF6B35]",
+        borderColor: "border-[#651FFF]"
       };
     }
     
@@ -30,9 +30,9 @@ const ThoughtBubble: React.FC<ThoughtBubbleProps> = ({
       return {
         icon: "💬",
         text: "Speaking...",
-        color: "text-blue-600",
-        bgColor: "bg-blue-100 dark:bg-blue-900/50",
-        borderColor: "border-blue-300 dark:border-blue-700"
+        color: "text-white",
+        bgColor: "bg-gradient-to-r from-[#FF6B35] to-[#651FFF]",
+        borderColor: "border-[#FF6B35]"
       };
     }
     
@@ -62,9 +62,9 @@ const ThoughtBubble: React.FC<ThoughtBubbleProps> = ({
         
         {/* Animated dots */}
         <div className="flex gap-1 mt-1 justify-center">
-          <div className={`w-1.5 h-1.5 rounded-full ${content.color.replace('text-', 'bg-')} animate-bounce`} style={{ animationDelay: '0ms' }}></div>
-          <div className={`w-1.5 h-1.5 rounded-full ${content.color.replace('text-', 'bg-')} animate-bounce`} style={{ animationDelay: '150ms' }}></div>
-          <div className={`w-1.5 h-1.5 rounded-full ${content.color.replace('text-', 'bg-')} animate-bounce`} style={{ animationDelay: '300ms' }}></div>
+          <div className="w-1 h-1 rounded-full bg-white animate-pulse" style={{ animationDelay: '0ms' }}></div>
+          <div className="w-1 h-1 rounded-full bg-white animate-pulse" style={{ animationDelay: '200ms' }}></div>
+          <div className="w-1 h-1 rounded-full bg-white animate-pulse" style={{ animationDelay: '400ms' }}></div>
         </div>
         
         {/* Bubble tail */}
