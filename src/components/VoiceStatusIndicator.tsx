@@ -48,16 +48,14 @@ const VoiceStatusIndicator: React.FC<VoiceStatusIndicatorProps> = ({
       };
     }
     
-    return {
-      icon: "🤖",
-      text: "Voice chat ready",
-      color: "text-purple-500",
-      bgColor: "bg-purple-100 dark:bg-purple-900/30",
-      borderColor: "border-purple-300 dark:border-purple-700"
-    };
+    // No default state - if voice chat is active, it should always be in one of the active states
+    return null;
   };
 
   const status = getStatusInfo();
+
+  // Don't render anything if no active status
+  if (!status) return null;
 
   return (
     <div className="w-full max-w-[900px] mx-auto mb-2">
