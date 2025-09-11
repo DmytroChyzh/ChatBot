@@ -6,6 +6,7 @@ import VoiceChatButton from './VoiceChatButton';
 import Robot3D from './Robot3D';
 import VoiceWaveIndicator from './VoiceWaveIndicator';
 import VoiceStatusIndicator from './VoiceStatusIndicator';
+import ContinueVoiceChatButton from './ContinueVoiceChatButton';
 
 interface InputBoxProps {
   value: string;
@@ -40,6 +41,7 @@ const InputBox: React.FC<InputBoxProps> = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
+  const [showContinueButton, setShowContinueButton] = useState(false);
   
   // Voice Chat refs
   const recognitionRef = useRef<any>(null);
@@ -71,6 +73,17 @@ const InputBox: React.FC<InputBoxProps> = ({
     } else {
       // Start voice chat
       await startVoiceChat();
+    }
+  };
+
+  const handleContinueVoiceChat = async () => {
+    console.log('Continue voice chat clicked');
+    setShowContinueButton(false);
+    setIsListening(true);
+    
+    // Restart recognition
+    if (recognitionRef.current) {
+      recognitionRef.current.start();
     }
   };
 
@@ -207,6 +220,7 @@ const InputBox: React.FC<InputBoxProps> = ({
     setIsSpeaking(false);
     setIsProcessing(false);
     setAudioLevel(0);
+    setShowContinueButton(false);
     
     console.log('Voice chat stopped successfully');
   };
@@ -304,26 +318,16 @@ const InputBox: React.FC<InputBoxProps> = ({
       const audio = new Audio(audioUrl);
       
       audio.onended = () => {
-        console.log('AI finished speaking, preparing to listen...');
+        console.log('AI finished speaking, showing continue button...');
         console.log('audio.onended - isVoiceChatActive:', isVoiceChatActive);
         setIsSpeaking(false);
         
-        // Set listening state immediately to show "Speak now!" 
+        // Show continue button instead of automatic transition
         if (isVoiceChatActive) {
-          console.log('Setting isListening to true in audio.onended');
-          setIsListening(true);
-          
-          // Wait a bit before actually starting recognition to give user time
-          setTimeout(() => {
-            if (isVoiceChatActive && !isSpeaking && !isProcessing) {
-              console.log('Restarting listening after AI finished...');
-              if (recognitionRef.current) {
-                recognitionRef.current.start();
-              }
-            }
-          }, 1000); // 1 second delay to let user prepare
+          console.log('Showing continue voice chat button');
+          setShowContinueButton(true);
         } else {
-          console.log('Voice chat not active, not setting listening state');
+          console.log('Voice chat not active, not showing continue button');
         }
       };
       
@@ -331,10 +335,10 @@ const InputBox: React.FC<InputBoxProps> = ({
         console.error('Audio playback error:', error);
         console.log('audio.onerror - isVoiceChatActive:', isVoiceChatActive);
         setIsSpeaking(false);
-        // If audio fails, still set listening state
+        // If audio fails, show continue button
         if (isVoiceChatActive) {
-          console.log('Setting isListening to true in audio.onerror');
-          setIsListening(true);
+          console.log('Showing continue button due to audio error');
+          setShowContinueButton(true);
         }
       };
 
@@ -343,10 +347,10 @@ const InputBox: React.FC<InputBoxProps> = ({
       console.error('Error converting to speech:', error);
       console.log('convertToSpeech catch - isVoiceChatActive:', isVoiceChatActive);
       setIsSpeaking(false);
-      // If TTS fails, still set listening state
+      // If TTS fails, show continue button
       if (isVoiceChatActive) {
-        console.log('Setting isListening to true in convertToSpeech catch');
-        setIsListening(true);
+        console.log('Showing continue button due to TTS error');
+        setShowContinueButton(true);
       }
     }
   };
@@ -454,6 +458,14 @@ const InputBox: React.FC<InputBoxProps> = ({
           isProcessing={isProcessing}
           audioLevel={audioLevel}
         />
+        
+        {/* Continue Voice Chat Button */}
+        {showContinueButton && (
+          <ContinueVoiceChatButton
+            onClick={handleContinueVoiceChat}
+            disabled={loading || disabled}
+          />
+        )}
         
         <div
           className="w-full bg-[hsl(var(--input-bg))] border-2 border-accent rounded-3xl px-8 py-0 flex flex-col justify-between min-h-[128px] transition-colors duration-300 shadow-md focus-within:ring-2 focus-within:ring-accent"
