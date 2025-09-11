@@ -20,7 +20,6 @@ const RobotModel: React.FC<{
 }> = ({ isListening, isSpeaking, isProcessing }) => {
   const { scene } = useGLTF('/humanoid-robot-ai-realistic/source/model.glb');
   const meshRef = useRef<THREE.Group>(null);
-  const eyeRef = useRef<THREE.Mesh>(null);
   
   // Animation states
   useFrame((state) => {
@@ -54,28 +53,12 @@ const RobotModel: React.FC<{
     }
   });
 
-  // Eye glow effect
-  useEffect(() => {
-    if (eyeRef.current) {
-      const material = eyeRef.current.material as THREE.MeshStandardMaterial;
-      if (isListening || isSpeaking || isProcessing) {
-        material.emissive = new THREE.Color(0x00ff00);
-        material.emissiveIntensity = 0.5;
-      } else {
-        material.emissive = new THREE.Color(0x000000);
-        material.emissiveIntensity = 0;
-      }
-    }
-  }, [isListening, isSpeaking, isProcessing]);
+  // Eye glow effect removed - green sphere was not needed
 
   return (
     <group ref={meshRef} scale={1.5} position={[0, 0.5, 0]}>
       <primitive object={scene} />
-      {/* Add glowing eyes */}
-      <mesh ref={eyeRef} position={[0, 0.5, 0.8]}>
-        <sphereGeometry args={[0.1, 16, 16]} />
-        <meshStandardMaterial color="#00ff00" emissive="#00ff00" emissiveIntensity={0.5} />
-      </mesh>
+      {/* Green sphere removed - not needed */}
     </group>
   );
 };
