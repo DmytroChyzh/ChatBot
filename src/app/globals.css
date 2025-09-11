@@ -642,10 +642,12 @@ html {
   }
 }
 
-/* Beautiful neon sidebar scrollbar */
+/* Beautiful neon sidebar scrollbar - positioned on the right */
 .custom-sidebar-scrollbar::-webkit-scrollbar {
   width: 10px;
   background: transparent;
+  position: absolute;
+  right: 0;
 }
 
 .custom-sidebar-scrollbar::-webkit-scrollbar-track {
@@ -692,6 +694,15 @@ html {
 .custom-sidebar-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #8B5CF6 rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* Force scrollbar to the right edge */
+.custom-sidebar-scrollbar::-webkit-scrollbar {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }
 
 /* Modern estimate card scrollbar */
