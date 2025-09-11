@@ -148,17 +148,22 @@ const InputBox: React.FC<InputBoxProps> = ({
       };
 
       recognitionRef.current.onend = () => {
-        console.log('Voice recognition ended');
+        console.log('Voice recognition ended - isSpeaking:', isSpeaking, 'isProcessing:', isProcessing);
         setIsListening(false);
         // Restart recognition if voice chat is still active and AI is not speaking
         if (isVoiceChatActive && !isSpeaking && !isProcessing) {
           console.log('Restarting voice recognition...');
           setTimeout(() => {
             if (recognitionRef.current && isVoiceChatActive && !isSpeaking && !isProcessing) {
+              console.log('Actually restarting recognition now');
               setIsListening(true);
               recognitionRef.current.start();
+            } else {
+              console.log('Not restarting - conditions not met');
             }
           }, 100);
+        } else {
+          console.log('Not restarting recognition - AI is speaking or processing');
         }
       };
 
@@ -209,6 +214,12 @@ const InputBox: React.FC<InputBoxProps> = ({
       setIsProcessing(true);
       setIsListening(false);
       
+      // Stop recognition completely while AI is processing
+      if (recognitionRef.current) {
+        console.log('Stopping recognition - AI is processing');
+        recognitionRef.current.stop();
+      }
+      
       const response = await fetch('/api/ai', {
         method: 'POST',
         headers: {
@@ -251,6 +262,13 @@ const InputBox: React.FC<InputBoxProps> = ({
   const convertToSpeech = async (text: string) => {
     try {
       setIsSpeaking(true);
+      
+      // Stop recognition completely while AI is speaking
+      if (recognitionRef.current) {
+        console.log('Stopping recognition - AI is about to speak');
+        recognitionRef.current.stop();
+        setIsListening(false);
+      }
       
       const response = await fetch('/api/text-to-speech', {
         method: 'POST',
