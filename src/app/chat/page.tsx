@@ -1122,7 +1122,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         </div>
         {/* Estimate Card Sidebar - Desktop only */}
         {showProjectSidebar && projectEstimate && (
-          <div className="hidden lg:flex flex-col flex-shrink-0 w-96 pr-8 pt-8">
+          <div className="hidden lg:flex flex-col flex-shrink-0 w-[28rem] pr-8 pt-8">
             <EstimateCard
               estimate={projectEstimate}
               estimateStep={estimateStep}

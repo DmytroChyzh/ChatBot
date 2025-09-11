@@ -4,7 +4,6 @@ import {
   DollarSign, 
   Clock, 
   Users, 
-  Phone, 
   TrendingDown, 
   CheckCircle,
   ArrowRight,
@@ -271,22 +270,6 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
           </div>
         </div>
 
-        {/* Контактна особа */}
-        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center gap-3 mb-2">
-            <Phone className="w-5 h-5 text-purple-600" />
-            <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-              {language === 'uk' ? 'Контактна особа' : 'Contact Person'}
-            </span>
-          </div>
-          <div className="text-sm text-purple-700 dark:text-purple-300">
-            <div className="font-medium">{estimate.team.contactPerson}</div>
-            <div className="text-purple-600 dark:text-purple-400">{estimate.team.contactEmail}</div>
-          </div>
-          <div className="text-xs text-purple-500 dark:text-purple-300 mt-2">
-            {language === 'uk' ? 'Ваш менеджер проекту' : 'Your project manager'}
-          </div>
-        </div>
 
         {/* CTA кнопка та пояснення - завжди внизу */}
         <div className="p-4 lg:p-6 pt-0 space-y-3 lg:space-y-4">
