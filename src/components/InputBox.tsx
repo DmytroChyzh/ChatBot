@@ -5,6 +5,7 @@ import DictationMode from './DictationMode';
 import VoiceChatButton from './VoiceChatButton';
 import Robot3D from './Robot3D';
 import VoiceWaveIndicator from './VoiceWaveIndicator';
+import VoiceStatusIndicator from './VoiceStatusIndicator';
 
 interface InputBoxProps {
   value: string;
@@ -320,6 +321,14 @@ const InputBox: React.FC<InputBoxProps> = ({
       />
       
       <div className="w-full max-w-[900px] mx-auto my-6">
+        {/* Voice Status Indicator */}
+        <VoiceStatusIndicator
+          isActive={isVoiceChatActive}
+          isListening={isListening}
+          isSpeaking={isSpeaking}
+          isProcessing={isProcessing}
+        />
+        
         {/* Voice Wave Indicator */}
         <VoiceWaveIndicator
           isActive={isVoiceChatActive}
