@@ -378,11 +378,12 @@ const InputBox: React.FC<InputBoxProps> = ({
               isDictating={isDictating}
             />
 
-            {/* Voice Chat Button */}
-            <VoiceChatButton 
-              onClick={handleStartVoiceChat}
-              disabled={loading || disabled}
-            />
+        {/* Voice Chat Button */}
+        <VoiceChatButton 
+          onClick={handleStartVoiceChat}
+          disabled={loading || disabled}
+          isActive={isVoiceChatActive}
+        />
 
           </div>
         </div>
