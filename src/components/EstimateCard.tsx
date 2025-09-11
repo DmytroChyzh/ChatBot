@@ -280,7 +280,6 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
             }}
             className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-2 lg:py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl text-sm lg:text-base"
           >
-            <Phone className="w-4 h-4" />
             <span className="hidden sm:inline">{language === 'uk' ? 'Зв\'язатися з менеджером' : 'Contact Manager'}</span>
             <span className="sm:hidden">{language === 'uk' ? 'Зв\'язатися' : 'Contact'}</span>
           </button>
