@@ -326,6 +326,7 @@ const InputBox: React.FC<InputBoxProps> = ({
         if (isVoiceChatActive) {
           console.log('Showing continue voice chat button');
           setShowContinueButton(true);
+          console.log('setShowContinueButton(true) called');
         } else {
           console.log('Voice chat not active, not showing continue button');
         }
@@ -465,6 +466,13 @@ const InputBox: React.FC<InputBoxProps> = ({
             onClick={handleContinueVoiceChat}
             disabled={loading || disabled}
           />
+        )}
+        
+        {/* Debug info */}
+        {isVoiceChatActive && (
+          <div className="text-xs text-gray-500 mb-2">
+            Debug: isListening={isListening.toString()}, isSpeaking={isSpeaking.toString()}, isProcessing={isProcessing.toString()}, showContinueButton={showContinueButton.toString()}
+          </div>
         )}
         
         <div
