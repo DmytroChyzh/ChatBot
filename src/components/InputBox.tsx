@@ -107,6 +107,12 @@ const InputBox: React.FC<InputBoxProps> = ({
       };
 
       recognitionRef.current.onresult = async (event: any) => {
+        // Don't process results if AI is speaking or processing
+        if (isSpeaking || isProcessing) {
+          console.log('Ignoring voice result - AI is speaking/processing');
+          return;
+        }
+        
         console.log('Voice recognition result:', event);
         let finalTranscript = '';
         
@@ -144,11 +150,12 @@ const InputBox: React.FC<InputBoxProps> = ({
       recognitionRef.current.onend = () => {
         console.log('Voice recognition ended');
         setIsListening(false);
-        // Restart recognition if voice chat is still active
+        // Restart recognition if voice chat is still active and AI is not speaking
         if (isVoiceChatActive && !isSpeaking && !isProcessing) {
           console.log('Restarting voice recognition...');
           setTimeout(() => {
-            if (recognitionRef.current && isVoiceChatActive) {
+            if (recognitionRef.current && isVoiceChatActive && !isSpeaking && !isProcessing) {
+              setIsListening(true);
               recognitionRef.current.start();
             }
           }, 100);
@@ -265,14 +272,20 @@ const InputBox: React.FC<InputBoxProps> = ({
       const audio = new Audio(audioUrl);
       
       audio.onended = () => {
+        console.log('AI finished speaking, preparing to listen...');
         setIsSpeaking(false);
-        // Restart listening
+        
+        // Wait a bit before restarting listening to give user time
         if (isVoiceChatActive) {
           setTimeout(() => {
-            if (recognitionRef.current) {
-              recognitionRef.current.start();
+            if (isVoiceChatActive && !isSpeaking && !isProcessing) {
+              console.log('Restarting listening after AI finished...');
+              setIsListening(true);
+              if (recognitionRef.current) {
+                recognitionRef.current.start();
+              }
             }
-          }, 500);
+          }, 1000); // 1 second delay to let user prepare
         }
       };
 
