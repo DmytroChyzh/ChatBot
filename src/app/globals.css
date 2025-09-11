@@ -642,12 +642,15 @@ html {
   }
 }
 
-/* Beautiful neon sidebar scrollbar - positioned on the right */
+/* Beautiful neon sidebar scrollbar - positioned on the right edge of screen */
 .custom-sidebar-scrollbar::-webkit-scrollbar {
   width: 10px;
   background: transparent;
-  position: absolute;
+  position: fixed;
   right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1000;
 }
 
 .custom-sidebar-scrollbar::-webkit-scrollbar-track {
@@ -697,12 +700,13 @@ html {
   position: relative;
 }
 
-/* Force scrollbar to the right edge */
+/* Force chat scrollbar to the right edge of screen */
 .custom-sidebar-scrollbar::-webkit-scrollbar {
-  position: absolute;
+  position: fixed;
   right: 0;
   top: 0;
   bottom: 0;
+  z-index: 1000;
 }
 
 /* Modern estimate card scrollbar - positioned on the right */
