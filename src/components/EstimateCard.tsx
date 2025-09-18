@@ -7,16 +7,7 @@ import {
   TrendingDown, 
   CheckCircle,
   ArrowRight,
-  Target,
-  Search,
-  Palette,
-  Zap,
-  Layers,
-  Smartphone,
-  Calendar,
-  Star,
-  ChevronDown,
-  ChevronUp
+  Target
 } from 'lucide-react';
 
 interface EstimateCardProps {
@@ -64,8 +55,6 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 }) => {
   const { t, language } = useLanguage();
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
-  const [expandedPhases, setExpandedPhases] = useState<Set<string>>(new Set());
-  const [selectedComplexity, setSelectedComplexity] = useState<string>('medium');
 
   // Функція для отримання описів фаз дизайну
   const getPhaseDescription = (phaseKey: string): string => {
@@ -92,64 +81,6 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
     );
   };
 
-  // Функція для отримання іконок фаз
-  const getPhaseIcon = (phaseKey: string) => {
-    const icons = {
-      'ux-research': Search,
-      'ui-design': Palette,
-      'prototyping': Zap,
-      'design-system': Layers,
-      'mobile-adaptive': Smartphone
-    };
-    return icons[phaseKey as keyof typeof icons] || Target;
-  };
-
-  // Функція для отримання кольорів фаз
-  const getPhaseColor = (phaseKey: string) => {
-    const colors = {
-      'ux-research': 'from-blue-500 to-blue-600',
-      'ui-design': 'from-purple-500 to-purple-600',
-      'prototyping': 'from-yellow-500 to-orange-500',
-      'design-system': 'from-green-500 to-green-600',
-      'mobile-adaptive': 'from-pink-500 to-pink-600'
-    };
-    return colors[phaseKey as keyof typeof colors] || 'from-gray-500 to-gray-600';
-  };
-
-  // Функція для отримання пріоритету фази
-  const getPhasePriority = (phaseKey: string) => {
-    const priorities = {
-      'ux-research': 'high',
-      'ui-design': 'high',
-      'prototyping': 'medium',
-      'design-system': 'medium',
-      'mobile-adaptive': 'high'
-    };
-    return priorities[phaseKey as keyof typeof priorities] || 'medium';
-  };
-
-  // Функція для отримання термінів фаз
-  const getPhaseTimeline = (phaseKey: string) => {
-    const timelines = {
-      'ux-research': language === 'uk' ? '1-2 тижні' : '1-2 weeks',
-      'ui-design': language === 'uk' ? '2-4 тижні' : '2-4 weeks',
-      'prototyping': language === 'uk' ? '1-2 тижні' : '1-2 weeks',
-      'design-system': language === 'uk' ? '1-2 тижні' : '1-2 weeks',
-      'mobile-adaptive': language === 'uk' ? '1-3 тижні' : '1-3 weeks'
-    };
-    return timelines[phaseKey as keyof typeof timelines] || (language === 'uk' ? '1-2 тижні' : '1-2 weeks');
-  };
-
-  // Функція для перемикання розгортання фази
-  const togglePhaseExpansion = (phaseKey: string) => {
-    const newExpanded = new Set(expandedPhases);
-    if (newExpanded.has(phaseKey)) {
-      newExpanded.delete(phaseKey);
-    } else {
-      newExpanded.add(phaseKey);
-    }
-    setExpandedPhases(newExpanded);
-  };
 
   // Додаємо логування для дебагу
   console.log('EstimateCard render:', {
@@ -325,38 +256,11 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 
         {/* Фази проекту з покращеннями */}
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {language === 'uk' ? 'Етапи дизайн-процесу' : 'Design Process Stages'}
-              </h4>
-              {/* Загальний прогрес проекту */}
-              <div className="flex items-center gap-2">
-                <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
-                  <div className="h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-1000" style={{ width: '75%' }} />
-                </div>
-                <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">75%</span>
-              </div>
-            </div>
-            {/* Селектор складності */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                {language === 'uk' ? 'Складність:' : 'Complexity:'}
-              </span>
-              <select
-                value={selectedComplexity}
-                onChange={(e) => setSelectedComplexity(e.target.value)}
-                className="text-xs bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              >
-                <option value="simple">{language === 'uk' ? 'Простий' : 'Simple'}</option>
-                <option value="medium">{language === 'uk' ? 'Середній' : 'Medium'}</option>
-                <option value="complex">{language === 'uk' ? 'Складний' : 'Complex'}</option>
-                <option value="enterprise">{language === 'uk' ? 'Enterprise' : 'Enterprise'}</option>
-              </select>
-            </div>
-          </div>
+          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            {language === 'uk' ? 'Етапи дизайн-процесу' : 'Design Process Stages'}
+          </h4>
           
-          <div className="space-y-3">
+          <div className="space-y-2">
             {Object.entries(estimate.phases).map(([phaseKey, description]) => {
               // Мапінг назв фаз для відображення
               const getPhaseDisplayName = (key: string) => {
@@ -370,58 +274,35 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 return phaseNames[key] || description;
               };
 
-              const PhaseIcon = getPhaseIcon(phaseKey);
-              const phaseColor = getPhaseColor(phaseKey);
-              const priority = getPhasePriority(phaseKey);
-              const timeline = getPhaseTimeline(phaseKey);
-              const isExpanded = expandedPhases.has(phaseKey);
-
-              // Розрахунок прогрес-бару (симуляція)
-              const progressPercentage = Math.floor(Math.random() * 40) + 60; // 60-100%
 
               return (
-                <div key={phaseKey} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-3 hover:shadow-md transition-all duration-200">
-                  <div className="flex items-center gap-3">
-                    {/* Іконка фази з кольоровим градієнтом */}
-                    <div className={`p-2 rounded-lg bg-gradient-to-r ${phaseColor} text-white flex-shrink-0`}>
-                      <PhaseIcon className="w-4 h-4" />
+                <div key={phaseKey} className="border border-gray-200 dark:border-gray-600 rounded-lg">
+                  <button
+                    onClick={() => setExpandedPhase(expandedPhase === phaseKey ? null : phaseKey)}
+                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        {getPhaseDisplayName(phaseKey)}
+                      </span>
                     </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">
-                          {getPhaseDisplayName(phaseKey)}
-                        </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {timeline}
-                        </span>
-                      </div>
-                      
-                      {/* Прогрес-бар */}
-                      <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1.5 mb-1">
-                        <div 
-                          className={`h-1.5 rounded-full bg-gradient-to-r ${phaseColor} transition-all duration-1000 ease-out`}
-                          style={{ width: `${progressPercentage}%` }}
-                        />
-                      </div>
-                      
-                      {/* Пріоритет та відсоток */}
-                      <div className="flex items-center justify-between text-xs">
-                        <div className={`px-2 py-0.5 rounded-full font-medium ${
-                          priority === 'high' 
-                            ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
-                            : priority === 'medium'
-                            ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
-                            : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                        }`}>
-                          {priority === 'high' ? '🔥' : priority === 'medium' ? '⭐' : '✅'} {priority}
-                        </div>
-                        <span className="text-gray-500 dark:text-gray-400 font-medium">
-                          {progressPercentage}%
-                        </span>
-                      </div>
+                    <ArrowRight 
+                      className={`w-4 h-4 text-gray-500 transition-transform ${
+                        expandedPhase === phaseKey ? 'rotate-90' : ''
+                      }`} 
+                    />
+                  </button>
+                  
+                  {expandedPhase === phaseKey && (
+                    <div className="px-3 pb-3 border-t border-gray-200 dark:border-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
+                          getPhaseDescription(phaseKey)
+                        }
+                      </p>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
