@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 import { getChatSession, updateProjectCard } from '../../../lib/firestore';
 import { ProjectCardState } from '../../../types/chat';
 import { parseProjectInfoFromText } from '../../../utils/parseProjectInfo';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const SYSTEM_PROMPT = `You are a flexible AI consultant for Cieden. You know everything about Cieden: our cases, team, processes, UX/UI, design, development, website, approaches, values, and expertise.
 
@@ -114,6 +116,30 @@ function cleanProjectInfo(raw: any, prevCard?: ProjectCardState): Partial<Projec
   return cleaned;
 }
 
+// Функція для вибору AI залежно від складності
+function shouldUseClaude(message: string, conversationHistory: any[]): boolean {
+  // Прості питання - використовуємо Claude Haiku (швидше)
+  const simplePatterns = [
+    /^(привіт|hello|hi|доброго дня|доброго ранку)/i,
+    /^(дякую|спасибо|thank you|thanks)/i,
+    /^(так|ні|yes|no|ok|ок)/i,
+    /^(що|what|як|how|коли|when|де|where)/i
+  ];
+  
+  // Складні питання - використовуємо GPT-3.5 (якісніше)
+  const complexPatterns = [
+    /проект|project|дизайн|design|розробка|development/i,
+    /оцінка|estimate|ціна|price|бюджет|budget/i,
+    /функціональність|functionality|можливості|features/i
+  ];
+  
+  const isSimple = simplePatterns.some(pattern => pattern.test(message));
+  const isComplex = complexPatterns.some(pattern => pattern.test(message));
+  
+  // Якщо є API ключ Claude і питання просте - використовуємо Claude
+  return process.env.ANTHROPIC_API_KEY && isSimple && !isComplex;
+}
+
 export async function POST(req: NextRequest) {
   const { message, conversationHistory = [], sessionId } = await req.json();
 
@@ -125,36 +151,75 @@ export async function POST(req: NextRequest) {
       }))
     : [];
 
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      { role: "system", content: SYSTEM_PROMPT },
-      ...conversationContext,
-      { role: "user", content: message }
-    ]
-  });
+  let completion;
+  
+  // Вибираємо AI залежно від складності
+  if (shouldUseClaude(message, conversationHistory)) {
+    // Використовуємо Claude Haiku для простих питань
+    try {
+      completion = await anthropic.messages.create({
+        model: "claude-3-haiku-20240307",
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: conversationContext.concat([{ role: "user", content: message }])
+      });
+    } catch (error) {
+      console.log('Claude failed, falling back to GPT-3.5:', error);
+      // Fallback до GPT-3.5
+      completion = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          ...conversationContext,
+          { role: "user", content: message }
+        ],
+        max_tokens: 1000,
+        temperature: 0.7
+      });
+    }
+  } else {
+    // Використовуємо GPT-3.5 для складних питань
+    completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...conversationContext,
+        { role: "user", content: message }
+      ],
+      max_tokens: 1000,
+      temperature: 0.7
+    });
+  }
 
   try {
-    let content = completion.choices[0].message.content || '';
+    // Обробляємо відповідь залежно від типу AI
+    let rawContent = '';
+    if (completion.choices) {
+      // OpenAI response
+      rawContent = completion.choices[0].message.content || '';
+    } else if (completion.content) {
+      // Claude response
+      rawContent = Array.isArray(completion.content) 
+        ? completion.content.map(block => block.text).join('')
+        : completion.content;
+    }
+    
+    let content = rawContent;
     // Видаляємо службові рядки (JSON, SuggestedAnswers) з тексту відповіді
     content = content.replace(/JSON:[\s\S]*?(SuggestedAnswers:|---|$)/gi, '').replace(/SuggestedAnswers:[\s\S]*?(---|$)/gi, '').replace(/SUGGESTED:\s*\[[^\]]*\]/gi, '').replace(/\n{2,}/g, '\n').trim();
-    // НЕ парсимо і НЕ оновлюємо картку з відповіді асистента!
-    // const projectInfoRaw = parseProjectInfoFromText(content);
-    // const projectInfo = cleanProjectInfo(projectInfoRaw);
-    const suggestedAnswers = parseSuggestedAnswers(completion.choices[0].message.content || '');
+    
+    const suggestedAnswers = parseSuggestedAnswers(rawContent);
     return NextResponse.json({
       content,
-      // projectInfo: {},
       completionStatus: "incomplete",
       nextQuestions: [],
       shouldTriggerWorkers: false,
       suggestedAnswers
     });
   } catch (error) {
-    console.error('Error processing OpenAI response:', error);
+    console.error('Error processing AI response:', error);
     return NextResponse.json({
       content: "Sorry, an error occurred while processing the response.",
-      // projectInfo: {},
       completionStatus: "incomplete",
       nextQuestions: [],
       shouldTriggerWorkers: false,
