@@ -12,31 +12,39 @@ const SYSTEM_PROMPT = `You are a flexible AI consultant for Cieden. You know eve
 
 You communicate with the client as a human: answer any questions about Cieden, give useful advice, share experience, talk about cases, team, website, processes, expertise, approaches, values, technologies, anything that may be helpful.
 
-If the client wants to start a new project or redesign — you gather all necessary information ONE question at a time. Each next question adapts to the client's answers, never duplicates, never repeats, never uses template lists. Questions are always flexible, personalized, like a real expert.
+🎯 PROJECT CONSULTATION STRATEGY:
+- Ask ONLY ONE question at a time, never multiple questions
+- Each question adapts to the client's previous answers
+- Questions are natural, conversational, like a real expert
+- Never use template lists or duplicate questions
+- Build understanding step by step
 
-🎯 ESTIMATION STRATEGY:
-- Start with broad questions to understand project scope
-- Ask specific questions about functionality, target audience, business goals
-- Gather technical requirements, integrations, design preferences
-- Understand budget expectations and timeline constraints
-- Ask about competitors and unique selling points
-- Get details about current state (existing website/app) if applicable
+📋 INFORMATION GATHERING FLOW:
+1. Start with project type (if not mentioned)
+2. Then target audience (based on project type)
+3. Then core functionality (based on audience)
+4. Then business goals (based on functionality)
+5. Finally budget/timeline (based on everything above)
 
-📋 KEY INFORMATION TO GATHER:
-1. Project type (website, web app, e-commerce, dashboard, mobile app)
-2. Target audience and user personas
-3. Core functionality and features
-4. Business goals and success metrics
-5. Budget range and timeline
-6. Design preferences and brand guidelines
-7. Technical requirements and integrations
-8. Competitors and market positioning
-9. Current state (if redesign/improvement)
-10. Content management needs
+🧠 SMART BUTTON GENERATION:
+After each question, provide 4-5 contextual buttons that:
+- Offer specific, actionable options
+- Include "I don't know" or "Need help" options
+- Are relevant to the current question context
+- Help the client give better answers
+- Never duplicate the question text
 
-After each question you provide 4-5 relevant answer buttons (SuggestedAnswers), but the client can always type their own answer. Buttons must be short, unique, without duplicates, and maximally helpful for the client.
+Examples of good buttons:
+- For "project type": ["Website", "Mobile App", "E-commerce", "Dashboard", "Not sure"]
+- For "target audience": ["B2B companies", "End consumers", "Internal users", "Need help choosing"]
+- For "budget": ["Under $10k", "$10-25k", "$25-50k", "$50k+", "Need consultation"]
 
-❗️After EVERY question about project, redesign, functionality, goals, budget, timeline, audience, competitors, UX/UI, you ALWAYS add a SuggestedAnswers block with 4-5 options. If you can't think of any — add ['Other', 'Explain in detail', 'I don't know', 'Skip']. If you break this — the answer will not be accepted!
+❗️CRITICAL RULES:
+1. Ask ONLY ONE question per response
+2. Always provide SuggestedAnswers with 4-5 contextual options
+3. Never put suggestions in the main text - only in SuggestedAnswers block
+4. Adapt questions based on client's previous answers
+5. Be conversational and helpful, not robotic
 
 All answers must be maximally useful for future estimation and manager: gather details that help understand real goals, expectations, problems, and client wishes.
 
@@ -46,13 +54,10 @@ No service lines, JSON, or suggestions in the client text.
 
 Format:
 ---
-Client text
-
-JSON:
-{ ... }
+Your single question here
 
 SuggestedAnswers:
-[ ... ]
+["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"]
 ---
 `;
 
@@ -71,13 +76,13 @@ function extractJSON(str) {
 }
 
 function parseSuggestedAnswers(text: string): string[] {
-  // SUGGESTED: ["..."]
-  const match = text.match(/SUGGESTED:\s*\[([^\]]+)\]/i);
+  // Шукаємо SuggestedAnswers блок
+  const match = text.match(/SuggestedAnswers:\s*\[([^\]]+)\]/i);
   let arr: string[] = [];
   if (match) {
     arr = match[1].split(',').map(s => s.replace(/['"\s]/g, '').trim()).filter(Boolean);
   } else {
-    // Якщо не знайдено — шукаємо маркдаун-список одразу після питання
+    // Fallback - шукаємо маркдаун-список
     const mdList = text.match(/\n\- ([^\n]+)/g);
     if (mdList) {
       arr = mdList.map(s => s.replace(/\n\- /g, '').trim());
@@ -85,6 +90,39 @@ function parseSuggestedAnswers(text: string): string[] {
   }
   // Повертаємо лише унікальні підказки
   return Array.from(new Set(arr.filter(Boolean)));
+}
+
+// Розумна функція для генерації кнопок на основі контексту
+function generateSmartButtons(message: string, conversationHistory: any[]): string[] {
+  const lastUserMessage = conversationHistory
+    .filter(msg => msg.role === 'user')
+    .pop()?.content?.toLowerCase() || '';
+  
+  const currentMessage = message.toLowerCase();
+  
+  // Аналізуємо контекст для генерації релевантних кнопок
+  if (currentMessage.includes('тип') || currentMessage.includes('проект')) {
+    return ["Веб-сайт", "Мобільний додаток", "E-commerce", "Dashboard", "Не знаю"];
+  }
+  
+  if (currentMessage.includes('аудиторія') || currentMessage.includes('користувачі')) {
+    return ["B2B компанії", "Кінцеві споживачі", "Внутрішні користувачі", "Потрібна допомога"];
+  }
+  
+  if (currentMessage.includes('функції') || currentMessage.includes('можливості')) {
+    return ["Базові функції", "Складні функції", "Показати приклади", "Не знаю"];
+  }
+  
+  if (currentMessage.includes('бюджет') || currentMessage.includes('ціна')) {
+    return ["До $10k", "$10-25k", "$25-50k", "$50k+", "Потрібна консультація"];
+  }
+  
+  if (currentMessage.includes('терміни') || currentMessage.includes('час')) {
+    return ["1-2 місяці", "3-6 місяців", "6+ місяців", "Не терміново", "Потрібна оцінка"];
+  }
+  
+  // Загальні кнопки для невизначених ситуацій
+  return ["Так", "Ні", "Не знаю", "Потрібна допомога", "Пропустити"];
 }
 
 // Очищення та мапінг під ProjectCardState
@@ -208,7 +246,13 @@ export async function POST(req: NextRequest) {
     // Видаляємо службові рядки (JSON, SuggestedAnswers) з тексту відповіді
     content = content.replace(/JSON:[\s\S]*?(SuggestedAnswers:|---|$)/gi, '').replace(/SuggestedAnswers:[\s\S]*?(---|$)/gi, '').replace(/SUGGESTED:\s*\[[^\]]*\]/gi, '').replace(/\n{2,}/g, '\n').trim();
     
-    const suggestedAnswers = parseSuggestedAnswers(rawContent);
+    let suggestedAnswers = parseSuggestedAnswers(rawContent);
+    
+    // Якщо AI не надав кнопки, генеруємо розумні кнопки на основі контексту
+    if (suggestedAnswers.length === 0) {
+      suggestedAnswers = generateSmartButtons(message, conversationHistory);
+    }
+    
     return NextResponse.json({
       content,
       completionStatus: "incomplete",
