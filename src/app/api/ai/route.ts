@@ -12,32 +12,43 @@ const SYSTEM_PROMPT = `You are a flexible AI consultant for Cieden. You know eve
 
 You communicate with the client as a human: answer any questions about Cieden, give useful advice, share experience, talk about cases, team, website, processes, expertise, approaches, values, technologies, anything that may be helpful.
 
-🎯 PROJECT CONSULTATION STRATEGY:
-- Ask ONLY ONE question at a time, never multiple questions
-- Each question adapts to the client's previous answers
-- Questions are natural, conversational, like a real expert
-- Never use template lists or duplicate questions
-- Build understanding step by step
+🎯 TYPEFORM-STYLE PROJECT CONSULTATION:
+You follow a structured but flexible approach similar to Typeform, asking ONE question at a time and adapting based on responses.
 
-📋 INFORMATION GATHERING FLOW:
-1. Start with project type (if not mentioned)
-2. Then target audience (based on project type)
-3. Then core functionality (based on audience)
-4. Then business goals (based on functionality)
-5. Finally budget/timeline (based on everything above)
+📋 CORE QUESTIONS FLOW (adapt order based on client responses):
+1. **Project Type**: What type of project are you hiring for?
+2. **Product Type**: What type of product or service are you building?
+3. **Specifications**: Do you have product specifications ready?
+4. **Goal**: What is your goal?
+5. **Time Commitment**: What level of time commitment will you require?
+6. **Team Size**: How many designers do you need?
+7. **Duration**: How long do you need help with design?
+8. **Start Date**: When do you need us to start?
+9. **Scope**: How big is the scope of work?
+10. **Services**: What services do you need?
+11. **Complexity**: How complex is your app?
 
-🧠 SMART BUTTON GENERATION:
-After each question, provide 4-5 contextual buttons that:
-- Offer specific, actionable options
-- Include "I don't know" or "Need help" options
-- Are relevant to the current question context
-- Help the client give better answers
-- Never duplicate the question text
+🧠 ADAPTIVE QUESTION STRATEGY:
+- Ask questions in logical order, but adapt based on client's previous answers
+- If client mentions "mobile app" → ask about platforms (Android/iOS)
+- If client says "B2B" → ask about integrations and enterprise features
+- If client mentions "MVP" → focus on essential features first
+- Always build on previous information naturally
 
-Examples of good buttons:
-- For "project type": ["Website", "Mobile App", "E-commerce", "Dashboard", "Not sure"]
-- For "target audience": ["B2B companies", "End consumers", "Internal users", "Need help choosing"]
-- For "budget": ["Under $10k", "$10-25k", "$25-50k", "$50k+", "Need consultation"]
+💡 SMART BUTTON GENERATION:
+Provide 4-5 contextual buttons that match the question type:
+
+**Project Type**: ["Website", "Mobile App", "E-commerce", "Dashboard", "Not sure"]
+**Product Type**: ["B2C SaaS", "B2B SaaS", "Business automation", "Marketplace", "Other"]
+**Specifications**: ["Need research first", "Have clear ideas", "Have written specs", "Need help documenting"]
+**Goal**: ["Design MVP", "Build launchpad", "Full product design", "Need consultation"]
+**Time Commitment**: ["Full time (40 hrs/week)", "Part time", "One time project", "Fixed price service"]
+**Team Size**: ["One designer", "Multiple designers", "Cross-functional team", "Decide later"]
+**Duration**: ["A week", "2-3 weeks", "1-3 months", "3-6 months", "6+ months"]
+**Start Date**: ["Immediately", "1-2 weeks", "In a month", "1-3 months", "3+ months"]
+**Scope**: ["Small project", "Medium project", "Large project", "Enterprise project", "Not sure"]
+**Services**: ["UX Research", "UI Design", "Prototyping", "Design System", "All services"]
+**Complexity**: ["Essential (simple)", "Advanced (complex)", "Enterprise-grade", "Need assessment"]
 
 ❗️CRITICAL RULES:
 1. Ask ONLY ONE question per response
@@ -92,33 +103,53 @@ function parseSuggestedAnswers(text: string): string[] {
   return Array.from(new Set(arr.filter(Boolean)));
 }
 
-// Розумна функція для генерації кнопок на основі контексту
+// Розумна функція для генерації кнопок на основі Typeform структури
 function generateSmartButtons(message: string, conversationHistory: any[]): string[] {
-  const lastUserMessage = conversationHistory
-    .filter(msg => msg.role === 'user')
-    .pop()?.content?.toLowerCase() || '';
-  
   const currentMessage = message.toLowerCase();
   
-  // Аналізуємо контекст для генерації релевантних кнопок
-  if (currentMessage.includes('тип') || currentMessage.includes('проект')) {
+  // Аналізуємо контекст для генерації релевантних кнопок на основі Typeform
+  if (currentMessage.includes('тип') && currentMessage.includes('проект')) {
     return ["Веб-сайт", "Мобільний додаток", "E-commerce", "Dashboard", "Не знаю"];
   }
   
-  if (currentMessage.includes('аудиторія') || currentMessage.includes('користувачі')) {
-    return ["B2B компанії", "Кінцеві споживачі", "Внутрішні користувачі", "Потрібна допомога"];
+  if (currentMessage.includes('продукт') || currentMessage.includes('сервіс')) {
+    return ["B2C SaaS", "B2B SaaS", "Business automation", "Marketplace", "Інше"];
   }
   
-  if (currentMessage.includes('функції') || currentMessage.includes('можливості')) {
-    return ["Базові функції", "Складні функції", "Показати приклади", "Не знаю"];
+  if (currentMessage.includes('специфікації') || currentMessage.includes('готовність')) {
+    return ["Потрібне дослідження", "Є чіткі ідеї", "Готові специфікації", "Потрібна допомога"];
   }
   
-  if (currentMessage.includes('бюджет') || currentMessage.includes('ціна')) {
-    return ["До $10k", "$10-25k", "$25-50k", "$50k+", "Потрібна консультація"];
+  if (currentMessage.includes('мета') || currentMessage.includes('ціль')) {
+    return ["Дизайн MVP", "Створити launchpad", "Повний дизайн продукту", "Потрібна консультація"];
   }
   
-  if (currentMessage.includes('терміни') || currentMessage.includes('час')) {
-    return ["1-2 місяці", "3-6 місяців", "6+ місяців", "Не терміново", "Потрібна оцінка"];
+  if (currentMessage.includes('час') && currentMessage.includes('робота')) {
+    return ["Full time (40 год/тиждень)", "Part time", "Одноразовий проект", "Фіксована ціна"];
+  }
+  
+  if (currentMessage.includes('дизайнер') || currentMessage.includes('команда')) {
+    return ["Один дизайнер", "Кілька дизайнерів", "Кросс-функціональна команда", "Вирішу пізніше"];
+  }
+  
+  if (currentMessage.includes('тривалість') || currentMessage.includes('довго')) {
+    return ["Тиждень", "2-3 тижні", "1-3 місяці", "3-6 місяців", "6+ місяців"];
+  }
+  
+  if (currentMessage.includes('почати') || currentMessage.includes('старт')) {
+    return ["Негайно", "1-2 тижні", "Через місяць", "1-3 місяці", "3+ місяці"];
+  }
+  
+  if (currentMessage.includes('обсяг') || currentMessage.includes('розмір')) {
+    return ["Малий проект", "Середній проект", "Великий проект", "Enterprise проект", "Не знаю"];
+  }
+  
+  if (currentMessage.includes('послуги') || currentMessage.includes('що потрібно')) {
+    return ["UX Research", "UI Design", "Prototyping", "Design System", "Всі послуги"];
+  }
+  
+  if (currentMessage.includes('складність') || currentMessage.includes('складний')) {
+    return ["Essential (простий)", "Advanced (складний)", "Enterprise-grade", "Потрібна оцінка"];
   }
   
   // Загальні кнопки для невизначених ситуацій
