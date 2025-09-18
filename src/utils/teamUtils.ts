@@ -59,6 +59,19 @@ export function getTeamMembersByRole(role: string): TeamMember[] {
 export function getDesignersForProject(complexity: string, projectType: string): string[] {
   const designers = getTeamMembersByDepartment('Design');
   
+  // Визначаємо розмір команди на основі складності
+  let teamSize = 2; // default
+  
+  if (complexity === 'simple' || projectType === 'landing') {
+    teamSize = 1; // 1 дизайнер для простих проектів
+  } else if (complexity === 'medium' || projectType === 'website') {
+    teamSize = 2; // 2 дизайнери для середніх проектів
+  } else if (complexity === 'high' || projectType === 'web-app' || projectType === 'dashboard') {
+    teamSize = 3; // 3 дизайнери для складних проектів
+  } else if (complexity === 'enterprise' || projectType === 'enterprise') {
+    teamSize = 4; // 4 дизайнери для enterprise проектів
+  }
+  
   // Фільтруємо за seniority та проектом
   let filteredDesigners = designers;
   
@@ -75,8 +88,11 @@ export function getDesignersForProject(complexity: string, projectType: string):
     filteredDesigners = designers.filter(d => ['Senior', 'Middle', 'Str. Middle'].includes(d.seniority));
   }
   
+  // Обмежуємо кількість дизайнерів
+  const selectedDesigners = filteredDesigners.slice(0, teamSize);
+  
   // Повертаємо імена дизайнерів
-  return filteredDesigners.map(d => d.fullName);
+  return selectedDesigners.map(d => d.fullName);
 }
 
 /**

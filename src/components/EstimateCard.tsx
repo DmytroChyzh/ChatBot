@@ -96,7 +96,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
   // Розраховуємо відсоток звуження діапазону
   const initialRange = estimate.initialRange.max - estimate.initialRange.min;
   const currentRange = estimate.currentRange.max - estimate.currentRange.min;
-  const narrowingPercentage = ((initialRange - currentRange) / initialRange) * 100;
+  const narrowingPercentage = initialRange > 0 ? Math.max(0, Math.min(100, ((initialRange - currentRange) / initialRange) * 100)) : 0;
 
   // Отримуємо колір впевненості
   const getConfidenceColor = (confidence: string) => {

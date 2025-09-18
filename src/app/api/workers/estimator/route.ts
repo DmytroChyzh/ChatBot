@@ -30,7 +30,7 @@ const REAL_DESIGN_TEMPLATES = {
     'mobile-adaptive': { hours: 20, cost: 1000 },
   },
   'medium-website': {
-    // Shipro: ~$18,000, 362 години
+    // Shipro: ~$18,000, 362 години (при $50/год)
     'ux-research': { hours: 20, cost: 1000 },
     'ui-design': { hours: 180, cost: 9000 },
     'prototyping': { hours: 30, cost: 1500 },
