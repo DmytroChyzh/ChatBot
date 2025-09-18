@@ -1,0 +1,107 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "type": "project_type",
+      "question": "Який тип проекту вас цікавить?",
+      "buttons": ["Веб-сайт", "Мобільний додаток", "E-commerce", "Dashboard", "Не знаю"],
+      "followUp": {
+        "Мобільний додаток": {
+          "question": "Для яких платформ потрібен додаток?",
+          "buttons": ["Тільки Android", "Тільки iOS", "Android + iOS", "Android + iOS + Web", "Не знаю"]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": "product_type",
+      "question": "Який тип продукту або сервісу ви створюєте?",
+      "buttons": ["B2C SaaS", "B2B SaaS", "Business automation", "Marketplace", "Інше"]
+    },
+    {
+      "id": 3,
+      "type": "specifications",
+      "question": "Чи готові у вас специфікації продукту?",
+      "buttons": ["Потрібне дослідження", "Є чіткі ідеї", "Готові специфікації", "Потрібна допомога"]
+    },
+    {
+      "id": 4,
+      "type": "goal",
+      "question": "Яка ваша мета для цього проекту?",
+      "buttons": ["Дизайн MVP", "Створити launchpad", "Повний дизайн продукту", "Потрібна консультація"]
+    },
+    {
+      "id": 5,
+      "type": "time_commitment",
+      "question": "Який рівень затрат часу ви плануєте?",
+      "buttons": ["Full time (40 год/тиждень)", "Part time", "Одноразовий проект", "Фіксована ціна"]
+    },
+    {
+      "id": 6,
+      "type": "team_size",
+      "question": "Скільки дизайнерів вам потрібно?",
+      "buttons": ["Один дизайнер", "Кілька дизайнерів", "Кросс-функціональна команда", "Вирішу пізніше"]
+    },
+    {
+      "id": 7,
+      "type": "duration",
+      "question": "Як довго потрібна допомога з дизайном?",
+      "buttons": ["Тиждень", "2-3 тижні", "1-3 місяці", "3-6 місяців", "6+ місяців"]
+    },
+    {
+      "id": 8,
+      "type": "start_date",
+      "question": "Коли потрібно почати роботу?",
+      "buttons": ["Негайно", "1-2 тижні", "Через місяць", "1-3 місяці", "3+ місяці"]
+    },
+    {
+      "id": 9,
+      "type": "scope",
+      "question": "Який розмір проекту?",
+      "buttons": ["Малий проект", "Середній проект", "Великий проект", "Enterprise проект", "Не знаю"]
+    },
+    {
+      "id": 10,
+      "type": "services",
+      "question": "Які послуги вам потрібні?",
+      "buttons": ["UX Research", "UI Design", "Prototyping", "Design System", "Всі послуги"]
+    },
+    {
+      "id": 11,
+      "type": "complexity",
+      "question": "Наскільки складний ваш додаток?",
+      "buttons": ["Essential (простий)", "Advanced (складний)", "Enterprise-grade", "Потрібна оцінка"]
+    }
+  ],
+  "pricing": {
+    "base_prices": {
+      "website": { "min": 3000, "max": 8000, "hours": { "min": 60, "max": 160 } },
+      "webapp": { "min": 8000, "max": 25000, "hours": { "min": 160, "max": 500 } },
+      "mobile_app": { "min": 30000, "max": 80000, "hours": { "min": 600, "max": 1600 } },
+      "enterprise": { "min": 60000, "max": 150000, "hours": { "min": 1200, "max": 3000 } }
+    },
+    "multipliers": {
+      "platforms": {
+        "android_only": 0.7,
+        "ios_only": 0.7,
+        "android_ios": 1.0,
+        "android_ios_web": 1.4
+      },
+      "complexity": {
+        "essential": 0.8,
+        "advanced": 1.0,
+        "enterprise": 1.5
+      },
+      "team_size": {
+        "one_designer": 0.8,
+        "multiple_designers": 1.0,
+        "cross_functional": 1.3
+      },
+      "timeline": {
+        "standard": 1.0,
+        "rush": 1.5,
+        "flexible": 0.9
+      }
+    }
+  }
+}

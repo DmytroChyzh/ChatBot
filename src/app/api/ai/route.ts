@@ -4,6 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { getChatSession, updateProjectCard } from '../../../lib/firestore';
 import { ProjectCardState } from '../../../types/chat';
 import { parseProjectInfoFromText } from '../../../utils/parseProjectInfo';
+import typeformQuestions from '../../../data/typeform-questions.json';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -13,49 +14,30 @@ const SYSTEM_PROMPT = `You are a flexible AI consultant for Cieden. You know eve
 You communicate with the client as a human: answer any questions about Cieden, give useful advice, share experience, talk about cases, team, website, processes, expertise, approaches, values, technologies, anything that may be helpful.
 
 🎯 TYPEFORM-STYLE PROJECT CONSULTATION:
-You follow a structured but flexible approach similar to Typeform, asking ONE question at a time and adapting based on responses.
+You follow a structured approach using predefined questions, but remain flexible and conversational.
 
-📋 CORE QUESTIONS FLOW (adapt order based on client responses):
-1. **Project Type**: What type of project are you hiring for?
-2. **Product Type**: What type of product or service are you building?
-3. **Specifications**: Do you have product specifications ready?
-4. **Goal**: What is your goal?
-5. **Time Commitment**: What level of time commitment will you require?
-6. **Team Size**: How many designers do you need?
-7. **Duration**: How long do you need help with design?
-8. **Start Date**: When do you need us to start?
-9. **Scope**: How big is the scope of work?
-10. **Services**: What services do you need?
-11. **Complexity**: How complex is your app?
+📋 QUESTION STRUCTURE:
+You have access to a structured set of questions. Use them as a guide, but adapt naturally to the conversation flow.
 
-🧠 ADAPTIVE QUESTION STRATEGY:
-- Ask questions in logical order, but adapt based on client's previous answers
-- If client mentions "mobile app" → ask about platforms (Android/iOS)
-- If client says "B2B" → ask about integrations and enterprise features
-- If client mentions "MVP" → focus on essential features first
-- Always build on previous information naturally
+🧠 ADAPTIVE STRATEGY:
+- Ask ONE question at a time
+- If client clicks a button or gives a specific answer, acknowledge it and ask the next logical question
+- If client asks something unrelated, answer their question first, then continue with the consultation
+- Always be helpful and conversational
+- Build on previous information naturally
 
-💡 SMART BUTTON GENERATION:
-Provide 4-5 contextual buttons that match the question type:
-
-**Project Type**: ["Website", "Mobile App", "E-commerce", "Dashboard", "Not sure"]
-**Product Type**: ["B2C SaaS", "B2B SaaS", "Business automation", "Marketplace", "Other"]
-**Specifications**: ["Need research first", "Have clear ideas", "Have written specs", "Need help documenting"]
-**Goal**: ["Design MVP", "Build launchpad", "Full product design", "Need consultation"]
-**Time Commitment**: ["Full time (40 hrs/week)", "Part time", "One time project", "Fixed price service"]
-**Team Size**: ["One designer", "Multiple designers", "Cross-functional team", "Decide later"]
-**Duration**: ["A week", "2-3 weeks", "1-3 months", "3-6 months", "6+ months"]
-**Start Date**: ["Immediately", "1-2 weeks", "In a month", "1-3 months", "3+ months"]
-**Scope**: ["Small project", "Medium project", "Large project", "Enterprise project", "Not sure"]
-**Services**: ["UX Research", "UI Design", "Prototyping", "Design System", "All services"]
-**Complexity**: ["Essential (simple)", "Advanced (complex)", "Enterprise-grade", "Need assessment"]
+💡 BUTTON HANDLING:
+- When client clicks a button, acknowledge their choice and ask the next question
+- If client types a free-form answer, acknowledge it and ask the next question
+- Always provide SuggestedAnswers with 4-5 contextual options
 
 ❗️CRITICAL RULES:
 1. Ask ONLY ONE question per response
 2. Always provide SuggestedAnswers with 4-5 contextual options
 3. Never put suggestions in the main text - only in SuggestedAnswers block
-4. Adapt questions based on client's previous answers
-5. Be conversational and helpful, not robotic
+4. Be conversational and natural, not robotic
+5. Acknowledge client's responses before asking next question
+6. If client asks unrelated questions, answer them first
 
 All answers must be maximally useful for future estimation and manager: gather details that help understand real goals, expectations, problems, and client wishes.
 
@@ -107,49 +89,54 @@ function parseSuggestedAnswers(text: string): string[] {
 function generateSmartButtons(message: string, conversationHistory: any[]): string[] {
   const currentMessage = message.toLowerCase();
   
-  // Аналізуємо контекст для генерації релевантних кнопок на основі Typeform
-  if (currentMessage.includes('тип') && currentMessage.includes('проект')) {
-    return ["Веб-сайт", "Мобільний додаток", "E-commerce", "Dashboard", "Не знаю"];
-  }
-  
-  if (currentMessage.includes('продукт') || currentMessage.includes('сервіс')) {
-    return ["B2C SaaS", "B2B SaaS", "Business automation", "Marketplace", "Інше"];
-  }
-  
-  if (currentMessage.includes('специфікації') || currentMessage.includes('готовність')) {
-    return ["Потрібне дослідження", "Є чіткі ідеї", "Готові специфікації", "Потрібна допомога"];
-  }
-  
-  if (currentMessage.includes('мета') || currentMessage.includes('ціль')) {
-    return ["Дизайн MVP", "Створити launchpad", "Повний дизайн продукту", "Потрібна консультація"];
-  }
-  
-  if (currentMessage.includes('час') && currentMessage.includes('робота')) {
-    return ["Full time (40 год/тиждень)", "Part time", "Одноразовий проект", "Фіксована ціна"];
-  }
-  
-  if (currentMessage.includes('дизайнер') || currentMessage.includes('команда')) {
-    return ["Один дизайнер", "Кілька дизайнерів", "Кросс-функціональна команда", "Вирішу пізніше"];
-  }
-  
-  if (currentMessage.includes('тривалість') || currentMessage.includes('довго')) {
-    return ["Тиждень", "2-3 тижні", "1-3 місяці", "3-6 місяців", "6+ місяців"];
-  }
-  
-  if (currentMessage.includes('почати') || currentMessage.includes('старт')) {
-    return ["Негайно", "1-2 тижні", "Через місяць", "1-3 місяці", "3+ місяці"];
-  }
-  
-  if (currentMessage.includes('обсяг') || currentMessage.includes('розмір')) {
-    return ["Малий проект", "Середній проект", "Великий проект", "Enterprise проект", "Не знаю"];
-  }
-  
-  if (currentMessage.includes('послуги') || currentMessage.includes('що потрібно')) {
-    return ["UX Research", "UI Design", "Prototyping", "Design System", "Всі послуги"];
-  }
-  
-  if (currentMessage.includes('складність') || currentMessage.includes('складний')) {
-    return ["Essential (простий)", "Advanced (складний)", "Enterprise-grade", "Потрібна оцінка"];
+  // Знаходимо відповідне питання з файлу
+  for (const question of typeformQuestions.questions) {
+    const questionText = question.question.toLowerCase();
+    
+    // Перевіряємо чи поточне повідомлення відповідає питанню
+    if (currentMessage.includes('тип') && currentMessage.includes('проект') && questionText.includes('тип')) {
+      return question.buttons;
+    }
+    
+    if (currentMessage.includes('продукт') && questionText.includes('продукт')) {
+      return question.buttons;
+    }
+    
+    if (currentMessage.includes('специфікації') && questionText.includes('специфікації')) {
+      return question.buttons;
+    }
+    
+    if (currentMessage.includes('мета') && questionText.includes('мета')) {
+      return question.buttons;
+    }
+    
+    if (currentMessage.includes('час') && questionText.includes('час')) {
+      return question.buttons;
+    }
+    
+    if (currentMessage.includes('дизайнер') && questionText.includes('дизайнер')) {
+      return question.buttons;
+    }
+    
+    if (currentMessage.includes('тривалість') && questionText.includes('тривалість')) {
+      return question.buttons;
+    }
+    
+    if (currentMessage.includes('почати') && questionText.includes('почати')) {
+      return question.buttons;
+    }
+    
+    if (currentMessage.includes('обсяг') && questionText.includes('обсяг')) {
+      return question.buttons;
+    }
+    
+    if (currentMessage.includes('послуги') && questionText.includes('послуги')) {
+      return question.buttons;
+    }
+    
+    if (currentMessage.includes('складність') && questionText.includes('складність')) {
+      return question.buttons;
+    }
   }
   
   // Загальні кнопки для невизначених ситуацій
