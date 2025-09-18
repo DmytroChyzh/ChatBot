@@ -1039,7 +1039,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   }
 
   // Determine whether to show card: only for project-related conversations
-  const showProjectSidebar = session && shouldShowProjectCard(conversationType);
+  const showProjectSidebar = session && shouldShowProjectCard(conversationType) && estimateStep >= 2;
   
   // Додаємо логування для дебагу
   console.log('Debug EstimateCard:', {
@@ -1087,7 +1087,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             <div className="w-full flex justify-center px-4 lg:px-0">
               <div style={{ width: '100%', maxWidth: 900 }}>
                 {/* Mobile Estimate Toggle Button */}
-                {showProjectSidebar && projectEstimate && (
+                {showProjectSidebar && projectEstimate && estimateStep >= 2 && (
                   <div className="lg:hidden flex justify-center mb-4">
                     <button
                       onClick={() => setShowMobileEstimate(!showMobileEstimate)}
@@ -1121,7 +1121,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           </div>
         </div>
         {/* Estimate Card Sidebar - Desktop only */}
-        {showProjectSidebar && projectEstimate && (
+        {showProjectSidebar && projectEstimate && estimateStep >= 2 && (
           <div className="hidden lg:flex flex-col flex-shrink-0 w-[28rem] pr-8 pt-8">
             <EstimateCard
               estimate={projectEstimate}
@@ -1135,7 +1135,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
       </div>
 
       {/* Mobile Estimate Modal - Full screen popup */}
-      {showProjectSidebar && projectEstimate && showMobileEstimate && (
+      {showProjectSidebar && projectEstimate && estimateStep >= 2 && showMobileEstimate && (
         <div 
           className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
           onClick={() => setShowMobileEstimate(false)}
