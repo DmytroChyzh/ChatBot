@@ -380,99 +380,48 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               const progressPercentage = Math.floor(Math.random() * 40) + 60; // 60-100%
 
               return (
-                <div key={phaseKey} className="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden hover:shadow-md transition-all duration-200">
-                  <button
-                    onClick={() => togglePhaseExpansion(phaseKey)}
-                    className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      {/* Іконка фази з кольоровим градієнтом */}
-                      <div className={`p-2 rounded-lg bg-gradient-to-r ${phaseColor} text-white`}>
-                        <PhaseIcon className="w-4 h-4" />
-                      </div>
-                      
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">
-                            {getPhaseDisplayName(phaseKey)}
-                          </span>
-                          {/* Пріоритет */}
-                          <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            priority === 'high' 
-                              ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
-                              : priority === 'medium'
-                              ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
-                              : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                          }`}>
-                            {priority === 'high' ? '🔥' : priority === 'medium' ? '⭐' : '✅'} {priority}
-                          </div>
-                        </div>
-                        
-                        {/* Прогрес-бар з анімацією */}
-                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mb-1 overflow-hidden">
-                          <div 
-                            className={`h-2 rounded-full bg-gradient-to-r ${phaseColor} transition-all duration-1000 ease-out animate-pulse`}
-                            style={{ 
-                              width: `${progressPercentage}%`,
-                              animationDelay: `${Math.random() * 0.5}s`
-                            }}
-                          />
-                        </div>
-                        
-                        {/* Мета-інформація */}
-                        <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {timeline}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Target className="w-3 h-3" />
-                            {progressPercentage}%
-                          </div>
-                        </div>
-                      </div>
+                <div key={phaseKey} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-3 hover:shadow-md transition-all duration-200">
+                  <div className="flex items-center gap-3">
+                    {/* Іконка фази з кольоровим градієнтом */}
+                    <div className={`p-2 rounded-lg bg-gradient-to-r ${phaseColor} text-white flex-shrink-0`}>
+                      <PhaseIcon className="w-4 h-4" />
                     </div>
                     
-                    {/* Кнопка розгортання */}
-                    {isExpanded ? (
-                      <ChevronUp className="w-4 h-4 text-gray-500 transition-transform" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-gray-500 transition-transform" />
-                    )}
-                  </button>
-                  
-                  {/* Розгорнутий контент */}
-                  {isExpanded && (
-                    <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800">
-                      <div className="pt-3">
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                          {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
-                            getPhaseDescription(phaseKey)
-                          }
-                        </p>
-                        
-                        {/* Додаткові деталі фази */}
-                        <div className="grid grid-cols-2 gap-3 text-xs">
-                          <div className="bg-white dark:bg-gray-700 p-2 rounded border">
-                            <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">
-                              {language === 'uk' ? 'Статус' : 'Status'}
-                            </div>
-                            <div className="text-green-600 dark:text-green-400">
-                              {language === 'uk' ? 'В процесі' : 'In Progress'}
-                            </div>
-                          </div>
-                          <div className="bg-white dark:bg-gray-700 p-2 rounded border">
-                            <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">
-                              {language === 'uk' ? 'Команда' : 'Team'}
-                            </div>
-                            <div className="text-blue-600 dark:text-blue-400">
-                              {priority === 'high' ? '2-3 дизайнери' : '1-2 дизайнери'}
-                            </div>
-                          </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {getPhaseDisplayName(phaseKey)}
+                        </span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          {timeline}
+                        </span>
+                      </div>
+                      
+                      {/* Прогрес-бар */}
+                      <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1.5 mb-1">
+                        <div 
+                          className={`h-1.5 rounded-full bg-gradient-to-r ${phaseColor} transition-all duration-1000 ease-out`}
+                          style={{ width: `${progressPercentage}%` }}
+                        />
+                      </div>
+                      
+                      {/* Пріоритет та відсоток */}
+                      <div className="flex items-center justify-between text-xs">
+                        <div className={`px-2 py-0.5 rounded-full font-medium ${
+                          priority === 'high' 
+                            ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+                            : priority === 'medium'
+                            ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
+                            : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                        }`}>
+                          {priority === 'high' ? '🔥' : priority === 'medium' ? '⭐' : '✅'} {priority}
                         </div>
+                        <span className="text-gray-500 dark:text-gray-400 font-medium">
+                          {progressPercentage}%
+                        </span>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}

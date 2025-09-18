@@ -45,6 +45,14 @@ const REAL_DESIGN_TEMPLATES = {
     'design-system': { hours: 32, cost: 1600 },
     'mobile-adaptive': { hours: 125, cost: 6250 },
   },
+  'mobile-app': {
+    // Мобільний додаток (Android + iOS): $25,000-$45,000, 500-900 годин
+    'ux-research': { hours: 60, cost: 3000 },
+    'ui-design': { hours: 300, cost: 15000 },
+    'prototyping': { hours: 80, cost: 4000 },
+    'design-system': { hours: 60, cost: 3000 },
+    'mobile-adaptive': { hours: 200, cost: 10000 },
+  },
   'enterprise-platform': {
     // Visible AI: $61,280-$114,240, 1,226-2,285 годин
     'ux-research': { hours: 100, cost: 5000 },
@@ -91,8 +99,10 @@ export async function POST(request: NextRequest) {
       projectType = 'simple-website';
     } else if (projectType.includes('dashboard') || projectType.includes('admin') || projectType.includes('management')) {
       projectType = 'complex-webapp';
-    } else if (projectType.includes('mobile') || projectType.includes('app')) {
-      projectType = 'medium-website'; // мобільні додатки як середній проект
+    } else if (projectType.includes('mobile') || projectType.includes('app') || projectType.includes('android') || projectType.includes('ios')) {
+      projectType = 'mobile-app'; // мобільні додатки як окремий тип
+    } else if (projectType.includes('web-app') || projectType.includes('webapp') || projectType.includes('application')) {
+      projectType = 'complex-webapp'; // веб-додатки як складні проекти
     } else if (projectType.includes('enterprise') || projectType.includes('platform') || projectType.includes('complex')) {
       projectType = 'enterprise-platform';
     } else {
