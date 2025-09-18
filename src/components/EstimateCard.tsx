@@ -81,6 +81,42 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
     );
   };
 
+  // Функція для отримання вартості фази
+  const getPhaseCost = (phaseKey: string): string => {
+    // Розраховуємо вартість на основі загальної вартості проекту
+    const totalCost = estimate.currentRange.max;
+    const costPercentages = {
+      'ux-research': 0.15, // 15% від загальної вартості
+      'ui-design': 0.50,   // 50% від загальної вартості
+      'prototyping': 0.15, // 15% від загальної вартості
+      'design-system': 0.10, // 10% від загальної вартості
+      'mobile-adaptive': 0.10 // 10% від загальної вартості
+    };
+    
+    const percentage = costPercentages[phaseKey as keyof typeof costPercentages] || 0.1;
+    const cost = Math.round(totalCost * percentage);
+    
+    return `$${cost.toLocaleString()}`;
+  };
+
+  // Функція для отримання годин фази
+  const getPhaseHours = (phaseKey: string): string => {
+    // Розраховуємо години на основі загальних годин проекту
+    const totalHours = estimate.currentRange.max / 50; // Приблизно $50 за годину
+    const hourPercentages = {
+      'ux-research': 0.15, // 15% від загальних годин
+      'ui-design': 0.50,   // 50% від загальних годин
+      'prototyping': 0.15, // 15% від загальних годин
+      'design-system': 0.10, // 10% від загальних годин
+      'mobile-adaptive': 0.10 // 10% від загальних годин
+    };
+    
+    const percentage = hourPercentages[phaseKey as keyof typeof hourPercentages] || 0.1;
+    const hours = Math.round(totalHours * percentage);
+    
+    return `${hours} ${language === 'uk' ? 'годин' : 'hours'}`;
+  };
+
 
   // Додаємо логування для дебагу
   console.log('EstimateCard render:', {
@@ -296,11 +332,31 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                   
                   {expandedPhase === phaseKey && (
                     <div className="px-3 pb-3 border-t border-gray-200 dark:border-gray-600">
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 mb-3">
                         {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
                           getPhaseDescription(phaseKey)
                         }
                       </p>
+                      
+                      {/* Деталі вартості та часу */}
+                      <div className="grid grid-cols-2 gap-3 text-xs">
+                        <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded border">
+                          <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            💰 {language === 'uk' ? 'Вартість' : 'Cost'}
+                          </div>
+                          <div className="text-green-600 dark:text-green-400 font-semibold">
+                            {getPhaseCost(phaseKey)}
+                          </div>
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded border">
+                          <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            ⏱️ {language === 'uk' ? 'Години' : 'Hours'}
+                          </div>
+                          <div className="text-blue-600 dark:text-blue-400 font-semibold">
+                            {getPhaseHours(phaseKey)}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
