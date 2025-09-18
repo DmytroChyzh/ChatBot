@@ -273,9 +273,18 @@ export default function ChatPage() {
     try {
       await addMessageToSession(sessionId, userMessage);
       const response = await sendToAI(input);
+      // Додаємо повідомлення про готовність до зв'язку якщо естімейт готовий
+      let finalContent = response.content;
+      if (estimateStep >= 3 && response.content && !response.content.includes('зв\'язатися') && !response.content.includes('менеджер')) {
+        const contactMessage = language === 'uk' 
+          ? '\n\n💬 **Ми можемо зв\'язатися з вами пізніше, але якщо ви хочете швидше з нами зв\'язатися - натисніть кнопку "Зв\'язатися з менеджером"!**'
+          : '\n\n💬 **We can contact you later, but if you want to contact us faster - click the "Contact Manager" button!**';
+        finalContent = response.content + contactMessage;
+      }
+
       const assistantMessage: Omit<Message, 'id'> = {
         role: 'assistant',
-        content: response.content,
+        content: finalContent,
         timestamp: new Date(),
         suggestedAnswers: response.suggestedAnswers || undefined,
       };
@@ -715,6 +724,9 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
 
       // Тільки після 2+ кроків показуємо реальний естімейт
       if (estimateStep >= 2) {
+        // Розраховуємо точність на основі кількості кроків
+        const accuracyPercentage = Math.min(95, 20 + (estimateStep - 2) * 15); // 20% + 15% за кожен крок
+        const rangeReduction = Math.max(0.1, 1 - (estimateStep - 2) * 0.15); // Зменшуємо діапазон на 15% за крок
         // Створюємо базовий естімейт на основі контексту після збору інформації
         const projectContext = messages
           .filter(m => m.role === 'user')
@@ -833,11 +845,18 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             contactEmail: getContactEmailForProject(projectType)
           };
 
+          // Застосовуємо динамічне зменшення діапазону на основі точності
+          const adjustedCurrentRange = {
+            min: Math.round(currentRange.min + (currentRange.max - currentRange.min) * (1 - rangeReduction) / 2),
+            max: Math.round(currentRange.max - (currentRange.max - currentRange.min) * (1 - rangeReduction) / 2)
+          };
+
           // Визначаємо фази з детальною інформацією на основі даних компанії
           // Використовуємо скориговані ціни з uncertaintyFactor для фаз
-          const phasesData = generateCompanyBasedPhases(projectType, complexity, adjustedPrice.minHours, adjustedPrice.maxHours, currentRange.min, currentRange.max, language);
+          const phasesData = generateCompanyBasedPhases(projectType, complexity, adjustedPrice.minHours, adjustedPrice.maxHours, adjustedCurrentRange.min, adjustedCurrentRange.max, language);
           console.log('Generated phases with uncertainty factor:', phasesData);
-          console.log('Phase costs should sum to approximately:', currentRange.min, '-', currentRange.max);
+          console.log('Phase costs should sum to approximately:', adjustedCurrentRange.min, '-', adjustedCurrentRange.max);
+          console.log('Accuracy percentage:', accuracyPercentage, 'Range reduction:', rangeReduction);
           
           // Створюємо фази з описами для відображення
           const phases = {
@@ -855,7 +874,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           };
           
           const estimate: ProjectEstimate = {
-            currentRange,
+            currentRange: adjustedCurrentRange,
             initialRange: adjustedHours,
             currency: 'USD',
             confidence: estimateStep <= 2 ? 'low' : estimateStep <= 3 ? 'medium' : 'high',
@@ -863,7 +882,8 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             timeline,
             team,
             phases,
-            phaseDescriptions: phasesData.descriptions
+            phaseDescriptions: phasesData.descriptions,
+            accuracyPercentage: accuracyPercentage // Додаємо точність для відображення
           };
 
           console.log('Setting real estimate from database:', estimate);

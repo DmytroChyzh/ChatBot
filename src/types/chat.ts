@@ -36,6 +36,7 @@ export interface ProjectEstimate {
     'design-system': string;
     'mobile-adaptive': string;
   };
+  accuracyPercentage?: number; // Додаємо точність для відображення
 }
 
 // Нові типи для розширеної функціональності

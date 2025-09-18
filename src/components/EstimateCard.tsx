@@ -130,10 +130,10 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 
   if (!isVisible) return null;
 
-  // Розраховуємо відсоток звуження діапазону
+  // Розраховуємо відсоток звуження діапазону або використовуємо точність з естімейту
   const initialRange = estimate.initialRange.max - estimate.initialRange.min;
   const currentRange = estimate.currentRange.max - estimate.currentRange.min;
-  const narrowingPercentage = initialRange > 0 ? Math.max(0, Math.min(100, ((initialRange - currentRange) / initialRange) * 100)) : 0;
+  const narrowingPercentage = (estimate as any).accuracyPercentage || (initialRange > 0 ? Math.max(0, Math.min(100, ((initialRange - currentRange) / initialRange) * 100)) : 0);
 
   // Отримуємо колір впевненості
   const getConfidenceColor = (confidence: string) => {
@@ -226,6 +226,14 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 }
               </span>
             </div>
+            {narrowingPercentage < 50 && (
+              <div className="mt-2 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
+                {language === 'uk' 
+                  ? '💡 Надайте більше деталей проєкту для підвищення точності естімейту!'
+                  : '💡 Provide more project details to increase estimate accuracy!'
+                }
+              </div>
+            )}
           </div>
         ) : (
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
