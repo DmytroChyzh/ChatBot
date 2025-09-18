@@ -162,17 +162,17 @@ export function generateCompanyBasedPhases(
   maxPrice: number,
   language: string = 'uk'
 ): {
-  research: string;
-  wireframing: string;
-  design: string;
-  prototyping: string;
-  testing: string;
+  'ux-research': string;
+  'ui-design': string;
+  'prototyping': string;
+  'design-system': string;
+  'mobile-adaptive': string;
   descriptions: {
-    research: string;
-    wireframing: string;
-    design: string;
-    prototyping: string;
-    testing: string;
+    'ux-research': string;
+    'ui-design': string;
+    'prototyping': string;
+    'design-system': string;
+    'mobile-adaptive': string;
   };
 } {
   const patterns = getEstimationPatterns();
@@ -182,46 +182,46 @@ export function generateCompanyBasedPhases(
   const avgHours = Math.round((minHours + maxHours) / 2);
   const avgPrice = Math.round((minPrice + maxPrice) / 2);
   
-  // Use company patterns for distribution
+  // Use company patterns for distribution (adapted for UI/UX design phases)
   const hoursDistribution = {
-    research: Math.round(avgHours * patterns.phase_distribution.research_analysis),
-    wireframing: Math.round(avgHours * patterns.phase_distribution.wireframing),
-    design: Math.round(avgHours * patterns.phase_distribution.design),
-    prototyping: Math.round(avgHours * patterns.phase_distribution.prototyping),
-    testing: Math.round(avgHours * patterns.phase_distribution.testing)
+    'ux-research': Math.round(avgHours * patterns.phase_distribution.research_analysis),
+    'ui-design': Math.round(avgHours * patterns.phase_distribution.design),
+    'prototyping': Math.round(avgHours * patterns.phase_distribution.prototyping),
+    'design-system': Math.round(avgHours * patterns.phase_distribution.wireframing),
+    'mobile-adaptive': Math.round(avgHours * patterns.phase_distribution.testing)
   };
   
   const priceDistribution = {
-    research: Math.round(avgPrice * patterns.phase_distribution.research_analysis),
-    wireframing: Math.round(avgPrice * patterns.phase_distribution.wireframing),
-    design: Math.round(avgPrice * patterns.phase_distribution.design),
-    prototyping: Math.round(avgPrice * patterns.phase_distribution.prototyping),
-    testing: Math.round(avgPrice * patterns.phase_distribution.testing)
+    'ux-research': Math.round(avgPrice * patterns.phase_distribution.research_analysis),
+    'ui-design': Math.round(avgPrice * patterns.phase_distribution.design),
+    'prototyping': Math.round(avgPrice * patterns.phase_distribution.prototyping),
+    'design-system': Math.round(avgPrice * patterns.phase_distribution.wireframing),
+    'mobile-adaptive': Math.round(avgPrice * patterns.phase_distribution.testing)
   };
   
   // Generate detailed descriptions based on project type and complexity
   const descriptions = generatePhaseDescriptions(projectType, complexity, isUkrainian);
   
   return {
-    research: isUkrainian 
-      ? `🔍 Дослідження та аналіз (${hoursDistribution.research} год, $${priceDistribution.research})`
-      : `🔍 Research & Analysis (${hoursDistribution.research}h, $${priceDistribution.research})`,
+    'ux-research': isUkrainian 
+      ? `🔍 UX Дослідження (${hoursDistribution['ux-research']} год, $${priceDistribution['ux-research']})`
+      : `🔍 UX Research (${hoursDistribution['ux-research']}h, $${priceDistribution['ux-research']})`,
     
-    wireframing: isUkrainian 
-      ? `📐 Структура та навігація (${hoursDistribution.wireframing} год, $${priceDistribution.wireframing})`
-      : `📐 Structure & Navigation (${hoursDistribution.wireframing}h, $${priceDistribution.wireframing})`,
+    'ui-design': isUkrainian 
+      ? `🎨 UI Дизайн (${hoursDistribution['ui-design']} год, $${priceDistribution['ui-design']})`
+      : `🎨 UI Design (${hoursDistribution['ui-design']}h, $${priceDistribution['ui-design']})`,
     
-    design: isUkrainian 
-      ? `🎨 Візуальний дизайн (${hoursDistribution.design} год, $${priceDistribution.design})`
-      : `🎨 Visual Design (${hoursDistribution.design}h, $${priceDistribution.design})`,
+    'prototyping': isUkrainian 
+      ? `⚡ Прототипування (${hoursDistribution['prototyping']} год, $${priceDistribution['prototyping']})`
+      : `⚡ Prototyping (${hoursDistribution['prototyping']}h, $${priceDistribution['prototyping']})`,
     
-    prototyping: isUkrainian 
-      ? `⚡ Прототипування (${hoursDistribution.prototyping} год, $${priceDistribution.prototyping})`
-      : `⚡ Prototyping (${hoursDistribution.prototyping}h, $${priceDistribution.prototyping})`,
+    'design-system': isUkrainian 
+      ? `📐 Дизайн-система (${hoursDistribution['design-system']} год, $${priceDistribution['design-system']})`
+      : `📐 Design System (${hoursDistribution['design-system']}h, $${priceDistribution['design-system']})`,
     
-    testing: isUkrainian 
-      ? `🧪 Тестування та оптимізація (${hoursDistribution.testing} год, $${priceDistribution.testing})`
-      : `🧪 Testing & Optimization (${hoursDistribution.testing}h, $${priceDistribution.testing})`,
+    'mobile-adaptive': isUkrainian 
+      ? `📱 Мобільна адаптація (${hoursDistribution['mobile-adaptive']} год, $${priceDistribution['mobile-adaptive']})`
+      : `📱 Mobile Adaptive (${hoursDistribution['mobile-adaptive']}h, $${priceDistribution['mobile-adaptive']})`,
     
     descriptions
   };
@@ -232,97 +232,97 @@ export function generateCompanyBasedPhases(
  */
 function generatePhaseDescriptions(projectType: string, complexity: string, isUkrainian: boolean) {
   const baseDescriptions = {
-    research: isUkrainian 
+    'ux-research': isUkrainian 
       ? "Аналіз цільової аудиторії, конкурентів та ринку. Дослідження потреб користувачів, створення персон, аналіз бізнес-вимог та технічних обмежень."
       : "Target audience analysis, competitor research, market analysis. User needs research, persona creation, business requirements analysis, and technical constraints study.",
     
-    wireframing: isUkrainian 
-      ? "Створення інформаційної архітектури, карта сайту, низько-деталізовані макети (wireframes), планування навігації та структури контенту."
-      : "Information architecture creation, site map, low-fidelity wireframes, navigation planning, and content structure design.",
+    'ui-design': isUkrainian 
+      ? "Створення візуального стилю, високо-деталізовані макети (mockups), UI компоненти, іконки, типографіка та кольорова схема."
+      : "Visual style creation, high-fidelity mockups, UI components, icons, typography and color scheme.",
     
-    design: isUkrainian 
-      ? "Створення візуального стилю, дизайн-система, високо-деталізовані макети (mockups), адаптивний дизайн для різних пристроїв, UI компоненти."
-      : "Visual style creation, design system, high-fidelity mockups, responsive design for different devices, UI components.",
-    
-    prototyping: isUkrainian 
+    'prototyping': isUkrainian 
       ? "Створення інтерактивних прототипів для тестування користувацького досвіду, демонстрації функціональності та валідації дизайн-рішень."
       : "Interactive prototype creation for user experience testing, functionality demonstration, and design validation.",
     
-    testing: isUkrainian 
-      ? "Юзабіліті тестування, збір зворотного зв'язку, ітерації на основі результатів тестування, фінальна оптимізація дизайну."
-      : "Usability testing, feedback collection, iterations based on testing results, final design optimization."
+    'design-system': isUkrainian 
+      ? "Створення дизайн-системи, компонентів, стилів, гайдлайнів та бібліотеки елементів для масштабування проекту."
+      : "Design system creation, components, styles, guidelines and element library for project scaling.",
+    
+    'mobile-adaptive': isUkrainian 
+      ? "Адаптація дизайну для мобільних пристроїв, планшетів та різних розмірів екранів. Responsive дизайн та мобільна оптимізація."
+      : "Design adaptation for mobile devices, tablets and different screen sizes. Responsive design and mobile optimization."
   };
 
   // Customize descriptions based on project type
   if (projectType === 'e-commerce') {
     return {
-      research: isUkrainian 
+      'ux-research': isUkrainian 
         ? "Аналіз цільової аудиторії, дослідження конкурентів в e-commerce, аналіз товарного каталогу, дослідження процесів покупки та конверсії."
         : "Target audience analysis, e-commerce competitor research, product catalog analysis, purchase process and conversion research.",
       
-      wireframing: isUkrainian 
-        ? "Створення структури каталогу товарів, планування корзини та процесу оформлення замовлення, карта сайту для інтернет-магазину."
-        : "Product catalog structure creation, shopping cart and checkout process planning, e-commerce site map.",
+      'ui-design': isUkrainian 
+        ? "Дизайн каталогу товарів, сторінки товару, корзини, оформлення замовлення, особистого кабінету, UI компоненти для e-commerce."
+        : "Product catalog design, product pages, shopping cart, checkout, user account, e-commerce UI components.",
       
-      design: isUkrainian 
-        ? "Дизайн каталогу товарів, сторінки товару, корзини, оформлення замовлення, особистого кабінету, адаптивний дизайн для мобільних пристроїв."
-        : "Product catalog design, product pages, shopping cart, checkout, user account, responsive design for mobile devices.",
-      
-      prototyping: isUkrainian 
+      'prototyping': isUkrainian 
         ? "Інтерактивні прототипи процесу покупки, тестування корзини та оформлення замовлення, демонстрація функціональності магазину."
         : "Interactive purchase process prototypes, cart and checkout testing, store functionality demonstration.",
       
-      testing: isUkrainian 
-        ? "Тестування процесу покупки, аналіз конверсії, оптимізація користувацького досвіду в e-commerce, A/B тестування ключових сторінок."
-        : "Purchase process testing, conversion analysis, e-commerce UX optimization, A/B testing of key pages."
+      'design-system': isUkrainian 
+        ? "Дизайн-система для e-commerce: компоненти каталогу, корзини, форми, кнопки, картки товарів та елементи навігації."
+        : "E-commerce design system: catalog components, cart, forms, buttons, product cards and navigation elements.",
+      
+      'mobile-adaptive': isUkrainian 
+        ? "Мобільна адаптація інтернет-магазину, оптимізація для touch-інтерфейсів, мобільна корзина та процес оформлення замовлення."
+        : "E-commerce mobile adaptation, touch interface optimization, mobile cart and checkout process."
     };
   }
 
   if (projectType === 'dashboard') {
     return {
-      research: isUkrainian 
+      'ux-research': isUkrainian 
         ? "Аналіз бізнес-процесів, дослідження потреб користувачів дашборду, аналіз даних та метрик, визначення ключових показників ефективності (KPI)."
         : "Business process analysis, dashboard user needs research, data and metrics analysis, key performance indicators (KPI) definition.",
       
-      wireframing: isUkrainian 
-        ? "Створення інформаційної архітектури дашборду, планування розташування віджетів, структура навігації між розділами."
-        : "Dashboard information architecture creation, widget layout planning, navigation structure between sections.",
+      'ui-design': isUkrainian 
+        ? "Дизайн інтерфейсу дашборду, створення віджетів та графіків, UI компоненти для адміністративних панелей, темна/світла тема."
+        : "Dashboard interface design, widget and chart creation, administrative panel UI components, dark/light theme.",
       
-      design: isUkrainian 
-        ? "Дизайн інтерфейсу дашборду, створення віджетів та графіків, дизайн-система для адміністративних панелей, темна/світла тема."
-        : "Dashboard interface design, widget and chart creation, administrative panel design system, dark/light theme.",
-      
-      prototyping: isUkrainian 
+      'prototyping': isUkrainian 
         ? "Інтерактивні прототипи дашборду з робочими графіками, демонстрація фільтрації даних та взаємодії з віджетами."
         : "Interactive dashboard prototypes with working charts, data filtering demonstration, and widget interaction.",
       
-      testing: isUkrainian 
-        ? "Тестування з бізнес-користувачами, валідація ефективності відображення даних, оптимізація швидкості сприйняття інформації."
-        : "Business user testing, data display effectiveness validation, information perception speed optimization."
+      'design-system': isUkrainian 
+        ? "Дизайн-система для дашбордів: компоненти графіків, віджетів, таблиць, фільтрів та елементів навігації."
+        : "Dashboard design system: chart components, widgets, tables, filters and navigation elements.",
+      
+      'mobile-adaptive': isUkrainian 
+        ? "Мобільна адаптація дашборду, оптимізація віджетів для touch-інтерфейсів, мобільна навігація та перегляд даних."
+        : "Dashboard mobile adaptation, widget optimization for touch interfaces, mobile navigation and data viewing."
     };
   }
 
   if (projectType === 'web-app') {
     return {
-      research: isUkrainian 
+      'ux-research': isUkrainian 
         ? "Аналіз функціональних вимог, дослідження користувацьких сценаріїв, аналіз інтеграцій з зовнішніми сервісами, технічні обмеження."
         : "Functional requirements analysis, user scenario research, external service integration analysis, technical constraints.",
       
-      wireframing: isUkrainian 
-        ? "Створення детальної інформаційної архітектури, планування користувацьких потоків, макети всіх екранів та функцій."
-        : "Detailed information architecture creation, user flow planning, all screens and functions wireframes.",
+      'ui-design': isUkrainian 
+        ? "Повний дизайн інтерфейсу веб-додатку, UI компоненти, адаптивний дизайн, анімації та мікро-взаємодії."
+        : "Complete web application interface design, UI components, responsive design, animations and micro-interactions.",
       
-      design: isUkrainian 
-        ? "Повний дизайн інтерфейсу веб-додатку, створення дизайн-системи, адаптивний дизайн, анімації та мікро-взаємодії."
-        : "Complete web application interface design, design system creation, responsive design, animations and micro-interactions.",
-      
-      prototyping: isUkrainian 
+      'prototyping': isUkrainian 
         ? "Повнофункціональні прототипи з усіма інтерактивними елементами, демонстрація робочих процесів та інтеграцій."
         : "Full-featured prototypes with all interactive elements, working processes and integrations demonstration.",
       
-      testing: isUkrainian 
-        ? "Комплексне тестування користувацького досвіду, тестування продуктивності, валідація всіх функцій та інтеграцій."
-        : "Comprehensive user experience testing, performance testing, all functions and integrations validation."
+      'design-system': isUkrainian 
+        ? "Дизайн-система для веб-додатку: компоненти форм, кнопок, навігації, модальних вікон та інтерактивних елементів."
+        : "Web application design system: form components, buttons, navigation, modal windows and interactive elements.",
+      
+      'mobile-adaptive': isUkrainian 
+        ? "Мобільна адаптація веб-додатку, оптимізація для touch-інтерфейсів, мобільна навігація та взаємодія."
+        : "Web application mobile adaptation, touch interface optimization, mobile navigation and interaction."
     };
   }
 

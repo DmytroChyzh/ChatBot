@@ -650,25 +650,25 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
     };
     
     const phases = {
-      research: isUkrainian 
-        ? `🔍 Дослідження та аналіз (${hoursDistribution.research} год, $${priceDistribution.research})`
-        : `🔍 Research & Analysis (${hoursDistribution.research}h, $${priceDistribution.research})`,
+      'ux-research': isUkrainian 
+        ? `🔍 UX Дослідження (${hoursDistribution.research} год, $${priceDistribution.research})`
+        : `🔍 UX Research (${hoursDistribution.research}h, $${priceDistribution.research})`,
       
-      wireframing: isUkrainian 
-        ? `📐 Структура та навігація (${hoursDistribution.wireframing} год, $${priceDistribution.wireframing})`
-        : `📐 Structure & Navigation (${hoursDistribution.wireframing}h, $${priceDistribution.wireframing})`,
+      'ui-design': isUkrainian 
+        ? `🎨 UI Дизайн (${hoursDistribution.design} год, $${priceDistribution.design})`
+        : `🎨 UI Design (${hoursDistribution.design}h, $${priceDistribution.design})`,
       
-      design: isUkrainian 
-        ? `🎨 Візуальний дизайн (${hoursDistribution.design} год, $${priceDistribution.design})`
-        : `🎨 Visual Design (${hoursDistribution.design}h, $${priceDistribution.design})`,
-      
-      prototyping: isUkrainian 
+      'prototyping': isUkrainian 
         ? `⚡ Прототипування (${hoursDistribution.prototyping} год, $${priceDistribution.prototyping})`
         : `⚡ Prototyping (${hoursDistribution.prototyping}h, $${priceDistribution.prototyping})`,
       
-      testing: isUkrainian 
-        ? `🧪 Тестування та оптимізація (${hoursDistribution.testing} год, $${priceDistribution.testing})`
-        : `🧪 Testing & Optimization (${hoursDistribution.testing}h, $${priceDistribution.testing})`
+      'design-system': isUkrainian 
+        ? `📐 Дизайн-система (${hoursDistribution.wireframing} год, $${priceDistribution.wireframing})`
+        : `📐 Design System (${hoursDistribution.wireframing}h, $${priceDistribution.wireframing})`,
+      
+      'mobile-adaptive': isUkrainian 
+        ? `📱 Мобільна адаптація (${hoursDistribution.testing} год, $${priceDistribution.testing})`
+        : `📱 Mobile Adaptive (${hoursDistribution.testing}h, $${priceDistribution.testing})`
     };
     
     return phases;
@@ -694,18 +694,18 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             contactEmail: 'kateryna.zavertailo@cieden.com'
           },
           phases: {
-            research: language === 'uk' ? '🔍 Дослідження та аналіз (0 год, $0)' : '🔍 Research & Analysis (0h, $0)',
-            wireframing: language === 'uk' ? '📐 Структура та навігація (0 год, $0)' : '📐 Structure & Navigation (0h, $0)',
-            design: language === 'uk' ? '🎨 Візуальний дизайн (0 год, $0)' : '🎨 Visual Design (0h, $0)',
-            prototyping: language === 'uk' ? '⚡ Прототипування (0 год, $0)' : '⚡ Prototyping (0h, $0)',
-            testing: language === 'uk' ? '🧪 Тестування та оптимізація (0 год, $0)' : '🧪 Testing & Optimization (0h, $0)'
+            'ux-research': language === 'uk' ? '🔍 UX Дослідження (0 год, $0)' : '🔍 UX Research (0h, $0)',
+            'ui-design': language === 'uk' ? '🎨 UI Дизайн (0 год, $0)' : '🎨 UI Design (0h, $0)',
+            'prototyping': language === 'uk' ? '⚡ Прототипування (0 год, $0)' : '⚡ Prototyping (0h, $0)',
+            'design-system': language === 'uk' ? '📐 Дизайн-система (0 год, $0)' : '📐 Design System (0h, $0)',
+            'mobile-adaptive': language === 'uk' ? '📱 Мобільна адаптація (0 год, $0)' : '📱 Mobile Adaptive (0h, $0)'
           },
           phaseDescriptions: {
-            research: language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
-            wireframing: language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
-            design: language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
-            prototyping: language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
-            testing: language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...'
+            'ux-research': language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
+            'ui-design': language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
+            'prototyping': language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
+            'design-system': language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...',
+            'mobile-adaptive': language === 'uk' ? 'Очікуємо інформацію про ваш проект...' : 'Waiting for information about your project...'
           }
         };
         console.log('Setting initial estimate:', initialEstimate);
@@ -841,11 +841,11 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           
           // Створюємо фази з описами для відображення
           const phases = {
-            research: phasesData.research,
-            wireframing: phasesData.wireframing,
-            design: phasesData.design,
-            prototyping: phasesData.prototyping,
-            testing: phasesData.testing
+            'ux-research': phasesData['ux-research'],
+            'ui-design': phasesData['ui-design'],
+            'prototyping': phasesData['prototyping'],
+            'design-system': phasesData['design-system'],
+            'mobile-adaptive': phasesData['mobile-adaptive']
           };
 
           // Скоригуємо години роботи з урахуванням невизначеності
@@ -920,11 +920,11 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             phases: (() => {
               const fallbackPhasesData = generateCompanyBasedPhases(projectType, complexity, 100, 200, fallbackCurrentRange.min, fallbackCurrentRange.max, language);
               return {
-                research: fallbackPhasesData.research,
-                wireframing: fallbackPhasesData.wireframing,
-                design: fallbackPhasesData.design,
-                prototyping: fallbackPhasesData.prototyping,
-                testing: fallbackPhasesData.testing
+                'ux-research': fallbackPhasesData['ux-research'],
+                'ui-design': fallbackPhasesData['ui-design'],
+                'prototyping': fallbackPhasesData['prototyping'],
+                'design-system': fallbackPhasesData['design-system'],
+                'mobile-adaptive': fallbackPhasesData['mobile-adaptive']
               };
             })(),
             phaseDescriptions: (() => {

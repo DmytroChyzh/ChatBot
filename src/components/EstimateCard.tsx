@@ -24,18 +24,18 @@ interface EstimateCardProps {
       contactEmail: string;
     };
     phases: {
-      research: string;
-      wireframing: string;
-      design: string;
-      prototyping: string;
-      testing: string;
+      'ux-research': string;
+      'ui-design': string;
+      'prototyping': string;
+      'design-system': string;
+      'mobile-adaptive': string;
     };
     phaseDescriptions?: {
-      research: string;
-      wireframing: string;
-      design: string;
-      prototyping: string;
-      testing: string;
+      'ux-research': string;
+      'ui-design': string;
+      'prototyping': string;
+      'design-system': string;
+      'mobile-adaptive': string;
     };
   };
   estimateStep: number;
@@ -55,6 +55,31 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 }) => {
   const { t, language } = useLanguage();
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
+
+  // Функція для отримання описів фаз дизайну
+  const getPhaseDescription = (phaseKey: string): string => {
+    const descriptions: { [key: string]: string } = {
+      'ux-research': language === 'uk' 
+        ? 'Дослідження користувачів, аналіз потреб та створення user personas'
+        : 'User research, needs analysis and user personas creation',
+      'ui-design': language === 'uk' 
+        ? 'Створення візуального дизайну, макетів та інтерфейсів'
+        : 'Visual design creation, layouts and interfaces',
+      'prototyping': language === 'uk' 
+        ? 'Прототипування інтерактивності та тестування користувацького досвіду'
+        : 'Interactive prototyping and user experience testing',
+      'design-system': language === 'uk' 
+        ? 'Розробка дизайн-системи та компонентів для масштабування'
+        : 'Design system and components development for scaling',
+      'mobile-adaptive': language === 'uk' 
+        ? 'Адаптація дизайну для мобільних пристроїв та responsive версій'
+        : 'Mobile device adaptation and responsive design versions'
+    };
+    return descriptions[phaseKey] || (language === 'uk' 
+      ? 'Детальний опис етапу буде надано під час роботи над проектом.'
+      : 'Detailed stage description will be provided during project work.'
+    );
+  };
 
   // Додаємо логування для дебагу
   console.log('EstimateCard render:', {
@@ -104,10 +129,10 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
             </div>
             <div>
               <h3 className="text-base lg:text-lg font-bold text-white">
-                {language === 'uk' ? 'Естімейт Проекту' : 'Project Estimate'}
+                {language === 'uk' ? 'Естімейт UI/UX Дизайну' : 'UI/UX Design Estimate'}
               </h3>
               <p className="text-xs lg:text-sm text-white/80">
-                {language === 'uk' ? 'Живий розрахунок вартості' : 'Live cost calculation'}
+                {language === 'uk' ? 'Розрахунок вартості дизайн-послуг' : 'Design services cost calculation'}
               </p>
             </div>
           </div>
@@ -231,42 +256,53 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
         {/* Фази проекту */}
         <div>
           <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            {language === 'uk' ? 'План робіт' : 'Work Plan'}
+            {language === 'uk' ? 'Етапи дизайн-процесу' : 'Design Process Stages'}
           </h4>
           <div className="space-y-2">
-            {Object.entries(estimate.phases).map(([phaseKey, description]) => (
-              <div key={phaseKey} className="border border-gray-200 dark:border-gray-600 rounded-lg">
-                <button
-                  onClick={() => setExpandedPhase(expandedPhase === phaseKey ? null : phaseKey)}
-                  className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {description}
-                    </span>
-                  </div>
-                  <ArrowRight 
-                    className={`w-4 h-4 text-gray-500 transition-transform ${
-                      expandedPhase === phaseKey ? 'rotate-90' : ''
-                    }`} 
-                  />
-                </button>
-                
-                {expandedPhase === phaseKey && (
-                  <div className="px-3 pb-3 border-t border-gray-200 dark:border-gray-600">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                      {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
-                        (language === 'uk' 
-                          ? 'Детальний опис етапу буде надано під час роботи над проектом.'
-                          : 'Detailed stage description will be provided during project work.'
-                        )
-                      }
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
+            {Object.entries(estimate.phases).map(([phaseKey, description]) => {
+              // Мапінг назв фаз для відображення
+              const getPhaseDisplayName = (key: string) => {
+                const phaseNames: { [key: string]: string } = {
+                  'ux-research': language === 'uk' ? 'UX Дослідження' : 'UX Research',
+                  'ui-design': language === 'uk' ? 'UI Дизайн' : 'UI Design',
+                  'prototyping': language === 'uk' ? 'Прототипування' : 'Prototyping',
+                  'design-system': language === 'uk' ? 'Дизайн-система' : 'Design System',
+                  'mobile-adaptive': language === 'uk' ? 'Мобільна адаптація' : 'Mobile Adaptive'
+                };
+                return phaseNames[key] || description;
+              };
+
+              return (
+                <div key={phaseKey} className="border border-gray-200 dark:border-gray-600 rounded-lg">
+                  <button
+                    onClick={() => setExpandedPhase(expandedPhase === phaseKey ? null : phaseKey)}
+                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        {getPhaseDisplayName(phaseKey)}
+                      </span>
+                    </div>
+                    <ArrowRight 
+                      className={`w-4 h-4 text-gray-500 transition-transform ${
+                        expandedPhase === phaseKey ? 'rotate-90' : ''
+                      }`} 
+                    />
+                  </button>
+                  
+                  {expandedPhase === phaseKey && (
+                    <div className="px-3 pb-3 border-t border-gray-200 dark:border-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
+                          getPhaseDescription(phaseKey)
+                        }
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -287,8 +323,8 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
           {/* Пояснення */}
           <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
             {language === 'uk' 
-              ? 'Це приблизний естімейт. Для точного розрахунку зв\'яжіться з нашим менеджером.'
-              : 'This is an approximate estimate. For accurate calculation, contact our manager.'
+              ? 'Це приблизний естімейт дизайн-послуг. Для точного розрахунку зв\'яжіться з нашим менеджером.'
+              : 'This is an approximate design services estimate. For accurate calculation, contact our manager.'
             }
           </div>
         </div>

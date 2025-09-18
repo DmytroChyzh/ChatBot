@@ -7,35 +7,51 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-// Базові шаблони для різних типів проєктів
-const PROJECT_TEMPLATES = {
-  'landing': {
-    discovery: { hours: 8, cost: 400 },
-    'ux-ui': { hours: 16, cost: 800 },
-    development: { hours: 24, cost: 1200 },
-    testing: { hours: 8, cost: 400 },
-    deployment: { hours: 4, cost: 200 },
+// Функція для отримання описів фаз дизайну
+function getPhaseDescription(phase: string): string {
+  const descriptions: { [key: string]: string } = {
+    'ux-research': 'UX дослідження та аналіз користувачів',
+    'ui-design': 'UI дизайн та візуальне оформлення',
+    'prototyping': 'Прототипування та інтерактивність',
+    'design-system': 'Дизайн-система та компоненти',
+    'mobile-adaptive': 'Мобільна адаптація та responsive дизайн'
+  };
+  return descriptions[phase] || `${phase} phase`;
+}
+
+// Реальні шаблони на основі аналізу CSV файлів
+const REAL_DESIGN_TEMPLATES = {
+  'simple-website': {
+    // Living Sunshine: $3,120-$4,560, 62-91 годин
+    'ux-research': { hours: 8, cost: 400 },
+    'ui-design': { hours: 35, cost: 1750 },
+    'prototyping': { hours: 12, cost: 600 },
+    'design-system': { hours: 7, cost: 350 },
+    'mobile-adaptive': { hours: 20, cost: 1000 },
   },
-  'dashboard': {
-    discovery: { hours: 16, cost: 800 },
-    'ux-ui': { hours: 32, cost: 1600 },
-    development: { hours: 80, cost: 4000 },
-    testing: { hours: 16, cost: 800 },
-    deployment: { hours: 8, cost: 400 },
+  'medium-website': {
+    // Shipro: ~$18,000, 362 години
+    'ux-research': { hours: 20, cost: 1000 },
+    'ui-design': { hours: 180, cost: 9000 },
+    'prototyping': { hours: 30, cost: 1500 },
+    'design-system': { hours: 25, cost: 1250 },
+    'mobile-adaptive': { hours: 89, cost: 4450 },
   },
-  'web-app': {
-    discovery: { hours: 24, cost: 1200 },
-    'ux-ui': { hours: 48, cost: 2400 },
-    development: { hours: 120, cost: 6000 },
-    testing: { hours: 24, cost: 1200 },
-    deployment: { hours: 12, cost: 600 },
+  'complex-webapp': {
+    // Refmax: $15,780-$24,367, 395-609 годин
+    'ux-research': { hours: 40, cost: 2000 },
+    'ui-design': { hours: 200, cost: 10000 },
+    'prototyping': { hours: 50, cost: 2500 },
+    'design-system': { hours: 32, cost: 1600 },
+    'mobile-adaptive': { hours: 125, cost: 6250 },
   },
-  'mobile': {
-    discovery: { hours: 20, cost: 1000 },
-    'ux-ui': { hours: 40, cost: 2000 },
-    development: { hours: 100, cost: 5000 },
-    testing: { hours: 20, cost: 1000 },
-    deployment: { hours: 8, cost: 400 },
+  'enterprise-platform': {
+    // Visible AI: $61,280-$114,240, 1,226-2,285 годин
+    'ux-research': { hours: 100, cost: 5000 },
+    'ui-design': { hours: 600, cost: 30000 },
+    'prototyping': { hours: 150, cost: 7500 },
+    'design-system': { hours: 100, cost: 5000 },
+    'mobile-adaptive': { hours: 200, cost: 10000 },
   },
 }
 
@@ -60,25 +76,35 @@ export async function POST(request: NextRequest) {
     const projectData = session.projectCard
     const messages = session.messages
 
-    // Визначаємо тип проєкту
+    // Визначаємо тип проєкту на основі реальних даних
     let projectTypeValue = projectData.projectType?.value;
-    let projectType = 'web-app';
+    let projectType = 'medium-website'; // default
+    
     if (typeof projectTypeValue === 'string') {
       projectType = projectTypeValue.toLowerCase();
     } else if (Array.isArray(projectTypeValue) && typeof projectTypeValue[0] === 'string') {
       projectType = projectTypeValue[0].toLowerCase();
     }
-    if (projectType.includes('landing')) projectType = 'landing';
-    else if (projectType.includes('dashboard')) projectType = 'dashboard';
-    else if (projectType.includes('mobile')) projectType = 'mobile';
-    else projectType = 'web-app';
+    
+    // Мапінг на реальні типи з CSV файлів
+    if (projectType.includes('landing') || projectType.includes('simple')) {
+      projectType = 'simple-website';
+    } else if (projectType.includes('dashboard') || projectType.includes('admin') || projectType.includes('management')) {
+      projectType = 'complex-webapp';
+    } else if (projectType.includes('mobile') || projectType.includes('app')) {
+      projectType = 'medium-website'; // мобільні додатки як середній проект
+    } else if (projectType.includes('enterprise') || projectType.includes('platform') || projectType.includes('complex')) {
+      projectType = 'enterprise-platform';
+    } else {
+      projectType = 'medium-website'; // default для веб-сайтів
+    }
 
     // Отримуємо базовий шаблон
-    const baseTemplate = PROJECT_TEMPLATES[projectType as keyof typeof PROJECT_TEMPLATES] || PROJECT_TEMPLATES['web-app'];
+    const baseTemplate = REAL_DESIGN_TEMPLATES[projectType as keyof typeof REAL_DESIGN_TEMPLATES] || REAL_DESIGN_TEMPLATES['medium-website'];
 
-    // Створюємо промпт для AI для уточнення оцінок
+    // Створюємо промпт для AI для уточнення оцінок UI/UX дизайну
     const prompt = `
-Як експерт з оцінки проєктів, проаналізуй надану інформацію та створи детальні оцінки за фазами розробки.
+Як експерт з оцінки UI/UX дизайн проєктів, проаналізуй надану інформацію та створи детальні оцінки за фазами дизайну.
 
 Дані проєкту:
 ${projectData.projectName ? `Назва: ${projectData.projectName}` : ''}
@@ -88,17 +114,45 @@ ${projectData.features && Array.isArray(projectData.features.value) && projectDa
 ${projectData.budget ? `Бюджет: ${projectData.budget}` : ''}
 ${projectData.timeline ? `Терміни: ${projectData.timeline}` : ''}
 
-Базові оцінки для типу проєкту "${projectType}":
+Базові оцінки для типу проєкту "${projectType}" (на основі реальних кейсів):
 ${Object.entries(baseTemplate).map(([phase, data]) => `${phase}: ${data.hours} годин, $${data.cost}`).join('\n')}
 
-Проаналізуй складність проєкту та відповідь JSON з уточненими оцінками:
+Проаналізуй складність проєкту та відповідь JSON з уточненими оцінками UI/UX дизайну:
 {
   "phases": [
     {
-      "phase": "discovery",
+      "phase": "ux-research",
       "estimatedHours": число,
       "estimatedCost": число,
-      "description": "опис фази",
+      "description": "UX дослідження та аналіз",
+      "priority": "high|medium|low"
+    },
+    {
+      "phase": "ui-design",
+      "estimatedHours": число,
+      "estimatedCost": число,
+      "description": "UI дизайн та візуальне оформлення",
+      "priority": "high|medium|low"
+    },
+    {
+      "phase": "prototyping",
+      "estimatedHours": число,
+      "estimatedCost": число,
+      "description": "Прототипування та інтерактивність",
+      "priority": "high|medium|low"
+    },
+    {
+      "phase": "design-system",
+      "estimatedHours": число,
+      "estimatedCost": число,
+      "description": "Дизайн-система та компоненти",
+      "priority": "high|medium|low"
+    },
+    {
+      "phase": "mobile-adaptive",
+      "estimatedHours": число,
+      "estimatedCost": число,
+      "description": "Мобільна адаптація та responsive дизайн",
       "priority": "high|medium|low"
     }
   ],
@@ -106,15 +160,16 @@ ${Object.entries(baseTemplate).map(([phase, data]) => `${phase}: ${data.hours} �
   "totalCost": число,
   "currency": "USD",
   "complexity": "low|medium|high",
-  "recommendations": "рекомендації"
+  "recommendations": "рекомендації для дизайн-процесу"
 }
 
 Врахуй:
-- Складність функцій
-- Кількість сторінок/екранів
-- Інтеграції з зовнішніми сервісами
-- Потреби в тестуванні
-- Специфічні вимоги клієнта
+- Кількість сторінок/екранів для дизайну
+- Складність UI компонентів
+- Потреби в UX дослідженнях
+- Мобільну адаптацію
+- Специфічні вимоги до дизайну
+- Брендинг та фірмовий стиль
 `;
 
     // Викликаємо OpenAI
@@ -146,14 +201,14 @@ ${Object.entries(baseTemplate).map(([phase, data]) => `${phase}: ${data.hours} �
           phase,
           estimatedHours: data.hours,
           estimatedCost: data.cost,
-          description: `${phase} phase`,
+          description: getPhaseDescription(phase),
           priority: 'medium' as const,
         })),
         totalHours: Object.values(baseTemplate).reduce((sum, data) => sum + data.hours, 0),
         totalCost: Object.values(baseTemplate).reduce((sum, data) => sum + data.cost, 0),
         currency: 'USD',
         complexity: 'medium',
-        recommendations: 'Standard project estimation based on template'
+        recommendations: 'Standard UI/UX design estimation based on real project data'
       }
     }
 

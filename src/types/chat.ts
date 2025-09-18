@@ -23,18 +23,18 @@ export interface ProjectEstimate {
     contactEmail: string;
   };
   phases: {
-    research: string;
-    wireframing: string;
-    design: string;
-    prototyping: string;
-    testing: string;
+    'ux-research': string;
+    'ui-design': string;
+    'prototyping': string;
+    'design-system': string;
+    'mobile-adaptive': string;
   };
   phaseDescriptions?: {
-    research: string;
-    wireframing: string;
-    design: string;
-    prototyping: string;
-    testing: string;
+    'ux-research': string;
+    'ui-design': string;
+    'prototyping': string;
+    'design-system': string;
+    'mobile-adaptive': string;
   };
 }
 
