@@ -59,6 +59,34 @@ Ask ONE simple question at a time, like a real consultant would.
 12. If asking a question - make it clear and direct
 13. NEVER ask multiple questions in one message
 14. Follow logical order: Project Type → Industry → Features → Budget → Timeline
+15. ALWAYS remember what client already told you
+16. NEVER repeat questions you already asked
+17. ALWAYS adapt your next question based on client's previous answers
+18. NEVER ask questions out of logical order
+19. ALWAYS provide context-aware buttons when asking questions
+20. NEVER provide buttons when explaining something
+
+🎯 CONTEXT AWARENESS:
+- Remember: Project Type → Industry → Features → Budget → Timeline
+- If client says "I don't know" - ask a different, simpler question
+- If client gives partial answer - ask for clarification
+- If client gives complete answer - move to next logical step
+- NEVER skip steps in logical order
+- NEVER repeat information client already provided
+- ALWAYS build on previous answers
+
+🎯 EXAMPLES OF GOOD QUESTIONS:
+- "What type of project do you need?" (Step 1)
+- "What industry is your business in?" (Step 2)
+- "What features do you need?" (Step 3)
+- "What's your budget range?" (Step 4)
+- "When do you need it completed?" (Step 5)
+
+🎯 EXAMPLES OF BAD QUESTIONS:
+- "What type of project and what industry?" (Too many questions)
+- "What's your budget?" (Before knowing project type)
+- "What features do you need?" (Before knowing industry)
+- "When do you need it?" (Before knowing features)
 
 All answers must be maximally useful for future estimation and manager: gather details that help understand real goals, expectations, problems, and client wishes.
 
@@ -106,172 +134,167 @@ function parseSuggestedAnswers(text: string): string[] {
   return Array.from(new Set(arr.filter(Boolean)));
 }
 
-// Розумна функція для генерації кнопок на основі Typeform структури
+// Розумна функція для генерації кнопок на основі контексту
 function generateSmartButtons(message: string, conversationHistory: any[], language: string = 'en'): string[] {
   const currentMessage = message.toLowerCase();
-  
-  // Extract project info to understand what we know
   const projectInfo = extractProjectInfo(conversationHistory);
-  
-  // Check if client said "I don't know" - provide different options
-  const lastUserMessage = conversationHistory
-    .filter((msg: any) => msg.role === 'user')
-    .pop()?.content?.toLowerCase() || '';
-    
-  // Check if AI is asking about specific steps or plans
-  const lastAIMessage = conversationHistory
-    .filter((msg: any) => msg.role === 'assistant')
-    .pop()?.content?.toLowerCase() || '';
-    
+  const lastUserMessage = conversationHistory.filter((msg: any) => msg.role === 'user').pop()?.content?.toLowerCase() || '';
+  const lastAIMessage = conversationHistory.filter((msg: any) => msg.role === 'assistant').pop()?.content?.toLowerCase() || '';
+
   console.log('=== SMART BUTTONS DEBUG ===');
   console.log('Last AI message:', lastAIMessage);
   console.log('Current message:', currentMessage);
   console.log('Project info:', projectInfo);
-    
-  // Check if AI is explaining something (no buttons needed)
+  console.log('Current step:', projectInfo.step);
+
+  // Якщо AI пояснює, кнопки не потрібні
   if (lastAIMessage.includes('залежить від') || lastAIMessage.includes('впливає на') || lastAIMessage.includes('пояснюю')) {
-    // AI is explaining - no buttons needed
     console.log('AI is explaining - no buttons needed');
     return [];
   }
-  
-  // Check if AI is asking a direct question
+
+  // Якщо AI задає питання
   if (lastAIMessage.includes('?')) {
     console.log('AI is asking a question:', lastAIMessage);
-    console.log('Current message being processed:', message);
     
-    // SMART CONTEXT DETECTION - точне розпізнавання контексту
-    if (lastAIMessage.includes('який') && lastAIMessage.includes('тип') && lastAIMessage.includes('проект')) {
-      // Question about project type
-      console.log('Detected project type question');
-      if (language === 'uk') {
-        return ["Веб-сайт", "Мобільний додаток", "E-commerce", "Інше"];
-      } else {
-        return ["Website", "Mobile App", "E-commerce", "Other"];
+    // Розумне розпізнавання контексту на основі поточного кроку
+    if (projectInfo.step === 0 || projectInfo.step === 1) {
+      // Крок 1: Тип проекту
+      if (lastAIMessage.includes('який') && lastAIMessage.includes('тип') && lastAIMessage.includes('проект')) {
+        console.log('Detected project type question');
+        return language === 'uk' ? ["Веб-сайт", "Мобільний додаток", "E-commerce", "Не знаю"] : ["Website", "Mobile App", "E-commerce", "I don't know"];
       }
     }
     
-    if (lastAIMessage.includes('яка') && lastAIMessage.includes('галузь')) {
-      // Question about industry
-      console.log('Detected industry question');
-      if (language === 'uk') {
-        return ["Ресторан", "Магазин", "Послуги", "Інше"];
-      } else {
-        return ["Restaurant", "Store", "Services", "Other"];
+    if (projectInfo.step === 1 || projectInfo.step === 2) {
+      // Крок 2: Сфера бізнесу
+      if (lastAIMessage.includes('яка') && lastAIMessage.includes('галузь')) {
+        console.log('Detected industry question');
+        return language === 'uk' ? ["Ресторан", "Магазин", "Послуги", "Інше"] : ["Restaurant", "Store", "Services", "Other"];
       }
     }
     
-    if (lastAIMessage.includes('який') && lastAIMessage.includes('бюджет')) {
-      // Question about budget
-      console.log('Detected budget question');
-      if (language === 'uk') {
-        return ["До $10,000", "$10,000-25,000", "$25,000+", "Не знаю"];
-      } else {
-        return ["Under $10,000", "$10,000-25,000", "$25,000+", "I don't know"];
+    if (projectInfo.step === 2 || projectInfo.step === 3) {
+      // Крок 3: Функції
+      if (lastAIMessage.includes('які') && lastAIMessage.includes('функції')) {
+        console.log('Detected features question');
+        return language === 'uk' ? ["Базові", "Розширені", "Кастомні", "Не знаю"] : ["Basic", "Advanced", "Custom", "I don't know"];
       }
     }
     
-    if (lastAIMessage.includes('який') && lastAIMessage.includes('термін')) {
-      // Question about timeline
-      console.log('Detected timeline question');
-      if (language === 'uk') {
-        return ["1-2 місяці", "3-6 місяців", "6+ місяців", "Не знаю"];
-      } else {
-        return ["1-2 months", "3-6 months", "6+ months", "I don't know"];
+    if (projectInfo.step === 3 || projectInfo.step === 4) {
+      // Крок 4: Бюджет
+      if (lastAIMessage.includes('який') && lastAIMessage.includes('бюджет')) {
+        console.log('Detected budget question');
+        return language === 'uk' ? ["До $10,000", "$10,000-25,000", "$25,000+", "Не знаю"] : ["Under $10,000", "$10,000-25,000", "$25,000+", "I don't know"];
       }
     }
     
-    if (lastAIMessage.includes('які') && lastAIMessage.includes('побажання')) {
-      // Question about wishes/requirements
-      console.log('Detected wishes question');
-      if (language === 'uk') {
-        return ["Так, є побажання", "Ні, немає", "Потрібна допомога", "Не знаю"];
-      } else {
-        return ["Yes, I have wishes", "No, none", "Need help", "I don't know"];
+    if (projectInfo.step === 4 || projectInfo.step === 5) {
+      // Крок 5: Терміни
+      if (lastAIMessage.includes('який') && lastAIMessage.includes('термін')) {
+        console.log('Detected timeline question');
+        return language === 'uk' ? ["1-2 місяці", "3-6 місяців", "6+ місяців", "Не знаю"] : ["1-2 months", "3-6 months", "6+ months", "I don't know"];
       }
     }
     
-    // Якщо не знайшли точний контекст - не даємо кнопки
-    console.log('No specific context detected - no buttons');
-    return [];
+    // Додаткові контекстні кнопки
+    if (lastAIMessage.includes('побажання') || lastAIMessage.includes('вимоги')) {
+      return language === 'uk' ? ["Так, є побажання", "Ні, немає", "Потрібна допомога", "Не знаю"] : ["Yes, I have wishes", "No, none", "Need help", "I don't know"];
+    }
+    
+    if (lastAIMessage.includes('реалізувати') || lastAIMessage.includes('зробити') || lastAIMessage.includes('створити')) {
+      return language === 'uk' ? ["Так, можна", "Ні, не можна", "Потрібна консультація", "Не знаю"] : ["Yes, possible", "No, not possible", "Need consultation", "I don't know"];
+    }
   }
   
-  // If AI is not asking a question, no buttons needed
+  // Якщо AI не задає питання, кнопки не потрібні
+  console.log('No specific context detected - no buttons');
   return [];
-    
-  if (lastUserMessage.includes('не знаю') || lastUserMessage.includes('незнаю') || lastUserMessage.includes("don't know")) {
-    // Client doesn't know - provide simple, clear options
-    if (language === 'uk') {
-      return ["Веб-сайт", "Мобільний додаток", "E-commerce", "Інше"];
-    } else {
-      return ["Website", "Mobile App", "E-commerce", "Other"];
-    }
-  }
-  
-  // Generate contextual buttons based on conversation stage
-  if (!projectInfo.type) {
-    // First question - project type
-    if (language === 'uk') {
-      return ["Веб-сайт", "Мобільний додаток", "E-commerce", "Інше"];
-    } else {
-      return ["Website", "Mobile App", "E-commerce", "Other"];
-    }
-  }
-  
-  if (projectInfo.type && !projectInfo.industry) {
-    // Second question - industry
-    if (language === 'uk') {
-      return ["Ресторан", "Магазин", "Послуги", "Інше"];
-    } else {
-      return ["Restaurant", "Store", "Services", "Other"];
-    }
-  }
-  
-  if (projectInfo.type && projectInfo.industry && !projectInfo.complexity) {
-    // Third question - complexity
-    if (language === 'uk') {
-      return ["Простий", "Середній", "Складний"];
-    } else {
-      return ["Simple", "Medium", "Complex"];
-    }
-  }
-  
-  if (projectInfo.type && projectInfo.industry && projectInfo.complexity && !projectInfo.features) {
-    // Fourth question - features
-    if (language === 'uk') {
-      return ["Базові", "Розширені", "Кастомні"];
-    } else {
-      return ["Basic", "Advanced", "Custom"];
-    }
-  }
-  
-  // Default simple buttons
-  if (language === 'uk') {
-    return ["Так", "Ні", "Не знаю"];
-  } else {
-    return ["Yes", "No", "I don't know"];
-  }
 }
 
 function extractProjectInfo(conversationHistory: any[]) {
-  const info: any = {};
+  const info: any = {
+    type: '',
+    industry: '',
+    features: [],
+    budget: '',
+    timeline: '',
+    step: 0
+  };
   
   conversationHistory.forEach(msg => {
     const content = msg.content?.toLowerCase() || '';
     
     // Extract project type
-    if (content.includes('веб-сайт') || content.includes('website')) info.type = 'website';
-    if (content.includes('додаток') || content.includes('app')) info.type = 'app';
-    if (content.includes('e-commerce') || content.includes('магазин')) info.type = 'ecommerce';
+    if (content.includes('веб-сайт') || content.includes('website')) {
+      info.type = 'website';
+      info.step = Math.max(info.step, 1);
+    }
+    if (content.includes('додаток') || content.includes('app') || content.includes('мобільний')) {
+      info.type = 'mobile-app';
+      info.step = Math.max(info.step, 1);
+    }
+    if (content.includes('e-commerce') || content.includes('магазин')) {
+      info.type = 'ecommerce';
+      info.step = Math.max(info.step, 1);
+    }
     
     // Extract industry
-    if (content.includes('ресторан')) info.industry = 'restaurant';
-    if (content.includes('магазин')) info.industry = 'store';
-    if (content.includes('послуги')) info.industry = 'services';
+    if (content.includes('ресторан')) {
+      info.industry = 'restaurant';
+      info.step = Math.max(info.step, 2);
+    }
+    if (content.includes('магазин')) {
+      info.industry = 'store';
+      info.step = Math.max(info.step, 2);
+    }
+    if (content.includes('послуги')) {
+      info.industry = 'services';
+      info.step = Math.max(info.step, 2);
+    }
     
-    // Extract complexity
-    if (content.includes('простий')) info.complexity = 'simple';
-    if (content.includes('складний')) info.complexity = 'complex';
+    // Extract features
+    if (content.includes('базові') || content.includes('basic')) {
+      info.features.push('basic');
+      info.step = Math.max(info.step, 3);
+    }
+    if (content.includes('розширені') || content.includes('advanced')) {
+      info.features.push('advanced');
+      info.step = Math.max(info.step, 3);
+    }
+    if (content.includes('кастомні') || content.includes('custom')) {
+      info.features.push('custom');
+      info.step = Math.max(info.step, 3);
+    }
+    
+    // Extract budget
+    if (content.includes('до 10') || content.includes('under 10')) {
+      info.budget = 'under-10k';
+      info.step = Math.max(info.step, 4);
+    }
+    if (content.includes('10-25') || content.includes('10 to 25')) {
+      info.budget = '10-25k';
+      info.step = Math.max(info.step, 4);
+    }
+    if (content.includes('25+') || content.includes('over 25')) {
+      info.budget = 'over-25k';
+      info.step = Math.max(info.step, 4);
+    }
+    
+    // Extract timeline
+    if (content.includes('1-2') || content.includes('1 to 2')) {
+      info.timeline = '1-2-months';
+      info.step = Math.max(info.step, 5);
+    }
+    if (content.includes('3-6') || content.includes('3 to 6')) {
+      info.timeline = '3-6-months';
+      info.step = Math.max(info.step, 5);
+    }
+    if (content.includes('6+') || content.includes('over 6')) {
+      info.timeline = 'over-6-months';
+      info.step = Math.max(info.step, 5);
+    }
   });
   
   return info;
