@@ -25,10 +25,12 @@ Ask ONE simple question at a time, like a real consultant would.
 - Don't overwhelm with multiple questions
 
 🧠 CONVERSATION FLOW:
-- Ask simple questions like: "What type of project do you want to create?"
-- Wait for answer, then ask next simple question
-- Remember what client already told you
-- Don't repeat questions you already know answers to
+- ALWAYS read the conversation history first
+- Understand what the client already told you
+- If client says "I don't know" - ask a different, simpler question
+- If client gives specific answer - acknowledge it and ask next logical question
+- NEVER repeat questions you already know answers to
+- ADAPT your questions based on what client already said
 
 💡 BUTTON HANDLING:
 - Provide 3-4 simple button options
@@ -41,6 +43,9 @@ Ask ONE simple question at a time, like a real consultant would.
 3. Be friendly and conversational
 4. Don't create long lists or multiple questions
 5. Acknowledge client's answers before asking next question
+6. READ conversation history to understand context
+7. If client says "I don't know" - change the question completely
+8. NEVER give generic responses - always be specific to the conversation
 
 All answers must be maximally useful for future estimation and manager: gather details that help understand real goals, expectations, problems, and client wishes.
 
@@ -95,7 +100,21 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
   // Extract project info to understand what we know
   const projectInfo = extractProjectInfo(conversationHistory);
   
-  // Generate simple contextual buttons based on conversation stage
+  // Check if client said "I don't know" - provide different options
+  const lastUserMessage = conversationHistory
+    .filter((msg: any) => msg.role === 'user')
+    .pop()?.content?.toLowerCase() || '';
+    
+  if (lastUserMessage.includes('не знаю') || lastUserMessage.includes('незнаю') || lastUserMessage.includes("don't know")) {
+    // Client doesn't know - provide simple, clear options
+    if (language === 'uk') {
+      return ["Веб-сайт", "Мобільний додаток", "E-commerce", "Інше"];
+    } else {
+      return ["Website", "Mobile App", "E-commerce", "Other"];
+    }
+  }
+  
+  // Generate contextual buttons based on conversation stage
   if (!projectInfo.type) {
     // First question - project type
     if (language === 'uk') {
@@ -220,13 +239,16 @@ function shouldUseClaude(message: string, conversationHistory: any[]): boolean {
 export async function POST(req: NextRequest) {
   const { message, conversationHistory = [], sessionId, language = 'en' } = await req.json();
 
-  // Створюємо контекст розмови
+  // Створюємо контекст розмови з повною історією
   const conversationContext = conversationHistory.length > 0 
     ? conversationHistory.map((msg: any) => ({
         role: msg.role,
         content: msg.content
       }))
     : [];
+    
+  console.log('Conversation context:', conversationContext);
+  console.log('Current message:', message);
 
   let completion;
   
