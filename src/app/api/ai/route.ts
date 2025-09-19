@@ -15,33 +15,32 @@ You communicate with the client as a human: answer any questions about Cieden, g
 
 IMPORTANT: Always respond in ${language === 'uk' ? 'Ukrainian' : 'English'} language. Never mix languages in your responses.
 
-🎯 TYPEFORM-STYLE PROJECT CONSULTATION:
-You follow a structured approach using predefined questions, but remain flexible and conversational.
+🎯 SIMPLE PROJECT CONSULTATION:
+Ask ONE simple question at a time, like a real consultant would.
 
-📋 QUESTION STRUCTURE:
-You have access to a structured set of questions. Use them as a guide, but adapt naturally to the conversation flow.
+📋 QUESTION RULES:
+- Keep questions SHORT and SIMPLE
+- Ask ONE thing at a time
+- Be conversational and friendly
+- Don't overwhelm with multiple questions
 
-🧠 ADAPTIVE STRATEGY:
-- Ask ONE question at a time
-- Remember ALL previous answers from the conversation
-- If client clicks a button or gives a specific answer, acknowledge it and ask the next logical question
-- If client asks something unrelated, answer their question first, then continue with the consultation
-- Always be helpful and conversational
-- Build on previous information naturally
-- NEVER ask about information you already know from the conversation
+🧠 CONVERSATION FLOW:
+- Ask simple questions like: "What type of project do you want to create?"
+- Wait for answer, then ask next simple question
+- Remember what client already told you
+- Don't repeat questions you already know answers to
 
 💡 BUTTON HANDLING:
-- When client clicks a button, acknowledge their choice and ask the next question
-- If client types a free-form answer, acknowledge it and ask the next question
-- Always provide SuggestedAnswers with 4-5 contextual options
+- Provide 3-4 simple button options
+- Acknowledge client's choice
+- Ask next simple question
 
 ❗️CRITICAL RULES:
-1. Ask ONLY ONE question per response
-2. Always provide SuggestedAnswers with 4-5 contextual options
-3. Never put suggestions in the main text - only in SuggestedAnswers block
-4. Be conversational and natural, not robotic
-5. Acknowledge client's responses before asking next question
-6. If client asks unrelated questions, answer them first
+1. Ask ONLY ONE simple question per response
+2. Keep questions SHORT (max 1-2 sentences)
+3. Be friendly and conversational
+4. Don't create long lists or multiple questions
+5. Acknowledge client's answers before asking next question
 
 All answers must be maximally useful for future estimation and manager: gather details that help understand real goals, expectations, problems, and client wishes.
 
@@ -93,61 +92,51 @@ function parseSuggestedAnswers(text: string): string[] {
 function generateSmartButtons(message: string, conversationHistory: any[], language: string = 'en'): string[] {
   const currentMessage = message.toLowerCase();
   
-  // Знаходимо відповідне питання з файлу
-  for (const question of typeformQuestions.questions) {
-    const questionText = question.question.toLowerCase();
-    
-    // Перевіряємо чи поточне повідомлення відповідає питанню
-    if (currentMessage.includes('тип') && currentMessage.includes('проект') && questionText.includes('тип')) {
-      return question.buttons;
-    }
-    
-    if (currentMessage.includes('продукт') && questionText.includes('продукт')) {
-      return question.buttons;
-    }
-    
-    if (currentMessage.includes('специфікації') && questionText.includes('специфікації')) {
-      return question.buttons;
-    }
-    
-    if (currentMessage.includes('мета') && questionText.includes('мета')) {
-      return question.buttons;
-    }
-    
-    if (currentMessage.includes('час') && questionText.includes('час')) {
-      return question.buttons;
-    }
-    
-    if (currentMessage.includes('дизайнер') && questionText.includes('дизайнер')) {
-      return question.buttons;
-    }
-    
-    if (currentMessage.includes('тривалість') && questionText.includes('тривалість')) {
-      return question.buttons;
-    }
-    
-    if (currentMessage.includes('почати') && questionText.includes('почати')) {
-      return question.buttons;
-    }
-    
-    if (currentMessage.includes('обсяг') && questionText.includes('обсяг')) {
-      return question.buttons;
-    }
-    
-    if (currentMessage.includes('послуги') && questionText.includes('послуги')) {
-      return question.buttons;
-    }
-    
-    if (currentMessage.includes('складність') && questionText.includes('складність')) {
-      return question.buttons;
+  // Extract project info to understand what we know
+  const projectInfo = extractProjectInfo(conversationHistory);
+  
+  // Generate simple contextual buttons based on conversation stage
+  if (!projectInfo.type) {
+    // First question - project type
+    if (language === 'uk') {
+      return ["Веб-сайт", "Мобільний додаток", "E-commerce", "Інше"];
+    } else {
+      return ["Website", "Mobile App", "E-commerce", "Other"];
     }
   }
   
-  // Загальні кнопки для невизначених ситуацій
+  if (projectInfo.type && !projectInfo.industry) {
+    // Second question - industry
+    if (language === 'uk') {
+      return ["Ресторан", "Магазин", "Послуги", "Інше"];
+    } else {
+      return ["Restaurant", "Store", "Services", "Other"];
+    }
+  }
+  
+  if (projectInfo.type && projectInfo.industry && !projectInfo.complexity) {
+    // Third question - complexity
+    if (language === 'uk') {
+      return ["Простий", "Середній", "Складний"];
+    } else {
+      return ["Simple", "Medium", "Complex"];
+    }
+  }
+  
+  if (projectInfo.type && projectInfo.industry && projectInfo.complexity && !projectInfo.features) {
+    // Fourth question - features
+    if (language === 'uk') {
+      return ["Базові", "Розширені", "Кастомні"];
+    } else {
+      return ["Basic", "Advanced", "Custom"];
+    }
+  }
+  
+  // Default simple buttons
   if (language === 'uk') {
-    return ["Так", "Ні", "Не знаю", "Потрібна допомога", "Пропустити"];
+    return ["Так", "Ні", "Не знаю"];
   } else {
-    return ["Yes", "No", "I don't know", "Need help", "Skip"];
+    return ["Yes", "No", "I don't know"];
   }
 }
 
