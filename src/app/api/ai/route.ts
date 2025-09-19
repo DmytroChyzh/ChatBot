@@ -132,9 +132,11 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
   // Check if AI is asking a direct question
   if (lastAIMessage.includes('?')) {
     console.log('AI is asking a question:', lastAIMessage);
+    console.log('Current message being processed:', message);
     // AI is asking a question - provide relevant buttons
     if (lastAIMessage.includes('тип') || lastAIMessage.includes('проект') || lastAIMessage.includes('створити')) {
       // Question about project type
+      console.log('Detected project type question');
       if (language === 'uk') {
         return ["Веб-сайт", "Мобільний додаток", "E-commerce", "Інше"];
       } else {
@@ -160,8 +162,9 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
       }
     }
     
-    if (lastAIMessage.includes('бюджет') || lastAIMessage.includes('ціна') || lastAIMessage.includes('коштувати')) {
+    if (lastAIMessage.includes('бюджет') || lastAIMessage.includes('ціна') || lastAIMessage.includes('коштувати') || lastAIMessage.includes('доларів')) {
       // Question about budget
+      console.log('Detected budget question');
       if (language === 'uk') {
         return ["До $10,000", "$10,000-25,000", "$25,000+", "Не знаю"];
       } else {
@@ -169,8 +172,9 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
       }
     }
     
-    if (lastAIMessage.includes('час') || lastAIMessage.includes('термін') || lastAIMessage.includes('коли')) {
+    if (lastAIMessage.includes('час') || lastAIMessage.includes('термін') || lastAIMessage.includes('коли') || lastAIMessage.includes('місяць') || lastAIMessage.includes('тижнів')) {
       // Question about timeline
+      console.log('Detected timeline question');
       if (language === 'uk') {
         return ["1-2 місяці", "3-6 місяців", "6+ місяців", "Не знаю"];
       } else {
@@ -220,6 +224,24 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
         return ["Так, є плани", "Ні, немає планів", "Потрібна допомога", "Не знаю"];
       } else {
         return ["Yes, I have plans", "No, no plans", "Need help", "I don't know"];
+      }
+    }
+    
+    if (lastAIMessage.includes('побажання') || lastAIMessage.includes('вимоги') || lastAIMessage.includes('додаткові')) {
+      // Question about wishes/requirements
+      if (language === 'uk') {
+        return ["Так, є побажання", "Ні, немає", "Потрібна допомога", "Не знаю"];
+      } else {
+        return ["Yes, I have wishes", "No, none", "Need help", "I don't know"];
+      }
+    }
+    
+    if (lastAIMessage.includes('реалізувати') || lastAIMessage.includes('зробити') || lastAIMessage.includes('створити')) {
+      // Question about implementation
+      if (language === 'uk') {
+        return ["Так, можна", "Ні, не можна", "Потрібна консультація", "Не знаю"];
+      } else {
+        return ["Yes, possible", "No, not possible", "Need consultation", "I don't know"];
       }
     }
   }
