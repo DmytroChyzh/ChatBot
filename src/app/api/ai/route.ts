@@ -27,6 +27,11 @@ Ask ONE simple question at a time, like a real consultant would.
 🧠 CONVERSATION FLOW:
 - ALWAYS read the conversation history first
 - Understand what the client already told you
+- Ask questions in LOGICAL ORDER:
+  1. First: What type of project? (Website, App, etc.)
+  2. Second: What industry/business? (Restaurant, Store, etc.)
+  3. Third: What features needed? (Simple, Advanced, etc.)
+  4. Fourth: Budget and timeline
 - If client says "I don't know" - ask a different, simpler question
 - If client gives specific answer - acknowledge it and ask next logical question
 - NEVER repeat questions you already know answers to
@@ -52,6 +57,8 @@ Ask ONE simple question at a time, like a real consultant would.
 10. Keep responses under 50 words
 11. If explaining something - don't ask questions, just explain
 12. If asking a question - make it clear and direct
+13. NEVER ask multiple questions in one message
+14. Follow logical order: Project Type → Industry → Features → Budget → Timeline
 
 All answers must be maximally useful for future estimation and manager: gather details that help understand real goals, expectations, problems, and client wishes.
 
@@ -125,35 +132,48 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
   // Check if AI is asking a direct question
   if (lastAIMessage.includes('?')) {
     // AI is asking a question - provide relevant buttons
-    if (lastAIMessage.includes('крок') || lastAIMessage.includes('план') || lastAIMessage.includes('послідовність')) {
+    if (lastAIMessage.includes('тип') || lastAIMessage.includes('проект') || lastAIMessage.includes('створити')) {
+      // Question about project type
       if (language === 'uk') {
-        return ["Так, почнемо", "Потрібна допомога", "Інший підхід", "Не знаю"];
+        return ["Веб-сайт", "Мобільний додаток", "E-commerce", "Інше"];
       } else {
-        return ["Yes, let's start", "Need help", "Different approach", "I don't know"];
+        return ["Website", "Mobile App", "E-commerce", "Other"];
       }
     }
     
-    if (lastAIMessage.includes('ідею') || lastAIMessage.includes('дизайн') || lastAIMessage.includes('функціонал')) {
+    if (lastAIMessage.includes('сфера') || lastAIMessage.includes('бізнес') || lastAIMessage.includes('галузь')) {
+      // Question about industry
       if (language === 'uk') {
-        return ["Так, є ідеї", "Ні, потрібна допомога", "Не знаю", "Інше"];
+        return ["Ресторан", "Магазин", "Послуги", "Інше"];
       } else {
-        return ["Yes, I have ideas", "No, need help", "I don't know", "Other"];
+        return ["Restaurant", "Store", "Services", "Other"];
       }
     }
     
-    if (lastAIMessage.includes('бізнес-цілі') || lastAIMessage.includes('аудиторію') || lastAIMessage.includes('цільову')) {
+    if (lastAIMessage.includes('функції') || lastAIMessage.includes('можливості') || lastAIMessage.includes('функціонал')) {
+      // Question about features
       if (language === 'uk') {
-        return ["Так, знаю", "Потрібна допомога", "Не знаю", "Інше"];
+        return ["Базові", "Розширені", "Кастомні", "Не знаю"];
       } else {
-        return ["Yes, I know", "Need help", "I don't know", "Other"];
+        return ["Basic", "Advanced", "Custom", "I don't know"];
       }
     }
     
-    if (lastAIMessage.includes('фото') || lastAIMessage.includes('відео') || lastAIMessage.includes('завантажувати')) {
+    if (lastAIMessage.includes('бюджет') || lastAIMessage.includes('ціна') || lastAIMessage.includes('коштувати')) {
+      // Question about budget
       if (language === 'uk') {
-        return ["Так, потрібно", "Ні, не потрібно", "Не знаю", "Інше"];
+        return ["До $10,000", "$10,000-25,000", "$25,000+", "Не знаю"];
       } else {
-        return ["Yes, needed", "No, not needed", "I don't know", "Other"];
+        return ["Under $10,000", "$10,000-25,000", "$25,000+", "I don't know"];
+      }
+    }
+    
+    if (lastAIMessage.includes('час') || lastAIMessage.includes('термін') || lastAIMessage.includes('коли')) {
+      // Question about timeline
+      if (language === 'uk') {
+        return ["1-2 місяці", "3-6 місяців", "6+ місяців", "Не знаю"];
+      } else {
+        return ["1-2 months", "3-6 months", "6+ months", "I don't know"];
       }
     }
   }
