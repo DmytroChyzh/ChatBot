@@ -154,9 +154,9 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
     if (lastAIMessage.includes('функції') || lastAIMessage.includes('можливості') || lastAIMessage.includes('функціонал')) {
       // Question about features
       if (language === 'uk') {
-        return ["Базові", "Розширені", "Кастомні", "Не знаю"];
+        return ["Пошук авто", "Фільтри пошуку", "Кошик покупок", "Реєстрація користувачів", "Оплата онлайн"];
       } else {
-        return ["Basic", "Advanced", "Custom", "I don't know"];
+        return ["Car search", "Search filters", "Shopping cart", "User registration", "Online payment"];
       }
     }
     
@@ -181,7 +181,7 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
     if (lastAIMessage.includes('веб') && lastAIMessage.includes('мобільний')) {
       // Question about both web and mobile
       if (language === 'uk') {
-        return ["Так, обидва", "Тільки веб", "Тільки мобільний", "Не знаю"];
+        return ["Так, обидва", "Тільки веб-сайт", "Тільки мобільний додаток", "Не знаю"];
       } else {
         return ["Yes, both", "Web only", "Mobile only", "I don't know"];
       }
@@ -193,6 +193,15 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
         return ["Так, є", "Ні, немає", "Потрібна допомога", "Не знаю"];
       } else {
         return ["Yes, I have", "No, I don't", "Need help", "I don't know"];
+      }
+    }
+    
+    if (lastAIMessage.includes('автомобілі') || lastAIMessage.includes('машини') || lastAIMessage.includes('авто')) {
+      // Question about cars/automobiles
+      if (language === 'uk') {
+        return ["Продаж авто", "Покупка авто", "Обмін авто", "Оренда авто"];
+      } else {
+        return ["Sell cars", "Buy cars", "Trade cars", "Rent cars"];
       }
     }
     
