@@ -123,9 +123,15 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
     .filter((msg: any) => msg.role === 'assistant')
     .pop()?.content?.toLowerCase() || '';
     
+  console.log('=== SMART BUTTONS DEBUG ===');
+  console.log('Last AI message:', lastAIMessage);
+  console.log('Current message:', currentMessage);
+  console.log('Project info:', projectInfo);
+    
   // Check if AI is explaining something (no buttons needed)
   if (lastAIMessage.includes('залежить від') || lastAIMessage.includes('впливає на') || lastAIMessage.includes('пояснюю')) {
     // AI is explaining - no buttons needed
+    console.log('AI is explaining - no buttons needed');
     return [];
   }
   
@@ -133,8 +139,9 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
   if (lastAIMessage.includes('?')) {
     console.log('AI is asking a question:', lastAIMessage);
     console.log('Current message being processed:', message);
-    // AI is asking a question - provide relevant buttons
-    if (lastAIMessage.includes('тип') || lastAIMessage.includes('проект') || lastAIMessage.includes('створити')) {
+    
+    // SMART CONTEXT DETECTION - точне розпізнавання контексту
+    if (lastAIMessage.includes('який') && lastAIMessage.includes('тип') && lastAIMessage.includes('проект')) {
       // Question about project type
       console.log('Detected project type question');
       if (language === 'uk') {
@@ -144,8 +151,9 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
       }
     }
     
-    if (lastAIMessage.includes('сфера') || lastAIMessage.includes('бізнес') || lastAIMessage.includes('галузь') || lastAIMessage.includes('діяльності')) {
+    if (lastAIMessage.includes('яка') && lastAIMessage.includes('галузь')) {
       // Question about industry
+      console.log('Detected industry question');
       if (language === 'uk') {
         return ["Ресторан", "Магазин", "Послуги", "Інше"];
       } else {
@@ -153,16 +161,7 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
       }
     }
     
-    if (lastAIMessage.includes('функції') || lastAIMessage.includes('можливості') || lastAIMessage.includes('функціонал')) {
-      // Question about features
-      if (language === 'uk') {
-        return ["Пошук авто", "Фільтри пошуку", "Кошик покупок", "Реєстрація користувачів", "Оплата онлайн"];
-      } else {
-        return ["Car search", "Search filters", "Shopping cart", "User registration", "Online payment"];
-      }
-    }
-    
-    if (lastAIMessage.includes('бюджет') || lastAIMessage.includes('ціна') || lastAIMessage.includes('коштувати') || lastAIMessage.includes('доларів')) {
+    if (lastAIMessage.includes('який') && lastAIMessage.includes('бюджет')) {
       // Question about budget
       console.log('Detected budget question');
       if (language === 'uk') {
@@ -172,7 +171,7 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
       }
     }
     
-    if (lastAIMessage.includes('час') || lastAIMessage.includes('термін') || lastAIMessage.includes('коли') || lastAIMessage.includes('місяць') || lastAIMessage.includes('тижнів')) {
+    if (lastAIMessage.includes('який') && lastAIMessage.includes('термін')) {
       // Question about timeline
       console.log('Detected timeline question');
       if (language === 'uk') {
@@ -182,53 +181,9 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
       }
     }
     
-    if (lastAIMessage.includes('веб') && lastAIMessage.includes('мобільний')) {
-      // Question about both web and mobile
-      if (language === 'uk') {
-        return ["Так, обидва", "Тільки веб-сайт", "Тільки мобільний додаток", "Не знаю"];
-      } else {
-        return ["Yes, both", "Web only", "Mobile only", "I don't know"];
-      }
-    }
-    
-    if (lastAIMessage.includes('додаткова') || lastAIMessage.includes('інформація') || lastAIMessage.includes('деталі')) {
-      // Question about additional information
-      if (language === 'uk') {
-        return ["Так, є", "Ні, немає", "Потрібна допомога", "Не знаю"];
-      } else {
-        return ["Yes, I have", "No, I don't", "Need help", "I don't know"];
-      }
-    }
-    
-    if (lastAIMessage.includes('автомобілі') || lastAIMessage.includes('машини') || lastAIMessage.includes('авто')) {
-      // Question about cars/automobiles
-      if (language === 'uk') {
-        return ["Продаж авто", "Покупка авто", "Обмін авто", "Оренда авто"];
-      } else {
-        return ["Sell cars", "Buy cars", "Trade cars", "Rent cars"];
-      }
-    }
-    
-    if (lastAIMessage.includes('розробки') || lastAIMessage.includes('розробка') || lastAIMessage.includes('розробити')) {
-      // Question about development
-      if (language === 'uk') {
-        return ["Так, розпочати", "Потрібна консультація", "Не знаю", "Інше"];
-      } else {
-        return ["Yes, start", "Need consultation", "I don't know", "Other"];
-      }
-    }
-    
-    if (lastAIMessage.includes('плануєте') || lastAIMessage.includes('планує') || lastAIMessage.includes('плани')) {
-      // Question about plans
-      if (language === 'uk') {
-        return ["Так, є плани", "Ні, немає планів", "Потрібна допомога", "Не знаю"];
-      } else {
-        return ["Yes, I have plans", "No, no plans", "Need help", "I don't know"];
-      }
-    }
-    
-    if (lastAIMessage.includes('побажання') || lastAIMessage.includes('вимоги') || lastAIMessage.includes('додаткові')) {
+    if (lastAIMessage.includes('які') && lastAIMessage.includes('побажання')) {
       // Question about wishes/requirements
+      console.log('Detected wishes question');
       if (language === 'uk') {
         return ["Так, є побажання", "Ні, немає", "Потрібна допомога", "Не знаю"];
       } else {
@@ -236,14 +191,9 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
       }
     }
     
-    if (lastAIMessage.includes('реалізувати') || lastAIMessage.includes('зробити') || lastAIMessage.includes('створити')) {
-      // Question about implementation
-      if (language === 'uk') {
-        return ["Так, можна", "Ні, не можна", "Потрібна консультація", "Не знаю"];
-      } else {
-        return ["Yes, possible", "No, not possible", "Need consultation", "I don't know"];
-      }
-    }
+    // Якщо не знайшли точний контекст - не даємо кнопки
+    console.log('No specific context detected - no buttons');
+    return [];
   }
   
   // If AI is not asking a question, no buttons needed
