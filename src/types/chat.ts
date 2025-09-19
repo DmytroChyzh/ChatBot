@@ -48,7 +48,7 @@ export interface ProjectSummary {
 }
 
 export interface PhaseEstimate {
-  phase: 'discovery' | 'ux-ui' | 'development' | 'testing' | 'deployment';
+  phase: 'ux-research' | 'ui-design' | 'prototyping' | 'design-system' | 'mobile-adaptive';
   estimatedHours: number;
   estimatedCost: number;
   description: string;
@@ -60,7 +60,10 @@ export interface ProjectEstimates {
   phases: PhaseEstimate[];
   totalHours: number;
   totalCost: number;
-  currency: string;
+  currentRange?: string;
+  timeline?: string;
+  teamSize?: number;
+  currency?: string;
   generatedAt: Date;
   model: string;
 }
