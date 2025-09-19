@@ -21,10 +21,12 @@ You have access to a structured set of questions. Use them as a guide, but adapt
 
 🧠 ADAPTIVE STRATEGY:
 - Ask ONE question at a time
+- Remember ALL previous answers from the conversation
 - If client clicks a button or gives a specific answer, acknowledge it and ask the next logical question
 - If client asks something unrelated, answer their question first, then continue with the consultation
 - Always be helpful and conversational
 - Build on previous information naturally
+- NEVER ask about information you already know from the conversation
 
 💡 BUTTON HANDLING:
 - When client clicks a button, acknowledge their choice and ask the next question
@@ -141,6 +143,30 @@ function generateSmartButtons(message: string, conversationHistory: any[]): stri
   
   // Загальні кнопки для невизначених ситуацій
   return ["Так", "Ні", "Не знаю", "Потрібна допомога", "Пропустити"];
+}
+
+function extractProjectInfo(conversationHistory: any[]) {
+  const info: any = {};
+  
+  conversationHistory.forEach(msg => {
+    const content = msg.content?.toLowerCase() || '';
+    
+    // Extract project type
+    if (content.includes('веб-сайт') || content.includes('website')) info.type = 'website';
+    if (content.includes('додаток') || content.includes('app')) info.type = 'app';
+    if (content.includes('e-commerce') || content.includes('магазин')) info.type = 'ecommerce';
+    
+    // Extract industry
+    if (content.includes('ресторан')) info.industry = 'restaurant';
+    if (content.includes('магазин')) info.industry = 'store';
+    if (content.includes('послуги')) info.industry = 'services';
+    
+    // Extract complexity
+    if (content.includes('простий')) info.complexity = 'simple';
+    if (content.includes('складний')) info.complexity = 'complex';
+  });
+  
+  return info;
 }
 
 // Очищення та мапінг під ProjectCardState

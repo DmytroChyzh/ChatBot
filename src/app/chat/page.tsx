@@ -722,11 +722,13 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         return;
       }
 
-      // Тільки після 2+ кроків показуємо реальний естімейт
+      // Показуємо прогресівний естімейт після кожного питання
       if (estimateStep >= 2) {
         // Розраховуємо точність на основі кількості кроків
         const accuracyPercentage = Math.min(95, 20 + (estimateStep - 2) * 15); // 20% + 15% за кожен крок
         const rangeReduction = Math.max(0.1, 1 - (estimateStep - 2) * 0.15); // Зменшуємо діапазон на 15% за крок
+        
+        console.log(`Progressive estimate: step ${estimateStep}, accuracy: ${accuracyPercentage}%, range reduction: ${rangeReduction}`);
         // Створюємо базовий естімейт на основі контексту після збору інформації
         const projectContext = messages
           .filter(m => m.role === 'user')
