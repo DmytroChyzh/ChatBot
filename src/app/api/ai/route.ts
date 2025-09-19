@@ -9,9 +9,11 @@ import typeformQuestions from '../../../data/typeform-questions.json';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `You are a flexible AI consultant for Cieden. You know everything about Cieden: our cases, team, processes, UX/UI, design, development, website, approaches, values, and expertise.
+const SYSTEM_PROMPT = (language: string) => `You are a flexible AI consultant for Cieden. You know everything about Cieden: our cases, team, processes, UX/UI, design, development, website, approaches, values, and expertise.
 
 You communicate with the client as a human: answer any questions about Cieden, give useful advice, share experience, talk about cases, team, website, processes, expertise, approaches, values, technologies, anything that may be helpful.
+
+IMPORTANT: Always respond in ${language === 'uk' ? 'Ukrainian' : 'English'} language. Never mix languages in your responses.
 
 🎯 TYPEFORM-STYLE PROJECT CONSULTATION:
 You follow a structured approach using predefined questions, but remain flexible and conversational.
@@ -88,7 +90,7 @@ function parseSuggestedAnswers(text: string): string[] {
 }
 
 // Розумна функція для генерації кнопок на основі Typeform структури
-function generateSmartButtons(message: string, conversationHistory: any[]): string[] {
+function generateSmartButtons(message: string, conversationHistory: any[], language: string = 'en'): string[] {
   const currentMessage = message.toLowerCase();
   
   // Знаходимо відповідне питання з файлу
@@ -142,7 +144,11 @@ function generateSmartButtons(message: string, conversationHistory: any[]): stri
   }
   
   // Загальні кнопки для невизначених ситуацій
-  return ["Так", "Ні", "Не знаю", "Потрібна допомога", "Пропустити"];
+  if (language === 'uk') {
+    return ["Так", "Ні", "Не знаю", "Потрібна допомога", "Пропустити"];
+  } else {
+    return ["Yes", "No", "I don't know", "Need help", "Skip"];
+  }
 }
 
 function extractProjectInfo(conversationHistory: any[]) {
@@ -223,7 +229,7 @@ function shouldUseClaude(message: string, conversationHistory: any[]): boolean {
 }
 
 export async function POST(req: NextRequest) {
-  const { message, conversationHistory = [], sessionId } = await req.json();
+  const { message, conversationHistory = [], sessionId, language = 'en' } = await req.json();
 
   // Створюємо контекст розмови
   const conversationContext = conversationHistory.length > 0 
@@ -242,7 +248,7 @@ export async function POST(req: NextRequest) {
       completion = await anthropic.messages.create({
         model: "claude-3-haiku-20240307",
         max_tokens: 1000,
-        system: SYSTEM_PROMPT,
+        system: SYSTEM_PROMPT(language),
         messages: conversationContext.concat([{ role: "user", content: message }])
       });
     } catch (error) {
@@ -251,7 +257,7 @@ export async function POST(req: NextRequest) {
       completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: SYSTEM_PROMPT(language) },
           ...conversationContext,
           { role: "user", content: message }
         ],
@@ -264,7 +270,7 @@ export async function POST(req: NextRequest) {
     completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
-        { role: "system", content: SYSTEM_PROMPT },
+        { role: "system", content: SYSTEM_PROMPT(language) },
         ...conversationContext,
         { role: "user", content: message }
       ],
@@ -294,7 +300,7 @@ export async function POST(req: NextRequest) {
     
     // Якщо AI не надав кнопки, генеруємо розумні кнопки на основі контексту
     if (suggestedAnswers.length === 0) {
-      suggestedAnswers = generateSmartButtons(message, conversationHistory);
+      suggestedAnswers = generateSmartButtons(message, conversationHistory, language);
     }
     
     return NextResponse.json({

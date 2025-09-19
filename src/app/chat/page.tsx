@@ -194,7 +194,8 @@ export default function ChatPage() {
       body: JSON.stringify({ 
         message,
         conversationHistory,
-        sessionId
+        sessionId,
+        language
       }),
     });
     const data = await res.json();
