@@ -33,7 +33,9 @@ Ask ONE simple question at a time, like a real consultant would.
 - ADAPT your questions based on what client already said
 
 💡 BUTTON HANDLING:
-- Provide 3-4 simple button options
+- ONLY provide buttons when asking a direct question
+- If explaining something - NO buttons needed
+- If asking a question - provide 3-4 relevant buttons
 - Acknowledge client's choice
 - Ask next simple question
 
@@ -48,6 +50,8 @@ Ask ONE simple question at a time, like a real consultant would.
 8. NEVER give generic responses - always be specific to the conversation
 9. NEVER write long explanations or numbered lists
 10. Keep responses under 50 words
+11. If explaining something - don't ask questions, just explain
+12. If asking a question - make it clear and direct
 
 All answers must be maximally useful for future estimation and manager: gather details that help understand real goals, expectations, problems, and client wishes.
 
@@ -112,32 +116,50 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
     .filter((msg: any) => msg.role === 'assistant')
     .pop()?.content?.toLowerCase() || '';
     
-  if (lastAIMessage.includes('крок') || lastAIMessage.includes('план') || lastAIMessage.includes('послідовність')) {
-    // AI is talking about steps/plans - provide action buttons
-    if (language === 'uk') {
-      return ["Так, почнемо", "Потрібна допомога", "Інший підхід", "Не знаю"];
-    } else {
-      return ["Yes, let's start", "Need help", "Different approach", "I don't know"];
+  // Check if AI is explaining something (no buttons needed)
+  if (lastAIMessage.includes('залежить від') || lastAIMessage.includes('впливає на') || lastAIMessage.includes('пояснюю')) {
+    // AI is explaining - no buttons needed
+    return [];
+  }
+  
+  // Check if AI is asking a direct question
+  if (lastAIMessage.includes('?')) {
+    // AI is asking a question - provide relevant buttons
+    if (lastAIMessage.includes('крок') || lastAIMessage.includes('план') || lastAIMessage.includes('послідовність')) {
+      if (language === 'uk') {
+        return ["Так, почнемо", "Потрібна допомога", "Інший підхід", "Не знаю"];
+      } else {
+        return ["Yes, let's start", "Need help", "Different approach", "I don't know"];
+      }
+    }
+    
+    if (lastAIMessage.includes('ідею') || lastAIMessage.includes('дизайн') || lastAIMessage.includes('функціонал')) {
+      if (language === 'uk') {
+        return ["Так, є ідеї", "Ні, потрібна допомога", "Не знаю", "Інше"];
+      } else {
+        return ["Yes, I have ideas", "No, need help", "I don't know", "Other"];
+      }
+    }
+    
+    if (lastAIMessage.includes('бізнес-цілі') || lastAIMessage.includes('аудиторію') || lastAIMessage.includes('цільову')) {
+      if (language === 'uk') {
+        return ["Так, знаю", "Потрібна допомога", "Не знаю", "Інше"];
+      } else {
+        return ["Yes, I know", "Need help", "I don't know", "Other"];
+      }
+    }
+    
+    if (lastAIMessage.includes('фото') || lastAIMessage.includes('відео') || lastAIMessage.includes('завантажувати')) {
+      if (language === 'uk') {
+        return ["Так, потрібно", "Ні, не потрібно", "Не знаю", "Інше"];
+      } else {
+        return ["Yes, needed", "No, not needed", "I don't know", "Other"];
+      }
     }
   }
   
-  if (lastAIMessage.includes('ідею') || lastAIMessage.includes('дизайн') || lastAIMessage.includes('функціонал')) {
-    // AI is asking about ideas/design/functionality
-    if (language === 'uk') {
-      return ["Так, є ідеї", "Ні, потрібна допомога", "Не знаю", "Інше"];
-    } else {
-      return ["Yes, I have ideas", "No, need help", "I don't know", "Other"];
-    }
-  }
-  
-  if (lastAIMessage.includes('бізнес-цілі') || lastAIMessage.includes('аудиторію') || lastAIMessage.includes('цільову')) {
-    // AI is asking about business goals/audience
-    if (language === 'uk') {
-      return ["Так, знаю", "Потрібна допомога", "Не знаю", "Інше"];
-    } else {
-      return ["Yes, I know", "Need help", "I don't know", "Other"];
-    }
-  }
+  // If AI is not asking a question, no buttons needed
+  return [];
     
   if (lastUserMessage.includes('не знаю') || lastUserMessage.includes('незнаю') || lastUserMessage.includes("don't know")) {
     // Client doesn't know - provide simple, clear options
