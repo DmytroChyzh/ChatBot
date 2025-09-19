@@ -131,6 +131,7 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
   
   // Check if AI is asking a direct question
   if (lastAIMessage.includes('?')) {
+    console.log('AI is asking a question:', lastAIMessage);
     // AI is asking a question - provide relevant buttons
     if (lastAIMessage.includes('тип') || lastAIMessage.includes('проект') || lastAIMessage.includes('створити')) {
       // Question about project type
@@ -141,7 +142,7 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
       }
     }
     
-    if (lastAIMessage.includes('сфера') || lastAIMessage.includes('бізнес') || lastAIMessage.includes('галузь')) {
+    if (lastAIMessage.includes('сфера') || lastAIMessage.includes('бізнес') || lastAIMessage.includes('галузь') || lastAIMessage.includes('діяльності')) {
       // Question about industry
       if (language === 'uk') {
         return ["Ресторан", "Магазин", "Послуги", "Інше"];
@@ -174,6 +175,42 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
         return ["1-2 місяці", "3-6 місяців", "6+ місяців", "Не знаю"];
       } else {
         return ["1-2 months", "3-6 months", "6+ months", "I don't know"];
+      }
+    }
+    
+    if (lastAIMessage.includes('веб') && lastAIMessage.includes('мобільний')) {
+      // Question about both web and mobile
+      if (language === 'uk') {
+        return ["Так, обидва", "Тільки веб", "Тільки мобільний", "Не знаю"];
+      } else {
+        return ["Yes, both", "Web only", "Mobile only", "I don't know"];
+      }
+    }
+    
+    if (lastAIMessage.includes('додаткова') || lastAIMessage.includes('інформація') || lastAIMessage.includes('деталі')) {
+      // Question about additional information
+      if (language === 'uk') {
+        return ["Так, є", "Ні, немає", "Потрібна допомога", "Не знаю"];
+      } else {
+        return ["Yes, I have", "No, I don't", "Need help", "I don't know"];
+      }
+    }
+    
+    if (lastAIMessage.includes('розробки') || lastAIMessage.includes('розробка') || lastAIMessage.includes('розробити')) {
+      // Question about development
+      if (language === 'uk') {
+        return ["Так, розпочати", "Потрібна консультація", "Не знаю", "Інше"];
+      } else {
+        return ["Yes, start", "Need consultation", "I don't know", "Other"];
+      }
+    }
+    
+    if (lastAIMessage.includes('плануєте') || lastAIMessage.includes('планує') || lastAIMessage.includes('плани')) {
+      // Question about plans
+      if (language === 'uk') {
+        return ["Так, є плани", "Ні, немає планів", "Потрібна допомога", "Не знаю"];
+      } else {
+        return ["Yes, I have plans", "No, no plans", "Need help", "I don't know"];
       }
     }
   }
