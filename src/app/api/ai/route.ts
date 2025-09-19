@@ -46,6 +46,8 @@ Ask ONE simple question at a time, like a real consultant would.
 6. READ conversation history to understand context
 7. If client says "I don't know" - change the question completely
 8. NEVER give generic responses - always be specific to the conversation
+9. NEVER write long explanations or numbered lists
+10. Keep responses under 50 words
 
 All answers must be maximally useful for future estimation and manager: gather details that help understand real goals, expectations, problems, and client wishes.
 
@@ -104,6 +106,38 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
   const lastUserMessage = conversationHistory
     .filter((msg: any) => msg.role === 'user')
     .pop()?.content?.toLowerCase() || '';
+    
+  // Check if AI is asking about specific steps or plans
+  const lastAIMessage = conversationHistory
+    .filter((msg: any) => msg.role === 'assistant')
+    .pop()?.content?.toLowerCase() || '';
+    
+  if (lastAIMessage.includes('крок') || lastAIMessage.includes('план') || lastAIMessage.includes('послідовність')) {
+    // AI is talking about steps/plans - provide action buttons
+    if (language === 'uk') {
+      return ["Так, почнемо", "Потрібна допомога", "Інший підхід", "Не знаю"];
+    } else {
+      return ["Yes, let's start", "Need help", "Different approach", "I don't know"];
+    }
+  }
+  
+  if (lastAIMessage.includes('ідею') || lastAIMessage.includes('дизайн') || lastAIMessage.includes('функціонал')) {
+    // AI is asking about ideas/design/functionality
+    if (language === 'uk') {
+      return ["Так, є ідеї", "Ні, потрібна допомога", "Не знаю", "Інше"];
+    } else {
+      return ["Yes, I have ideas", "No, need help", "I don't know", "Other"];
+    }
+  }
+  
+  if (lastAIMessage.includes('бізнес-цілі') || lastAIMessage.includes('аудиторію') || lastAIMessage.includes('цільову')) {
+    // AI is asking about business goals/audience
+    if (language === 'uk') {
+      return ["Так, знаю", "Потрібна допомога", "Не знаю", "Інше"];
+    } else {
+      return ["Yes, I know", "Need help", "I don't know", "Other"];
+    }
+  }
     
   if (lastUserMessage.includes('не знаю') || lastUserMessage.includes('незнаю') || lastUserMessage.includes("don't know")) {
     // Client doesn't know - provide simple, clear options
