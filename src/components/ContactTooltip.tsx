@@ -14,7 +14,7 @@ const ContactTooltip: React.FC<ContactTooltipProps> = ({ estimateStep, isVisible
   }
 
   return (
-    <div className="absolute -left-40 bottom-4 transform bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs px-3 py-2 rounded-lg shadow-lg z-20 whitespace-nowrap">
+    <div className="absolute -left-[10rem] bottom-4 transform -translate-y-64 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs px-3 py-2 rounded-lg shadow-lg z-20 max-w-[200px]">
       <div className="absolute top-1/2 right-0 transform translate-x-full -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-4 border-transparent border-l-purple-500"></div>
       {language === 'uk' 
         ? '💬 Ми можемо зв\'язатися з вами пізніше, але якщо хочете швидше - натисніть кнопку!'
