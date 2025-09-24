@@ -134,106 +134,15 @@ function parseSuggestedAnswers(text: string): string[] {
   return Array.from(new Set(arr.filter(Boolean)));
 }
 
-// Розумна функція для генерації кнопок на основі контексту
+// КНОПКИ ПОВНІСТЮ ВИДАЛЕНІ - AI працює без них
 function generateSmartButtons(message: string, conversationHistory: any[], language: string = 'en'): string[] {
-  const currentMessage = message.toLowerCase();
-  const projectInfo = extractProjectInfo(conversationHistory);
-  const lastUserMessage = conversationHistory.filter((msg: any) => msg.role === 'user').pop()?.content?.toLowerCase() || '';
-  const lastAIMessage = conversationHistory.filter((msg: any) => msg.role === 'assistant').pop()?.content?.toLowerCase() || '';
-
-  console.log('=== SMART BUTTONS DEBUG ===');
-  console.log('Last AI message:', lastAIMessage);
-  console.log('Current message:', currentMessage);
-  console.log('Project info:', projectInfo);
-  console.log('Current step:', projectInfo.step);
-
-  // Якщо AI пояснює або не задає прямих питань, кнопки не потрібні
-  if (lastAIMessage.includes('залежить від') || 
-      lastAIMessage.includes('впливає на') || 
-      lastAIMessage.includes('пояснюю') ||
-      lastAIMessage.includes('розумію') ||
-      lastAIMessage.includes('чудово') ||
-      lastAIMessage.includes('відмінно') ||
-      !lastAIMessage.includes('?')) {
-    console.log('AI is explaining or not asking direct question - no buttons needed');
-    return [];
-  }
-
-  // НЕ використовуємо typeform-questions.json поки що - він створює плутанину
-  // Замість цього використовуємо розумне розпізнавання контексту
-
-  // Розумне розпізнавання контексту на основі останнього повідомлення AI
-  const contextKeywords = {
-    'project_type': ['який тип', 'що створити', 'який проект', 'сайт', 'додаток', 'app', 'website', 'мобільний'],
-    'industry': ['яка галузь', 'в якій галузі', 'бізнес', 'сфера', 'ресторан', 'магазин', 'послуги', 'авто', 'медицина'],
-    'features': ['які функції', 'які можливості', 'що потрібно', 'які фічі', 'функціонал'],
-    'budget': ['який бюджет', 'бюджет', 'ціна', 'коштувати', 'доларів', 'гроші', 'скільки', 'вартість', 'терміни'],
-    'timeline': ['коли', 'термін', 'час', 'швидко', 'терміново', 'негайно', 'місяці', 'тижні', 'завершити', 'плануєте']
-  };
-
-  // Шукаємо відповідний контекст
-  for (const [context, keywords] of Object.entries(contextKeywords)) {
-    const hasRelevantKeywords = keywords.some(keyword => lastAIMessage.includes(keyword));
-    console.log(`Checking ${context}: keywords=${keywords.join(', ')}, found=${hasRelevantKeywords}`);
-    if (hasRelevantKeywords) {
-      console.log(`✅ Detected ${context} context - showing buttons`);
-      const buttons = getContextButtons(context, language);
-      console.log(`Buttons for ${context}:`, buttons);
-      return buttons;
-    }
-  }
-  
-  console.log('No specific context detected - no buttons');
+  // Повертаємо порожній масив - кнопок немає
   return [];
 }
 
-// Функція для отримання ключових слів питання
-function getQuestionKeywords(questionType: string): string[] {
-  const keywordsMap: { [key: string]: string[] } = {
-    'project_type': ['тип', 'проект', 'створити', 'зробити', 'сайт', 'додаток'],
-    'product_type': ['продукт', 'сервіс', 'створюєте', 'розробляєте'],
-    'specifications': ['специфікації', 'готові', 'ідеї', 'документи'],
-    'goal': ['мета', 'ціль', 'хочете', 'потрібно'],
-    'time_commitment': ['час', 'затрат', 'плануєте', 'тиждень'],
-    'team_size': ['дизайнерів', 'команда', 'людей', 'спеціалістів'],
-    'duration': ['довго', 'допомога', 'дизайн', 'місяці', 'тижні'],
-    'start_date': ['почати', 'коли', 'негайно', 'термін'],
-    'scope': ['розмір', 'проект', 'малий', 'великий', 'enterprise'],
-    'services': ['послуги', 'потрібні', 'ux', 'ui', 'прототип'],
-    'complexity': ['складний', 'додаток', 'essential', 'advanced']
-  };
-  
-  return keywordsMap[questionType] || [];
-}
+// Всі функції для кнопок видалені - вони більше не потрібні
 
-// Функція для отримання кнопок за контекстом
-function getContextButtons(context: string, language: string): string[] {
-  const buttonsMap: { [key: string]: { [lang: string]: string[] } } = {
-    'project_type': {
-      'uk': ["Веб-сайт", "Мобільний додаток", "E-commerce", "Dashboard", "Не знаю"],
-      'en': ["Website", "Mobile App", "E-commerce", "Dashboard", "I don't know"]
-    },
-    'industry': {
-      'uk': ["Ресторан", "Магазин", "Послуги", "Авто", "Медицина", "Інше"],
-      'en': ["Restaurant", "Store", "Services", "Automotive", "Healthcare", "Other"]
-    },
-    'features': {
-      'uk': ["Базові функції", "Розширені можливості", "Кастомні рішення", "Не знаю"],
-      'en': ["Basic features", "Advanced features", "Custom solutions", "I don't know"]
-    },
-    'budget': {
-      'uk': ["До $10,000", "$10,000-25,000", "$25,000-50,000", "$50,000+", "Не знаю"],
-      'en': ["Under $10,000", "$10,000-25,000", "$25,000-50,000", "$50,000+", "I don't know"]
-    },
-    'timeline': {
-      'uk': ["1-2 місяці", "3-6 місяців", "6+ місяців", "Терміново", "Не знаю"],
-      'en': ["1-2 months", "3-6 months", "6+ months", "Urgent", "I don't know"]
-    }
-  };
-  
-  return buttonsMap[context]?.[language] || [];
-}
-
+// Спрощена функція для відстеження проекту (без кнопок)
 function extractProjectInfo(conversationHistory: any[]) {
   const info: any = {
     type: '',
@@ -244,100 +153,59 @@ function extractProjectInfo(conversationHistory: any[]) {
     step: 0
   };
   
-  // Підраховуємо кількість питань AI для визначення кроку
-  const aiMessages = conversationHistory.filter((msg: any) => msg.role === 'assistant');
+  // Простий підрахунок кроку на основі кількості повідомлень
   const userMessages = conversationHistory.filter((msg: any) => msg.role === 'user');
+  info.step = Math.min(userMessages.length, 5);
   
-  // Базовий крок на основі кількості обмінів
-  info.step = Math.min(Math.floor(userMessages.length / 2), 5);
-  
+  // Базове відстеження інформації про проект
   conversationHistory.forEach(msg => {
     const content = msg.content?.toLowerCase() || '';
     
     // Extract project type
     if (content.includes('веб-сайт') || content.includes('website') || content.includes('сайт')) {
       info.type = 'website';
-      info.step = Math.max(info.step, 1);
     }
-    if (content.includes('додаток') || content.includes('app') || content.includes('мобільний') || content.includes('мобіл')) {
+    if (content.includes('додаток') || content.includes('app') || content.includes('мобільний')) {
       info.type = 'mobile-app';
-      info.step = Math.max(info.step, 1);
     }
-    if (content.includes('e-commerce') || content.includes('магазин') || content.includes('інтернет-магазин')) {
+    if (content.includes('e-commerce') || content.includes('магазин')) {
       info.type = 'ecommerce';
-      info.step = Math.max(info.step, 1);
-    }
-    if (content.includes('dashboard') || content.includes('дашборд')) {
-      info.type = 'dashboard';
-      info.step = Math.max(info.step, 1);
     }
     
     // Extract industry
-    if (content.includes('ресторан') || content.includes('кафе') || content.includes('їжа')) {
+    if (content.includes('ресторан') || content.includes('кафе')) {
       info.industry = 'restaurant';
-      info.step = Math.max(info.step, 2);
     }
-    if (content.includes('магазин') || content.includes('торгівля') || content.includes('продажі')) {
+    if (content.includes('магазин') || content.includes('торгівля')) {
       info.industry = 'store';
-      info.step = Math.max(info.step, 2);
     }
-    if (content.includes('послуги') || content.includes('консультація') || content.includes('допомога')) {
+    if (content.includes('послуги') || content.includes('консультація')) {
       info.industry = 'services';
-      info.step = Math.max(info.step, 2);
     }
-    if (content.includes('авто') || content.includes('автомобіль') || content.includes('машина')) {
+    if (content.includes('авто') || content.includes('автомобіль')) {
       info.industry = 'automotive';
-      info.step = Math.max(info.step, 2);
-    }
-    if (content.includes('медицина') || content.includes('здоров\'я') || content.includes('лікар')) {
-      info.industry = 'healthcare';
-      info.step = Math.max(info.step, 2);
-    }
-    
-    // Extract features
-    if (content.includes('базові') || content.includes('простий') || content.includes('мінімальний') || content.includes('basic')) {
-      info.features.push('basic');
-      info.step = Math.max(info.step, 3);
-    }
-    if (content.includes('розширені') || content.includes('складний') || content.includes('додаткові') || content.includes('advanced')) {
-      info.features.push('advanced');
-      info.step = Math.max(info.step, 3);
-    }
-    if (content.includes('кастомні') || content.includes('індивідуальний') || content.includes('унікальний') || content.includes('custom')) {
-      info.features.push('custom');
-      info.step = Math.max(info.step, 3);
     }
     
     // Extract budget
-    if (content.includes('до 10') || content.includes('менше 10') || content.includes('недорого') || content.includes('under 10')) {
+    if (content.includes('до 10') || content.includes('менше 10')) {
       info.budget = 'under-10k';
-      info.step = Math.max(info.step, 4);
     }
-    if (content.includes('10-25') || content.includes('10 до 25') || content.includes('середній бюджет') || content.includes('10 to 25')) {
+    if (content.includes('10-25') || content.includes('10 до 25')) {
       info.budget = '10k-25k';
-      info.step = Math.max(info.step, 4);
     }
-    if (content.includes('25-50') || content.includes('25 до 50')) {
-      info.budget = '25k-50k';
-      info.step = Math.max(info.step, 4);
-    }
-    if (content.includes('50+') || content.includes('більше 50') || content.includes('дорого') || content.includes('over 25')) {
-      info.budget = '50k+';
-      info.step = Math.max(info.step, 4);
+    if (content.includes('25+') || content.includes('більше 25')) {
+      info.budget = '25k+';
     }
     
     // Extract timeline
-    if (content.includes('1-2') || content.includes('швидко') || content.includes('терміново') || content.includes('1 to 2')) {
+    if (content.includes('1-2') || content.includes('швидко')) {
       info.timeline = '1-2-months';
-      info.step = Math.max(info.step, 5);
     }
-    if (content.includes('3-6') || content.includes('середній термін') || content.includes('нормально') || content.includes('3 to 6')) {
+    if (content.includes('3-6') || content.includes('середній')) {
       info.timeline = '3-6-months';
-      info.step = Math.max(info.step, 5);
     }
-    if (content.includes('6+') || content.includes('довго') || content.includes('не поспішаємо') || content.includes('over 6')) {
-      info.timeline = 'over-6-months';
-      info.step = Math.max(info.step, 5);
+    if (content.includes('6+') || content.includes('довго')) {
+      info.timeline = '6+months';
     }
   });
   
