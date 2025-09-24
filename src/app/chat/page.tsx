@@ -13,6 +13,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
+import ContactTooltip from '../../components/ContactTooltip';
 import ChatWindow from '../../components/ChatWindow';
 import CosmicBackground from '../../components/CosmicBackground';
 
@@ -1139,12 +1140,17 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         </div>
         {/* Estimate Card Sidebar - Desktop only */}
         {showProjectSidebar && projectEstimate && estimateStep >= 2 && (
-          <div className="hidden lg:flex flex-col flex-shrink-0 w-[28rem] pr-8 pt-8">
+          <div className="hidden lg:flex flex-col flex-shrink-0 w-[28rem] pr-8 pt-8 relative">
             <EstimateCard
               estimate={projectEstimate}
               estimateStep={estimateStep}
               conversationType={conversationType}
               onContactManager={handleContactManager}
+              isVisible={true}
+            />
+            {/* Окремий об'єкт збоку від картки */}
+            <ContactTooltip 
+              estimateStep={estimateStep}
               isVisible={true}
             />
           </div>
