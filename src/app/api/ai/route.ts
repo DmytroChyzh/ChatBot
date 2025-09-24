@@ -338,10 +338,8 @@ export async function POST(req: NextRequest) {
     
     let suggestedAnswers = parseSuggestedAnswers(rawContent);
     
-    // Якщо AI не надав кнопки, генеруємо розумні кнопки на основі контексту
-    if (suggestedAnswers.length === 0) {
-      suggestedAnswers = generateSmartButtons(message, conversationHistory, language);
-    }
+    // КНОПКИ ВИДАЛЕНІ - завжди повертаємо порожній масив
+    suggestedAnswers = [];
     
     return NextResponse.json({
       content,
