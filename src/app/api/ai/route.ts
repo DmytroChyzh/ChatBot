@@ -401,10 +401,8 @@ export async function POST(req: NextRequest) {
     
     let suggestedAnswers = parseSuggestedAnswers(rawContent);
     
-    // РОЗУМНІ КНОПКИ НА ОСНОВІ TYPEFORM ПИТАНЬ
-    if (suggestedAnswers.length === 0) {
-      suggestedAnswers = generateSmartButtons(message, conversationHistory, language);
-    }
+    // КНОПКИ ВИДАЛЕНІ - завжди повертаємо порожній масив
+    suggestedAnswers = [];
     
     return NextResponse.json({
       content,
