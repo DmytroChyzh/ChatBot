@@ -159,46 +159,27 @@ function generateSmartButtons(message: string, conversationHistory: any[], langu
     return [];
   }
 
-  // Використовуємо typeform-questions.json для розумних кнопок
-  try {
-    const typeformData = typeformQuestions;
-    const currentStep = Math.min(projectInfo.step + 1, typeformData.questions.length);
-    const currentQuestion = typeformData.questions[currentStep - 1];
-    
-    if (currentQuestion && currentQuestion.buttons) {
-      console.log('Using typeform question:', currentQuestion.question);
-      console.log('Available buttons:', currentQuestion.buttons);
-      
-      // Перевіряємо чи AI задає схоже питання
-      const questionKeywords = getQuestionKeywords(currentQuestion.type);
-      const isRelevantQuestion = questionKeywords.some(keyword => 
-        lastAIMessage.includes(keyword.toLowerCase())
-      );
-      
-      if (isRelevantQuestion) {
-        console.log('Relevant question detected, showing buttons');
-        return currentQuestion.buttons;
-      }
-    }
-  } catch (error) {
-    console.log('Error using typeform data:', error);
-  }
+  // НЕ використовуємо typeform-questions.json поки що - він створює плутанину
+  // Замість цього використовуємо розумне розпізнавання контексту
 
-  // Fallback: розумне розпізнавання контексту
+  // Розумне розпізнавання контексту на основі останнього повідомлення AI
   const contextKeywords = {
-    'project_type': ['тип', 'проект', 'створити', 'зробити', 'розробити', 'сайт', 'додаток', 'app', 'website'],
-    'industry': ['галузь', 'бізнес', 'сфера', 'ресторан', 'магазин', 'послуги', 'авто', 'медицина'],
-    'features': ['функції', 'можливості', 'фічі', 'що', 'які', 'потрібно', 'хочете'],
-    'budget': ['бюджет', 'ціна', 'коштувати', 'доларів', 'гроші', 'скільки', 'вартість'],
-    'timeline': ['термін', 'час', 'коли', 'швидко', 'терміново', 'негайно', 'місяці', 'тижні']
+    'project_type': ['який тип', 'що створити', 'який проект', 'сайт', 'додаток', 'app', 'website', 'мобільний'],
+    'industry': ['яка галузь', 'в якій галузі', 'бізнес', 'сфера', 'ресторан', 'магазин', 'послуги', 'авто', 'медицина'],
+    'features': ['які функції', 'які можливості', 'що потрібно', 'які фічі', 'функціонал'],
+    'budget': ['який бюджет', 'бюджет', 'ціна', 'коштувати', 'доларів', 'гроші', 'скільки', 'вартість', 'терміни'],
+    'timeline': ['коли', 'термін', 'час', 'швидко', 'терміново', 'негайно', 'місяці', 'тижні', 'завершити', 'плануєте']
   };
 
   // Шукаємо відповідний контекст
   for (const [context, keywords] of Object.entries(contextKeywords)) {
     const hasRelevantKeywords = keywords.some(keyword => lastAIMessage.includes(keyword));
+    console.log(`Checking ${context}: keywords=${keywords.join(', ')}, found=${hasRelevantKeywords}`);
     if (hasRelevantKeywords) {
-      console.log(`Detected ${context} context`);
-      return getContextButtons(context, language);
+      console.log(`✅ Detected ${context} context - showing buttons`);
+      const buttons = getContextButtons(context, language);
+      console.log(`Buttons for ${context}:`, buttons);
+      return buttons;
     }
   }
   
