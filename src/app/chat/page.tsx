@@ -274,14 +274,8 @@ export default function ChatPage() {
     try {
       await addMessageToSession(sessionId, userMessage);
       const response = await sendToAI(input);
-      // Додаємо повідомлення про готовність до зв'язку якщо естімейт готовий
+      // НЕ додаємо зайве нагадування в повідомлення
       let finalContent = response.content;
-      if (estimateStep >= 3 && response.content && !response.content.includes('зв\'язатися') && !response.content.includes('менеджер')) {
-        const contactMessage = language === 'uk' 
-          ? '\n\n💬 **Ми можемо зв\'язатися з вами пізніше, але якщо ви хочете швидше з нами зв\'язатися - натисніть кнопку "Зв\'язатися з менеджером"!**'
-          : '\n\n💬 **We can contact you later, but if you want to contact us faster - click the "Contact Manager" button!**';
-        finalContent = response.content + contactMessage;
-      }
 
       const assistantMessage: Omit<Message, 'id'> = {
         role: 'assistant',

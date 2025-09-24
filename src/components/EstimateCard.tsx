@@ -376,16 +376,29 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 
         {/* CTA кнопка та пояснення - завжди внизу */}
         <div className="p-4 lg:p-6 pt-0 space-y-3 lg:space-y-4">
-          <button
-            onClick={() => {
-              console.log('Contact manager button clicked!');
-              onContactManager();
-            }}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-2 lg:py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl text-sm lg:text-base"
-          >
-            <span className="hidden sm:inline">{language === 'uk' ? 'Зв\'язатися з менеджером' : 'Contact Manager'}</span>
-            <span className="sm:hidden">{language === 'uk' ? 'Зв\'язатися' : 'Contact'}</span>
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => {
+                console.log('Contact manager button clicked!');
+                onContactManager();
+              }}
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-2 lg:py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl text-sm lg:text-base"
+            >
+              <span className="hidden sm:inline">{language === 'uk' ? 'Зв\'язатися з менеджером' : 'Contact Manager'}</span>
+              <span className="sm:hidden">{language === 'uk' ? 'Зв\'язатися' : 'Contact'}</span>
+            </button>
+            
+            {/* Tooltip після 5 питань */}
+            {estimateStep >= 5 && (
+              <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg shadow-lg z-10 whitespace-nowrap">
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                {language === 'uk' 
+                  ? '💬 Ми можемо зв\'язатися з вами пізніше, але якщо хочете швидше - натисніть кнопку!'
+                  : '💬 We can contact you later, but if you want faster - click the button!'
+                }
+              </div>
+            )}
+          </div>
 
           {/* Пояснення */}
           <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
