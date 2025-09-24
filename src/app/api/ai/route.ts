@@ -15,25 +15,28 @@ You communicate with the client as a human: answer any questions about Cieden, g
 
 IMPORTANT: Always respond in ${language === 'uk' ? 'Ukrainian' : 'English'} language. Never mix languages in your responses.
 
-🎯 SIMPLE PROJECT CONSULTATION:
-Ask ONE simple question at a time, like a real consultant would.
+🎯 SMART PROJECT CONSULTATION:
+Use structured questions to guide the conversation naturally, but rephrase them conversationally.
 
-📋 QUESTION RULES:
-- Keep questions SHORT and SIMPLE
-- Ask ONE thing at a time
-- Be conversational and friendly
-- Don't overwhelm with multiple questions
+📋 QUESTION FLOW (based on typeform):
+1. "What type of project are you hiring for?" - Understand their main goal
+2. "What type of product or service are you building?" - Learn about their business  
+3. "Do you have product specifications ready?" - Assess their preparation level
+4. "What is your goal?" - Understand their objectives
+5. "What level of time commitment will you require?" - Learn about their needs
+6. "How many designers do you need?" - Understand team requirements
+7. "How long do you need help with design?" - Timeline expectations
+8. "When do you need us to start?" - Urgency and planning
+9. "How big is the scope of work?" - Project size assessment
+10. "What services do you need?" - Specific requirements
+11. "How complex is your app?" - Technical complexity
 
-🧠 CONVERSATION FLOW:
-- ALWAYS read the conversation history first
-- Understand what the client already told you
-- Ask questions in LOGICAL ORDER:
-  1. First: What type of project? (Website, App, etc.)
-  2. Second: What industry/business? (Restaurant, Store, etc.)
-  3. Third: What features needed? (Simple, Advanced, etc.)
-  4. Fourth: Budget and timeline
-- If client says "I don't know" - ask a different, simpler question
-- If client gives specific answer - acknowledge it and ask next logical question
+🧠 CONVERSATION RULES:
+- Ask ONE question at a time, naturally
+- Use the typeform questions as a guide, but rephrase them conversationally
+- Build on previous answers to make questions more personal
+- If client says "I don't know" - simplify the question or ask differently
+- If client gives specific answer - acknowledge it and move to next logical question
 - NEVER repeat questions you already know answers to
 - ADAPT your questions based on what client already said
 
@@ -134,10 +137,70 @@ function parseSuggestedAnswers(text: string): string[] {
   return Array.from(new Set(arr.filter(Boolean)));
 }
 
-// КНОПКИ ПОВНІСТЮ ВИДАЛЕНІ - AI працює без них
+// РОЗУМНА СИСТЕМА КНОПОК НА ОСНОВІ TYPEFORM ПИТАНЬ
 function generateSmartButtons(message: string, conversationHistory: any[], language: string = 'en'): string[] {
-  // Повертаємо порожній масив - кнопок немає
+  const projectInfo = extractProjectInfo(conversationHistory);
+  const lastAIMessage = conversationHistory.filter((msg: any) => msg.role === 'assistant').pop()?.content?.toLowerCase() || '';
+  
+  console.log('=== SMART BUTTONS DEBUG ===');
+  console.log('Project info step:', projectInfo.step);
+  console.log('Last AI message:', lastAIMessage);
+  
+  // Якщо AI не задає питання, кнопки не потрібні
+  if (!lastAIMessage.includes('?')) {
+    console.log('AI is not asking a question - no buttons');
+    return [];
+  }
+  
+  try {
+    // Отримуємо поточне питання з typeform
+    const currentQuestion = getCurrentTypeformQuestion(projectInfo.step);
+    
+    if (currentQuestion && currentQuestion.buttons) {
+      console.log('Using typeform question:', currentQuestion.question);
+      console.log('Available buttons:', currentQuestion.buttons);
+      
+      // Перевіряємо чи AI задає схоже питання
+      const isRelevantQuestion = isQuestionRelevant(lastAIMessage, currentQuestion.type);
+      
+      if (isRelevantQuestion) {
+        console.log('✅ Relevant question detected - showing buttons');
+        return currentQuestion.buttons;
+      }
+    }
+  } catch (error) {
+    console.log('Error using typeform data:', error);
+  }
+  
+  console.log('No relevant question detected - no buttons');
   return [];
+}
+
+// Отримуємо поточне питання з typeform на основі кроку
+function getCurrentTypeformQuestion(step: number) {
+  const typeformData = typeformQuestions;
+  const questionIndex = Math.min(step, typeformData.questions.length - 1);
+  return typeformData.questions[questionIndex];
+}
+
+// Перевіряємо чи AI задає релевантне питання
+function isQuestionRelevant(aiMessage: string, questionType: string) {
+  const keywordsMap: { [key: string]: string[] } = {
+    'project_type': ['type', 'project', 'hiring', 'build', 'create', 'develop'],
+    'product_type': ['product', 'service', 'building', 'creating', 'developing'],
+    'specifications': ['specifications', 'ready', 'ideas', 'documentation', 'research'],
+    'goal': ['goal', 'objective', 'purpose', 'want', 'need', 'looking'],
+    'time_commitment': ['time', 'commitment', 'hours', 'week', 'schedule'],
+    'team_size': ['designers', 'team', 'people', 'members', 'size'],
+    'duration': ['long', 'duration', 'months', 'weeks', 'help', 'design'],
+    'start_date': ['start', 'begin', 'when', 'immediately', 'timeline'],
+    'scope': ['scope', 'size', 'big', 'project', 'work', 'enterprise'],
+    'services': ['services', 'need', 'ux', 'ui', 'research', 'prototyping'],
+    'complexity': ['complex', 'app', 'simple', 'advanced', 'enterprise']
+  };
+  
+  const keywords = keywordsMap[questionType] || [];
+  return keywords.some(keyword => aiMessage.includes(keyword));
 }
 
 // Всі функції для кнопок видалені - вони більше не потрібні
@@ -338,8 +401,10 @@ export async function POST(req: NextRequest) {
     
     let suggestedAnswers = parseSuggestedAnswers(rawContent);
     
-    // КНОПКИ ВИДАЛЕНІ - завжди повертаємо порожній масив
-    suggestedAnswers = [];
+    // РОЗУМНІ КНОПКИ НА ОСНОВІ TYPEFORM ПИТАНЬ
+    if (suggestedAnswers.length === 0) {
+      suggestedAnswers = generateSmartButtons(message, conversationHistory, language);
+    }
     
     return NextResponse.json({
       content,

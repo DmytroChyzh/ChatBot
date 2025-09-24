@@ -3,74 +3,73 @@
     {
       "id": 1,
       "type": "project_type",
-      "question": "Який тип проекту вас цікавить?",
-      "buttons": ["Веб-сайт", "Мобільний додаток", "E-commerce", "Dashboard", "Не знаю"],
-      "followUp": {
-        "Мобільний додаток": {
-          "question": "Для яких платформ потрібен додаток?",
-          "buttons": ["Тільки Android", "Тільки iOS", "Android + iOS", "Android + iOS + Web", "Не знаю"]
-        }
-      }
+      "question": "What type of project are you hiring for?",
+      "buttons": [
+        "I want to build new product or service",
+        "I need ongoing assistance or consultation (extend my team)",
+        "I have existing project that needs UX/UI improvements",
+        "None of the above, I'm just looking to learn more"
+      ]
     },
     {
       "id": 2,
       "type": "product_type",
-      "question": "Який тип продукту або сервісу ви створюєте?",
-      "buttons": ["B2C SaaS", "B2B SaaS", "Business automation", "Marketplace", "Інше"]
+      "question": "What type of product or service are you building?",
+      "buttons": ["B2C SaaS", "B2B SaaS", "Business automation", "Marketplace", "Other"]
     },
     {
       "id": 3,
       "type": "specifications",
-      "question": "Чи готові у вас специфікації продукту?",
-      "buttons": ["Потрібне дослідження", "Є чіткі ідеї", "Готові специфікації", "Потрібна допомога"]
+      "question": "Do you have product specifications ready?",
+      "buttons": ["Need research first", "Have clear ideas", "Have written specs", "Need help documenting"]
     },
     {
       "id": 4,
       "type": "goal",
-      "question": "Яка ваша мета для цього проекту?",
-      "buttons": ["Дизайн MVP", "Створити launchpad", "Повний дизайн продукту", "Потрібна консультація"]
+      "question": "What is your goal?",
+      "buttons": ["Design MVP", "Build launchpad", "Full product design", "Need consultation"]
     },
     {
       "id": 5,
       "type": "time_commitment",
-      "question": "Який рівень затрат часу ви плануєте?",
-      "buttons": ["Full time (40 год/тиждень)", "Part time", "Одноразовий проект", "Фіксована ціна"]
+      "question": "What level of time commitment will you require?",
+      "buttons": ["Full time (40 hrs/week)", "Part time", "One time project", "Fixed price service"]
     },
     {
       "id": 6,
       "type": "team_size",
-      "question": "Скільки дизайнерів вам потрібно?",
-      "buttons": ["Один дизайнер", "Кілька дизайнерів", "Кросс-функціональна команда", "Вирішу пізніше"]
+      "question": "How many designers do you need?",
+      "buttons": ["One designer", "Multiple designers", "Cross-functional team", "Decide later"]
     },
     {
       "id": 7,
       "type": "duration",
-      "question": "Як довго потрібна допомога з дизайном?",
-      "buttons": ["Тиждень", "2-3 тижні", "1-3 місяці", "3-6 місяців", "6+ місяців"]
+      "question": "How long do you need help with design?",
+      "buttons": ["A week", "2-3 weeks", "1-3 months", "3-6 months", "6+ months"]
     },
     {
       "id": 8,
       "type": "start_date",
-      "question": "Коли потрібно почати роботу?",
-      "buttons": ["Негайно", "1-2 тижні", "Через місяць", "1-3 місяці", "3+ місяці"]
+      "question": "When do you need us to start?",
+      "buttons": ["Immediately", "1-2 weeks", "In a month", "1-3 months", "3+ months"]
     },
     {
       "id": 9,
       "type": "scope",
-      "question": "Який розмір проекту?",
-      "buttons": ["Малий проект", "Середній проект", "Великий проект", "Enterprise проект", "Не знаю"]
+      "question": "How big is the scope of work?",
+      "buttons": ["Small project", "Medium project", "Large project", "Enterprise project", "Not sure"]
     },
     {
       "id": 10,
       "type": "services",
-      "question": "Які послуги вам потрібні?",
-      "buttons": ["UX Research", "UI Design", "Prototyping", "Design System", "Всі послуги"]
+      "question": "What services do you need?",
+      "buttons": ["UX Research", "UI Design", "Prototyping", "Design System", "All services"]
     },
     {
       "id": 11,
       "type": "complexity",
-      "question": "Наскільки складний ваш додаток?",
-      "buttons": ["Essential (простий)", "Advanced (складний)", "Enterprise-grade", "Потрібна оцінка"]
+      "question": "How complex is your app?",
+      "buttons": ["Essential (simple)", "Advanced (complex)", "Enterprise-grade", "Need assessment"]
     }
   ],
   "pricing": {
