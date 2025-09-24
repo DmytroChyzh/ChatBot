@@ -30,7 +30,12 @@ export async function POST(request: NextRequest) {
       content: msg.content
     }));
 
+    console.log('=== ESTIMATOR DEBUG ===');
+    console.log('Project description:', projectDescription);
+    console.log('Conversation history length:', conversationHistory.length);
+
     // Викликаємо AI аналізатор
+    console.log('Calling AI project analyzer...');
     const analysisResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/ai-project-analyzer`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -40,24 +45,33 @@ export async function POST(request: NextRequest) {
       })
     });
 
+    console.log('Analysis response status:', analysisResponse.status);
     if (!analysisResponse.ok) {
+      const errorText = await analysisResponse.text();
+      console.error('AI analyzer failed:', errorText);
       throw new Error('Failed to analyze project');
     }
 
     const { analysis } = await analysisResponse.json();
+    console.log('Analysis result:', analysis);
 
     // Викликаємо динамічний калькулятор
+    console.log('Calling dynamic estimator...');
     const estimateResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/dynamic-estimator`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ analysis })
     });
 
+    console.log('Estimate response status:', estimateResponse.status);
     if (!estimateResponse.ok) {
+      const errorText = await estimateResponse.text();
+      console.error('Dynamic estimator failed:', errorText);
       throw new Error('Failed to calculate estimate');
     }
 
     const { estimate: dynamicEstimate } = await estimateResponse.json();
+    console.log('Dynamic estimate result:', dynamicEstimate);
 
     // Зберігаємо результат динамічного естімейту
     await saveWorkerResults(sessionId, 'estimator', dynamicEstimate);
