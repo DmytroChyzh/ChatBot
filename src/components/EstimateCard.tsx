@@ -300,20 +300,24 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 
         {/* Фази проекту з покращеннями */}
         <div>
-          <div className="flex items-center justify-between mb-3">
+          {/* Заголовок з кнопкою згортання на малих екранах */}
+          <button
+            onClick={() => setExpandedPhase(expandedPhase ? null : 'all')}
+            className="w-full flex items-center justify-between mb-3 lg:mb-3 lg:pointer-events-none"
+          >
             <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {language === 'uk' ? 'Етапи дизайн-процесу' : 'Design Process Stages'}
             </h4>
-            {/* Показуємо кнопку тільки на малих екранах */}
-            <button
-              onClick={() => setExpandedPhase(expandedPhase ? null : 'all')}
-              className="text-xs text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors lg:hidden"
-            >
-              {expandedPhase ? (language === 'uk' ? 'Згорнути все' : 'Collapse all') : (language === 'uk' ? 'Розгорнути все' : 'Expand all')}
-            </button>
-          </div>
+            {/* Стрілка тільки на малих екранах */}
+            <ArrowRight 
+              className={`w-4 h-4 text-gray-500 transition-transform lg:hidden ${
+                expandedPhase ? 'rotate-90' : ''
+              }`} 
+            />
+          </button>
           
-          <div className="space-y-2">
+          {/* На малих екранах - згортаємо весь блок, на великих - показуємо завжди */}
+          <div className={`space-y-2 lg:block ${expandedPhase ? 'block' : 'hidden lg:block'}`}>
             {Object.entries(estimate.phases).map(([phaseKey, description]) => {
               // Мапінг назв фаз для відображення
               const getPhaseDisplayName = (key: string) => {
@@ -327,7 +331,6 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 return phaseNames[key] || description;
               };
 
-
               return (
                 <div key={phaseKey} className="border border-gray-200 dark:border-gray-600 rounded-lg">
                   <button
@@ -340,16 +343,20 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                         {getPhaseDisplayName(phaseKey)}
                       </span>
                     </div>
-                    {/* Показуємо стрілку тільки на малих екранах, на великих завжди розгорнуто */}
+                    {/* На великих екранах - стрілка для окремих етапів, на малих - прихована */}
                     <ArrowRight 
-                      className={`w-4 h-4 text-gray-500 transition-transform lg:hidden ${
+                      className={`w-4 h-4 text-gray-500 transition-transform hidden lg:block ${
                         expandedPhase === phaseKey ? 'rotate-90' : ''
                       }`} 
                     />
                   </button>
                   
-                  {/* На великих екранах завжди показуємо, на малих - залежно від expandedPhase */}
-                  <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 lg:block ${expandedPhase === phaseKey ? 'block' : 'hidden lg:block'}`}>
+                  {/* На великих екранах - залежно від expandedPhase, на малих - завжди показуємо якщо розгорнуто весь блок */}
+                  <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 ${
+                    expandedPhase === phaseKey ? 'block' : 
+                    expandedPhase === 'all' ? 'block lg:hidden' : 
+                    'hidden lg:block'
+                  }`}>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 mb-3">
                       {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
                         getPhaseDescription(phaseKey)
