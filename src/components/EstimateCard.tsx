@@ -55,6 +55,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 }) => {
   const { t, language } = useLanguage();
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown visibility
 
   // Функція для отримання описів фаз дизайну
   const getPhaseDescription = (phaseKey: string): string => {
@@ -304,8 +305,8 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
           <div className="relative">
             <button
               onClick={() => {
-                console.log('Phase dropdown clicked, current expandedPhase:', expandedPhase);
-                setExpandedPhase(expandedPhase ? null : 'all');
+                console.log('Phase dropdown clicked, current isDropdownOpen:', isDropdownOpen);
+                setIsDropdownOpen(!isDropdownOpen);
               }}
               className="w-full flex items-center justify-between p-3 bg-[#404040] border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:scale-95"
             >
@@ -319,13 +320,13 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               </div>
               <ArrowRight 
                 className={`w-4 h-4 text-white transition-transform ${
-                  expandedPhase ? 'rotate-90' : ''
+                  isDropdownOpen ? 'rotate-90' : ''
                 }`} 
               />
             </button>
             
             {/* Dropdown контент */}
-            <div className={`mt-2 space-y-2 ${expandedPhase ? 'block' : 'hidden'}`}>
+            <div className={`mt-2 space-y-2 ${isDropdownOpen ? 'block' : 'hidden'}`}>
             {Object.entries(estimate.phases).map(([phaseKey, description]) => {
               // Мапінг назв фаз для відображення
               const getPhaseDisplayName = (key: string) => {
@@ -361,9 +362,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                   
                   {/* Деталі етапу */}
                   <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-b-lg ${
-                    expandedPhase === phaseKey ? 'block' : 
-                    expandedPhase === 'all' ? 'block' : 
-                    'hidden'
+                    expandedPhase === phaseKey ? 'block' : 'hidden'
                   }`}>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 mb-3">
                       {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
