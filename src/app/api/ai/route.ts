@@ -5,6 +5,7 @@ import { getChatSession, updateProjectCard } from '../../../lib/firestore';
 import { ProjectCardState } from '../../../types/chat';
 import { parseProjectInfoFromText } from '../../../utils/parseProjectInfo';
 import typeformQuestions from '../../../data/typeform-questions.json';
+import { getFeaturesByProjectType } from '../../../utils/projectFeatures';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -22,10 +23,15 @@ Cieden provides ONLY design services:
 We do NOT provide: development, coding, programming, or technical implementation.
 
 🌍 LANGUAGE DETECTION:
-- Match client's language (English/Ukrainian)
-- Never mix languages in responses
-- If client writes in English → respond in English
-- If client writes in Ukrainian → respond in Ukrainian
+- Automatically detect ANY client language
+- Always respond in the same language the client uses
+- Never mix languages in a single response
+
+🎯 SCOPE CLARITY:
+- ONLY talk about Cieden and its design services
+- If client asks about unrelated topics → politely decline and redirect to design
+- If client asks about development/coding → politely decline and redirect to design
+- Always bring conversation back to design and the company
 
 💬 CONVERSATION STYLE:
 - Keep responses under 50 words
@@ -34,16 +40,46 @@ We do NOT provide: development, coding, programming, or technical implementation
 - Ask ONE question at a time
 - Acknowledge answers before asking next
 
-📋 QUESTION FLOW (Natural Order):
-1. Project Type → "What kind of project do you need?"
-2. Industry → "What industry is your business in?"
-3. Goals/Features → "What are you trying to achieve?"
-4. Budget → "What's your budget range?"
-5. Timeline → "When do you need this completed?"
+🎯 SMART CONSULTATION APPROACH:
+When client asks about pricing/cost, DON'T ask "What features do you need?" 
+Instead, be a helpful consultant:
+
+1. ACKNOWLEDGE their question about cost
+2. EXPLAIN you need more info to give accurate estimate
+3. SHOW them common features for their project type (based on our real projects)
+4. LET them choose what they need
+5. THEN ask follow-up questions
+
+📋 EXAMPLE RESPONSES:
+
+Client: "How much does a bicycle sales website cost?"
+You: "Great question! To give you an accurate estimate, I need to understand your needs. 
+Here are common features for bicycle sales websites (based on our real projects):
+• Product catalog with filters
+• Shopping cart & checkout
+• User accounts
+• Mobile version
+• Admin panel
+• Payment system
+• Analytics
+
+Which of these do you need?"
+
+Client: "How much for a business website?"
+You: "I'd love to help! Business websites typically cost $3,000-8,000 (based on our projects).
+Here are common features:
+• Homepage design
+• Service/product pages  
+• Contact forms
+• Mobile responsive
+• SEO optimization
+• Blog section
+
+What type of business are you in?"
 
 🎯 SMART QUESTIONING:
 - Build on previous answers
-- If client says "I don't know" → ask differently
+- If client says "I don't know" → show options first
 - Never repeat questions already asked
 - Adapt questions based on context
 - Focus on business goals behind the project
@@ -295,8 +331,14 @@ export async function POST(req: NextRequest) {
       }))
     : [];
     
+  // Додаємо інформацію про функції проекту до контексту
+  const projectFeatures = getFeaturesByProjectType(message.toLowerCase());
+  const featuresContext = projectFeatures.length > 0 ? 
+    `\n\nAvailable features for this project type:\n${projectFeatures.map(f => `• ${f.name} - ${f.description} (${f.priceRange})`).join('\n')}` : '';
+    
   console.log('Conversation context:', conversationContext);
   console.log('Current message:', message);
+  console.log('Project features found:', projectFeatures.length);
 
   let completion;
   
@@ -308,7 +350,7 @@ export async function POST(req: NextRequest) {
         model: "claude-3-haiku-20240307",
         max_tokens: 1000,
         system: SYSTEM_PROMPT(language),
-        messages: conversationContext.concat([{ role: "user", content: message }])
+        messages: conversationContext.concat([{ role: "user", content: message + featuresContext }])
       });
     } catch (error) {
       console.log('Claude failed, falling back to GPT-3.5:', error);
@@ -318,7 +360,7 @@ export async function POST(req: NextRequest) {
         messages: [
           { role: "system", content: SYSTEM_PROMPT(language) },
           ...conversationContext,
-          { role: "user", content: message }
+          { role: "user", content: message + featuresContext }
         ],
         max_tokens: 1000,
         temperature: 0.7
@@ -328,11 +370,11 @@ export async function POST(req: NextRequest) {
     // Використовуємо GPT-3.5 для складних питань
     completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT(language) },
-        ...conversationContext,
-        { role: "user", content: message }
-      ],
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT(language) },
+          ...conversationContext,
+          { role: "user", content: message + featuresContext }
+        ],
       max_tokens: 1000,
       temperature: 0.7
     });
