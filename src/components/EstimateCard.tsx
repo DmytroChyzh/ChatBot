@@ -300,27 +300,32 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
 
         {/* Фази проекту з покращеннями */}
         <div>
-          {/* Заголовок з кнопкою згортання на малих екранах */}
-          <button
-            onClick={() => {
-              console.log('Phase button clicked, current expandedPhase:', expandedPhase);
-              setExpandedPhase(expandedPhase ? null : 'all');
-            }}
-            className="w-full flex items-center justify-between mb-3 lg:mb-3"
-          >
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {language === 'uk' ? 'Етапи дизайн-процесу' : 'Design Process Stages'}
-            </h4>
-            {/* Стрілка на всіх екранах */}
-            <ArrowRight 
-              className={`w-4 h-4 text-gray-500 transition-transform ${
-                expandedPhase ? 'rotate-90' : ''
-              }`} 
-            />
-          </button>
-          
-          {/* На малих екранах - згортаємо весь блок, на великих - показуємо завжди */}
-          <div className={`space-y-3 ${expandedPhase ? 'block' : 'hidden'}`}>
+          {/* Dropdown кнопка для етапів */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                console.log('Phase dropdown clicked, current expandedPhase:', expandedPhase);
+                setExpandedPhase(expandedPhase ? null : 'all');
+              }}
+              className="w-full flex items-center justify-between p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:scale-95"
+            >
+              <div className="flex items-center gap-2">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {language === 'uk' ? 'Етапи дизайн-процесу' : 'Design Process Stages'}
+                </h4>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  ({Object.keys(estimate.phases).length} {language === 'uk' ? 'етапів' : 'stages'})
+                </span>
+              </div>
+              <ArrowRight 
+                className={`w-4 h-4 text-gray-500 transition-transform ${
+                  expandedPhase ? 'rotate-90' : ''
+                }`} 
+              />
+            </button>
+            
+            {/* Dropdown контент */}
+            <div className={`mt-2 space-y-2 ${expandedPhase ? 'block' : 'hidden'}`}>
             {Object.entries(estimate.phases).map(([phaseKey, description]) => {
               // Мапінг назв фаз для відображення
               const getPhaseDisplayName = (key: string) => {
@@ -335,10 +340,10 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               };
 
               return (
-                <div key={phaseKey} className="border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-200">
+                <div key={phaseKey} className="bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
                   <button
                     onClick={() => setExpandedPhase(expandedPhase === phaseKey ? null : phaseKey)}
-                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 rounded-lg cursor-pointer active:scale-95"
+                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 rounded-lg cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-green-500" />
@@ -354,8 +359,8 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                     />
                   </button>
                   
-                  {/* На великих екранах - залежно від expandedPhase, на малих - завжди показуємо якщо розгорнуто весь блок */}
-                  <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 rounded-b-lg ${
+                  {/* Деталі етапу */}
+                  <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-b-lg ${
                     expandedPhase === phaseKey ? 'block' : 
                     expandedPhase === 'all' ? 'block' : 
                     'hidden'
@@ -389,6 +394,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 </div>
               );
             })}
+            </div>
           </div>
         </div>
 
