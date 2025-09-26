@@ -320,7 +320,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
           </button>
           
           {/* На малих екранах - згортаємо весь блок, на великих - показуємо завжди */}
-          <div className={`space-y-2 ${expandedPhase ? 'block' : 'hidden'}`}>
+          <div className={`space-y-3 ${expandedPhase ? 'block' : 'hidden'}`}>
             {Object.entries(estimate.phases).map(([phaseKey, description]) => {
               // Мапінг назв фаз для відображення
               const getPhaseDisplayName = (key: string) => {
@@ -335,10 +335,10 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               };
 
               return (
-                <div key={phaseKey} className="border border-gray-200 dark:border-gray-600 rounded-lg">
+                <div key={phaseKey} className="border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-200">
                   <button
                     onClick={() => setExpandedPhase(expandedPhase === phaseKey ? null : phaseKey)}
-                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 rounded-lg cursor-pointer active:scale-95"
                   >
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-green-500" />
@@ -355,7 +355,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                   </button>
                   
                   {/* На великих екранах - залежно від expandedPhase, на малих - завжди показуємо якщо розгорнуто весь блок */}
-                  <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 ${
+                  <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 rounded-b-lg ${
                     expandedPhase === phaseKey ? 'block' : 
                     expandedPhase === 'all' ? 'block' : 
                     'hidden'
