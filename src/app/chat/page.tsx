@@ -13,7 +13,6 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import InputBox from '../../components/InputBox';
 import Header from '../../components/Header';
 import EstimateCard from '../../components/EstimateCard';
-import ContactTooltip from '../../components/ContactTooltip';
 import ChatWindow from '../../components/ChatWindow';
 import CosmicBackground from '../../components/CosmicBackground';
 
@@ -1146,11 +1145,6 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
               estimateStep={estimateStep}
               conversationType={conversationType}
               onContactManager={handleContactManager}
-              isVisible={true}
-            />
-            {/* Окремий об'єкт збоку від картки */}
-            <ContactTooltip 
-              estimateStep={estimateStep}
               isVisible={true}
             />
           </div>
