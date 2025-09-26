@@ -302,7 +302,10 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
         <div>
           {/* Заголовок з кнопкою згортання на малих екранах */}
           <button
-            onClick={() => setExpandedPhase(expandedPhase ? null : 'all')}
+            onClick={() => {
+              console.log('Phase button clicked, current expandedPhase:', expandedPhase);
+              setExpandedPhase(expandedPhase ? null : 'all');
+            }}
             className="w-full flex items-center justify-between mb-3 lg:mb-3 lg:pointer-events-none"
           >
             <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -317,7 +320,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
           </button>
           
           {/* На малих екранах - згортаємо весь блок, на великих - показуємо завжди */}
-          <div className={`space-y-2 lg:block ${expandedPhase ? 'block' : 'hidden lg:block'}`}>
+          <div className={`space-y-2 ${expandedPhase ? 'block' : 'hidden lg:block'}`}>
             {Object.entries(estimate.phases).map(([phaseKey, description]) => {
               // Мапінг назв фаз для відображення
               const getPhaseDisplayName = (key: string) => {
@@ -354,7 +357,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                   {/* На великих екранах - залежно від expandedPhase, на малих - завжди показуємо якщо розгорнуто весь блок */}
                   <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 ${
                     expandedPhase === phaseKey ? 'block' : 
-                    expandedPhase === 'all' ? 'block lg:hidden' : 
+                    expandedPhase === 'all' ? 'block' : 
                     'hidden lg:block'
                   }`}>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 mb-3">
