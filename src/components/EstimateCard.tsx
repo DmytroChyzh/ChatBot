@@ -307,18 +307,18 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 console.log('Phase dropdown clicked, current expandedPhase:', expandedPhase);
                 setExpandedPhase(expandedPhase ? null : 'all');
               }}
-              className="w-full flex items-center justify-between p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:scale-95"
+              className="w-full flex items-center justify-between p-3 bg-[#404040] border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:scale-95"
             >
               <div className="flex items-center gap-2">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <h4 className="text-sm font-medium text-white">
                   {language === 'uk' ? 'Етапи дизайн-процесу' : 'Design Process Stages'}
                 </h4>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className="text-xs text-gray-300">
                   ({Object.keys(estimate.phases).length} {language === 'uk' ? 'етапів' : 'stages'})
                 </span>
               </div>
               <ArrowRight 
-                className={`w-4 h-4 text-gray-500 transition-transform ${
+                className={`w-4 h-4 text-white transition-transform ${
                   expandedPhase ? 'rotate-90' : ''
                 }`} 
               />
