@@ -308,25 +308,25 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 console.log('Phase dropdown clicked, current isDropdownOpen:', isDropdownOpen);
                 setIsDropdownOpen(!isDropdownOpen);
               }}
-              className="w-full flex items-center justify-between p-3 bg-[#404040] xl:bg-gray-100 xl:dark:bg-gray-700 xl:text-gray-900 xl:dark:text-white border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:scale-95 xl:cursor-default"
+              className="w-full flex items-center justify-between p-3 bg-[#404040] border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:scale-95"
             >
               <div className="flex items-center gap-2">
-                <h4 className="text-sm font-medium text-white xl:text-gray-900 xl:dark:text-white">
+                <h4 className="text-sm font-medium text-white">
                   {language === 'uk' ? 'Етапи дизайн-процесу' : 'Design Process Stages'}
                 </h4>
-                <span className="text-xs text-gray-300 xl:text-gray-600 xl:dark:text-gray-400">
+                <span className="text-xs text-gray-300">
                   ({Object.keys(estimate.phases).length} {language === 'uk' ? 'етапів' : 'stages'})
                 </span>
               </div>
               <ArrowRight 
-                className={`w-4 h-4 text-white xl:text-gray-500 xl:dark:text-gray-400 transition-transform ${
+                className={`w-4 h-4 text-white transition-transform ${
                   isDropdownOpen ? 'rotate-90' : ''
-                } xl:hidden`} 
+                }`} 
               />
             </button>
             
-            {/* Dropdown контент - на великих екранах завжди відкритий, на менших - dropdown */}
-            <div className={`mt-2 space-y-2 ${isDropdownOpen ? 'block' : 'hidden'} xl:block`}>
+            {/* Dropdown контент */}
+            <div className={`mt-2 space-y-2 ${isDropdownOpen ? 'block' : 'hidden'}`}>
             {Object.entries(estimate.phases).map(([phaseKey, description]) => {
               // Мапінг назв фаз для відображення
               const getPhaseDisplayName = (key: string) => {
@@ -356,14 +356,14 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                     <ArrowRight 
                       className={`w-3 h-3 text-gray-400 dark:text-gray-500 transition-transform ${
                         expandedPhase === phaseKey ? 'rotate-90' : ''
-                      } xl:hidden`} 
+                      }`} 
                     />
                   </button>
                   
                   {/* Деталі етапу */}
                   <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-600 rounded-b-md ${
                     expandedPhase === phaseKey ? 'block' : 'hidden'
-                  } xl:block`}>
+                  }`}>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 mb-3">
                       {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
                         getPhaseDescription(phaseKey)
