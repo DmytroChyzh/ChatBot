@@ -341,10 +341,10 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               };
 
               return (
-                <div key={phaseKey} className="bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div key={phaseKey} className="bg-gray-50 dark:bg-gray-700 rounded-md border-l-4 border-l-blue-400 shadow-sm">
                   <button
                     onClick={() => setExpandedPhase(expandedPhase === phaseKey ? null : phaseKey)}
-                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 rounded-lg cursor-pointer"
+                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 rounded-md cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-green-500" />
@@ -354,14 +354,14 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                     </div>
                     {/* Стрілка для окремих етапів на всіх екранах */}
                     <ArrowRight 
-                      className={`w-4 h-4 text-gray-500 transition-transform ${
+                      className={`w-3 h-3 text-gray-400 dark:text-gray-500 transition-transform ${
                         expandedPhase === phaseKey ? 'rotate-90' : ''
                       }`} 
                     />
                   </button>
                   
                   {/* Деталі етапу */}
-                  <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-b-lg ${
+                  <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-600 rounded-b-md ${
                     expandedPhase === phaseKey ? 'block' : 'hidden'
                   }`}>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 mb-3">
