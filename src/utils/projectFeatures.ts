@@ -255,6 +255,62 @@ export function getDashboardFeatures(): ProjectFeature[] {
   return commonFeatures;
 }
 
+// Отримуємо функції для мобільних додатків
+export function getMobileAppFeatures(): ProjectFeature[] {
+  const mobileAppFeatures = [
+    {
+      name: "Реєстрація та авторизація",
+      description: "Вхід через email, телефон, соціальні мережі",
+      priceRange: "Включено в базову ціну",
+      exampleProject: "Refmax Real Estate Platform"
+    },
+    {
+      name: "Каталог товарів/послуг",
+      description: "Пошук, фільтри, категорії, детальні сторінки",
+      priceRange: "Включено в базову ціну",
+      exampleProject: "Living Sunshine Website"
+    },
+    {
+      name: "Корзина та замовлення",
+      description: "Додавання товарів, оформлення замовлення",
+      priceRange: "Включено в базову ціну",
+      exampleProject: "Refmax Real Estate Platform"
+    },
+    {
+      name: "Система оплати",
+      description: "Картки, PayPal, Apple Pay, Google Pay",
+      priceRange: "+$1,500-3,000",
+      exampleProject: "Property Management System"
+    },
+    {
+      name: "Push-повідомлення",
+      description: "Сповіщення про замовлення, статуси, акції",
+      priceRange: "+$1,000-2,000",
+      exampleProject: "Refmax Real Estate Platform"
+    },
+    {
+      name: "Геолокація та доставка",
+      description: "Відстеження доставки, карти, маршрути",
+      priceRange: "+$2,000-4,000",
+      exampleProject: "Property Management System"
+    },
+    {
+      name: "Особистий кабінет",
+      description: "Профіль, історія замовлень, налаштування",
+      priceRange: "Включено в базову ціну",
+      exampleProject: "Refmax Real Estate Platform"
+    },
+    {
+      name: "Чат та підтримка",
+      description: "Онлайн-чат з підтримкою, FAQ",
+      priceRange: "+$1,500-2,500",
+      exampleProject: "BruhnPartner Platform"
+    }
+  ];
+
+  return mobileAppFeatures;
+}
+
 // Допоміжні функції
 function getFeatureDescription(feature: string): string {
   const descriptions: { [key: string]: string } = {
@@ -315,6 +371,15 @@ export function getFeaturesByProjectType(projectType: string): ProjectFeature[] 
     case 'дашборд':
     case 'веб-додаток':
       return getDashboardFeatures();
+    
+    case 'mobile-app':
+    case 'mobile':
+    case 'мобільний':
+    case 'мобільний застосунок':
+    case 'мобільний додаток':
+    case 'застосунок':
+    case 'додаток':
+      return getMobileAppFeatures();
     
     default:
       return getWebsiteFeatures(); // Fallback

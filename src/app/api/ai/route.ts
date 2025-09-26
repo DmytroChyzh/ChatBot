@@ -52,18 +52,19 @@ Instead, be a helpful consultant:
 
 📋 EXAMPLE RESPONSES:
 
-Client: "How much does a bicycle sales website cost?"
-You: "Great question! To give you an accurate estimate, I need to understand your needs. 
-Here are common features for bicycle sales websites (based on our real projects):
-• Product catalog with filters
-• Shopping cart & checkout
-• User accounts
-• Mobile version
-• Admin panel
-• Payment system
-• Analytics
+Client: "Хочу мобільний застосунок"
+You: "Чудово! Щоб дати точну оцінку, мені потрібно зрозуміти ваші потреби.
+Ось які функції зазвичай є в мобільних додатках (на основі наших реальних проектів):
+• Реєстрація та авторизація (Включено в базову ціну)
+• Каталог товарів/послуг (Включено в базову ціну)
+• Корзина та замовлення (Включено в базову ціну)
+• Система оплати (+$1,500-3,000)
+• Push-повідомлення (+$1,000-2,000)
+• Геолокація та доставка (+$2,000-4,000)
+• Особистий кабінет (Включено в базову ціну)
+• Чат та підтримка (+$1,500-2,500)
 
-Which of these do you need?"
+Які з цих функцій вам потрібні?"
 
 Client: "How much for a business website?"
 You: "I'd love to help! Business websites typically cost $3,000-8,000 (based on our projects).
@@ -332,7 +333,21 @@ export async function POST(req: NextRequest) {
     : [];
     
   // Додаємо інформацію про функції проекту до контексту
-  const projectFeatures = getFeaturesByProjectType(message.toLowerCase());
+  // Аналізуємо повідомлення та історію розмови для визначення типу проекту
+  const fullContext = (conversationHistory.map(m => m.content).join(' ') + ' ' + message).toLowerCase();
+  
+  let projectType = '';
+  if (fullContext.includes('мобільний') || fullContext.includes('застосунок') || fullContext.includes('додаток') || fullContext.includes('app')) {
+    projectType = 'мобільний застосунок';
+  } else if (fullContext.includes('сайт') || fullContext.includes('website') || fullContext.includes('лендінг')) {
+    projectType = 'сайт';
+  } else if (fullContext.includes('магазин') || fullContext.includes('e-commerce') || fullContext.includes('продаж')) {
+    projectType = 'магазин';
+  } else if (fullContext.includes('дашборд') || fullContext.includes('dashboard') || fullContext.includes('панель')) {
+    projectType = 'дашборд';
+  }
+  
+  const projectFeatures = getFeaturesByProjectType(projectType || message.toLowerCase());
   const featuresContext = projectFeatures.length > 0 ? 
     `\n\nAvailable features for this project type:\n${projectFeatures.map(f => `• ${f.name} - ${f.description} (${f.priceRange})`).join('\n')}` : '';
     
