@@ -306,21 +306,21 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
               console.log('Phase button clicked, current expandedPhase:', expandedPhase);
               setExpandedPhase(expandedPhase ? null : 'all');
             }}
-            className="w-full flex items-center justify-between mb-3 lg:mb-3 lg:pointer-events-none"
+            className="w-full flex items-center justify-between mb-3 lg:mb-3"
           >
             <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {language === 'uk' ? 'Етапи дизайн-процесу' : 'Design Process Stages'}
             </h4>
-            {/* Стрілка тільки на малих екранах */}
+            {/* Стрілка на всіх екранах */}
             <ArrowRight 
-              className={`w-4 h-4 text-gray-500 transition-transform lg:hidden ${
+              className={`w-4 h-4 text-gray-500 transition-transform ${
                 expandedPhase ? 'rotate-90' : ''
               }`} 
             />
           </button>
           
           {/* На малих екранах - згортаємо весь блок, на великих - показуємо завжди */}
-          <div className={`space-y-2 ${expandedPhase ? 'block' : 'hidden lg:block'}`}>
+          <div className={`space-y-2 ${expandedPhase ? 'block' : 'hidden'}`}>
             {Object.entries(estimate.phases).map(([phaseKey, description]) => {
               // Мапінг назв фаз для відображення
               const getPhaseDisplayName = (key: string) => {
@@ -346,9 +346,9 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                         {getPhaseDisplayName(phaseKey)}
                       </span>
                     </div>
-                    {/* На великих екранах - стрілка для окремих етапів, на малих - прихована */}
+                    {/* Стрілка для окремих етапів на всіх екранах */}
                     <ArrowRight 
-                      className={`w-4 h-4 text-gray-500 transition-transform hidden lg:block ${
+                      className={`w-4 h-4 text-gray-500 transition-transform ${
                         expandedPhase === phaseKey ? 'rotate-90' : ''
                       }`} 
                     />
@@ -358,7 +358,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                   <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 ${
                     expandedPhase === phaseKey ? 'block' : 
                     expandedPhase === 'all' ? 'block' : 
-                    'hidden lg:block'
+                    'hidden'
                   }`}>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 mb-3">
                       {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
