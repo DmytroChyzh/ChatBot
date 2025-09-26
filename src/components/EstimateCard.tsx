@@ -304,15 +304,16 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
             <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {language === 'uk' ? 'Етапи дизайн-процесу' : 'Design Process Stages'}
             </h4>
+            {/* Показуємо кнопку тільки на малих екранах */}
             <button
               onClick={() => setExpandedPhase(expandedPhase ? null : 'all')}
-              className="text-xs text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors"
+              className="text-xs text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors lg:hidden"
             >
               {expandedPhase ? (language === 'uk' ? 'Згорнути все' : 'Collapse all') : (language === 'uk' ? 'Розгорнути все' : 'Expand all')}
             </button>
           </div>
           
-          <div className="space-y-1">
+          <div className="space-y-2">
             {Object.entries(estimate.phases).map(([phaseKey, description]) => {
               // Мапінг назв фаз для відображення
               const getPhaseDisplayName = (key: string) => {
@@ -331,50 +332,50 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 <div key={phaseKey} className="border border-gray-200 dark:border-gray-600 rounded-lg">
                   <button
                     onClick={() => setExpandedPhase(expandedPhase === phaseKey ? null : phaseKey)}
-                    className="w-full flex items-center justify-between p-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="w-3 h-3 text-green-500" />
-                      <span className="text-xs font-medium text-gray-900 dark:text-white">
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
                         {getPhaseDisplayName(phaseKey)}
                       </span>
                     </div>
+                    {/* Показуємо стрілку тільки на малих екранах, на великих завжди розгорнуто */}
                     <ArrowRight 
-                      className={`w-3 h-3 text-gray-500 transition-transform ${
+                      className={`w-4 h-4 text-gray-500 transition-transform lg:hidden ${
                         expandedPhase === phaseKey ? 'rotate-90' : ''
                       }`} 
                     />
                   </button>
                   
-                  {expandedPhase === phaseKey && (
-                    <div className="px-2 pb-2 border-t border-gray-200 dark:border-gray-600">
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 mb-2">
-                        {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
-                          getPhaseDescription(phaseKey)
-                        }
-                      </p>
-                      
-                      {/* Деталі вартості та часу */}
-                      <div className="grid grid-cols-2 gap-3 text-xs">
-                        <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded border">
-                          <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            💰 {language === 'uk' ? 'Вартість' : 'Cost'}
-                          </div>
-                          <div className="text-green-600 dark:text-green-400 font-semibold">
-                            {getPhaseCost(phaseKey)}
-                          </div>
+                  {/* На великих екранах завжди показуємо, на малих - залежно від expandedPhase */}
+                  <div className={`px-3 pb-3 border-t border-gray-200 dark:border-gray-600 lg:block ${expandedPhase === phaseKey ? 'block' : 'hidden lg:block'}`}>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 mb-3">
+                      {estimate.phaseDescriptions?.[phaseKey as keyof typeof estimate.phaseDescriptions] || 
+                        getPhaseDescription(phaseKey)
+                      }
+                    </p>
+                    
+                    {/* Деталі вартості та часу */}
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded border">
+                        <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          💰 {language === 'uk' ? 'Вартість' : 'Cost'}
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded border">
-                          <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            ⏱️ {language === 'uk' ? 'Години' : 'Hours'}
-                          </div>
-                          <div className="text-blue-600 dark:text-blue-400 font-semibold">
-                            {getPhaseHours(phaseKey)}
-                          </div>
+                        <div className="text-green-600 dark:text-green-400 font-semibold">
+                          {getPhaseCost(phaseKey)}
+                        </div>
+                      </div>
+                      <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded border">
+                        <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          ⏱️ {language === 'uk' ? 'Години' : 'Hours'}
+                        </div>
+                        <div className="text-blue-600 dark:text-blue-400 font-semibold">
+                          {getPhaseHours(phaseKey)}
                         </div>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}
@@ -390,7 +391,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
                 console.log('Contact manager button clicked!');
                 onContactManager();
               }}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl text-xs"
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-2 lg:py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl text-sm lg:text-base"
             >
               <span className="hidden sm:inline">{language === 'uk' ? 'Зв\'язатися з менеджером' : 'Contact Manager'}</span>
               <span className="sm:hidden">{language === 'uk' ? 'Зв\'язатися' : 'Contact'}</span>
@@ -399,7 +400,7 @@ const EstimateCard: React.FC<EstimateCardProps> = ({
           </div>
 
           {/* Пояснення */}
-          <div className="text-xs text-gray-500 dark:text-gray-400 text-center leading-tight">
+          <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
             {language === 'uk' 
               ? 'Це приблизний естімейт дизайн-послуг. Для точного розрахунку зв\'яжіться з нашим менеджером.'
               : 'This is an approximate design services estimate. For accurate calculation, contact our manager.'
