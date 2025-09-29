@@ -211,29 +211,7 @@ export default function ChatPage() {
       setConversationType(newType);
     }
     
-    // Перевіряємо чи питання про команду (тільки для team та portfolio)
-    if (input.includes('team') || input.includes('команда') || 
-        input.includes('portfolio') || input.includes('портфоліо') ||
-        isTeamQuestion(input)) {
-      const teamAnswer = handleTeamQuestion(input);
-      
-      // Додаємо відповідь про команду
-      const teamMessage: Omit<Message, 'id'> = {
-        role: 'assistant',
-        content: teamAnswer,
-        timestamp: new Date(),
-      };
-
-      try {
-        await addMessageToSession(sessionId, teamMessage);
-        setInput('');
-      } catch (error) {
-        console.error('Error adding team message:', error);
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
+    // Видалено обробку питань про команду
 
     const userMessage: Omit<Message, 'id'> = {
       role: 'user',
@@ -253,9 +231,7 @@ export default function ChatPage() {
         suggestedAnswers: response.suggestedAnswers || undefined,
       };
       await addMessageToSession(sessionId, assistantMessage);
-      if (response.shouldTriggerWorkers) {
-        triggerWorkers();
-      }
+      // Видалено triggerWorkers
       if (response.completionStatus === 'complete') {
         setIsProjectComplete(true);
       }
@@ -280,30 +256,7 @@ export default function ChatPage() {
       setConversationType('project');
     }
     
-    // Перевіряємо чи питання про команду (тільки для team та portfolio)
-    if (value.includes('team') || value.includes('команда') || 
-        value.includes('portfolio') || value.includes('портфоліо') ||
-        isTeamQuestion(value)) {
-      const teamAnswer = handleTeamQuestion(value);
-      
-      // Додаємо відповідь про команду
-      const teamMessage: Omit<Message, 'id'> = {
-        role: 'assistant',
-        content: teamAnswer,
-        timestamp: new Date(),
-      };
-
-      (async () => {
-        try {
-          await addMessageToSession(sessionId, teamMessage);
-        } catch (error) {
-          console.error('Error adding team message:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      })();
-      return;
-    }
+    // Видалено обробку питань про команду
 
     const userMessage: Omit<Message, 'id'> = {
       role: 'user',
@@ -322,7 +275,7 @@ export default function ChatPage() {
         };
         await addMessageToSession(sessionId, assistantMessage);
         if (response.shouldTriggerWorkers) {
-          triggerWorkers();
+          // Видалено triggerWorkers
         }
         if (response.completionStatus === 'complete') {
           setIsProjectComplete(true);
@@ -548,46 +501,7 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
 
 
 
-  // Функція для обробки питань про команду
-  const handleTeamQuestion = (question: string): string => {
-    const searchResult = searchTeam({ query: question });
-    
-    if (searchResult.members.length === 0) {
-      return 'Вибачте, не знайшов інформації про цю особу або відділ. Спробуйте переформулювати питання.';
-    }
-
-    if (searchResult.members.length === 1) {
-      const member = searchResult.members[0];
-      return `**${member.fullName}** - ${member.role} в відділі ${member.department}
-      
-**Досвід:** ${member.totalExperience} (в Cieden: ${member.inCieden})
-**Рівень:** ${member.seniority}
-**Англійська:** ${member.englishLevel}
-**Галузі:** ${member.industries.join(', ')}
-
-**Контакти:** ${member.email}
-${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
-    }
-
-    // Якщо знайдено кілька людей
-    const memberList = searchResult.members.map(m => 
-      `• **${m.fullName}** - ${m.role} (${m.seniority})`
-    ).join('\n');
-
-    return `Знайшов ${searchResult.members.length} людей:\n\n${memberList}\n\nЗадайте більш конкретне питання для детальної інформації.`;
-  };
-
-  // Перевіряємо чи питання про команду
-  const isTeamQuestion = (question: string): boolean => {
-    const teamKeywords = [
-      'хто', 'дизайнер', 'менеджер', 'продукт', 'команда', 'ceo', 'керівник',
-      'андрій', 'деміан', 'дмитро', 'ілля', 'роман', 'марта', 'владислав', 'володимир',
-      'design', 'product', 'management', 'lead', 'senior', 'middle'
-    ];
-    
-    const lowerQuestion = question.toLowerCase();
-    return teamKeywords.some(keyword => lowerQuestion.includes(keyword));
-  };
+  // Видалено функції для команди
 
 
 
@@ -692,52 +606,32 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         console.log(`Simple estimate: step ${estimateStep}`);
         // Простий фіксований естімейт
         const simpleEstimate: ProjectEstimate = {
-          id: `estimate-${Date.now()}`,
-          phases: {
-            'ux-research': {
-              phase: 'ux-research',
-              estimatedHours: 20,
-              estimatedCost: 2000,
-              description: language === 'uk' ? 'Дослідження користувачів' : 'User Research',
-              priority: 'high'
-            },
-            'ui-design': {
-              phase: 'ui-design', 
-              estimatedHours: 40,
-              estimatedCost: 4000,
-              description: language === 'uk' ? 'UI дизайн' : 'UI Design',
-              priority: 'high'
-            },
-            'prototyping': {
-              phase: 'prototyping',
-              estimatedHours: 15,
-              estimatedCost: 1500,
-              description: language === 'uk' ? 'Прототипування' : 'Prototyping',
-              priority: 'medium'
-            },
-            'design-system': {
-              phase: 'design-system',
-              estimatedHours: 10,
-              estimatedCost: 1000,
-              description: language === 'uk' ? 'Дизайн-система' : 'Design System',
-              priority: 'medium'
-            },
-            'mobile-adaptive': {
-              phase: 'mobile-adaptive',
-              estimatedHours: 15,
-              estimatedCost: 1500,
-              description: language === 'uk' ? 'Мобільна адаптація' : 'Mobile Adaptation',
-              priority: 'low'
-            }
-          },
-          totalHours: 100,
-          totalCost: 10000,
-          currentRange: '$8,000 - $15,000',
-          timeline: '4-8 тижнів',
-          teamSize: 2,
+          currentRange: { min: 8000, max: 15000 },
+          initialRange: { min: 80, max: 120 },
           currency: 'USD',
-          generatedAt: new Date(),
-          model: 'simple'
+          confidence: 'medium',
+          estimatedAt: new Date(),
+          timeline: '4-8 тижнів',
+          team: {
+            designers: ['UI/UX Designer', 'UX Researcher'],
+            contactPerson: 'Project Manager',
+            contactEmail: 'hello@cieden.com'
+          },
+          phases: {
+            'ux-research': language === 'uk' ? 'Дослідження користувачів' : 'User Research',
+            'ui-design': language === 'uk' ? 'UI дизайн' : 'UI Design',
+            'prototyping': language === 'uk' ? 'Прототипування' : 'Prototyping',
+            'design-system': language === 'uk' ? 'Дизайн-система' : 'Design System',
+            'mobile-adaptive': language === 'uk' ? 'Мобільна адаптація' : 'Mobile Adaptation'
+          },
+          phaseDescriptions: {
+            'ux-research': language === 'uk' ? 'Дослідження користувачів' : 'User Research',
+            'ui-design': language === 'uk' ? 'UI дизайн' : 'UI Design',
+            'prototyping': language === 'uk' ? 'Прототипування' : 'Prototyping',
+            'design-system': language === 'uk' ? 'Дизайн-система' : 'Design System',
+            'mobile-adaptive': language === 'uk' ? 'Мобільна адаптація' : 'Mobile Adaptation'
+          },
+          accuracyPercentage: 80
         };
         
         setProjectEstimate(simpleEstimate);
@@ -745,6 +639,9 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
 
         // Видалено складну логіку
       }
+    } catch (error) {
+      console.error('Error generating estimate:', error);
+    }
   };
 
 
