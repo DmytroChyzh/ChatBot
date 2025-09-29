@@ -8,14 +8,17 @@ const PROJECT_KEYWORDS = [
   'інтернет-магазин', 'лендінг', 'портал', 'система', 'платформа',
   'мобільний додаток', 'веб-додаток', 'електронна комерція',
   'редизайн', 'переробити', 'покращити', 'оновлювати',
-  'автомобілі', 'продаж', 'апка', 'додаток',
+  'автомобілі', 'продаж', 'апка', 'додаток', 'авторіа',
+  'велосипед', 'велосипеди', 'купувати', 'продавати',
+  'магазин', 'каталог', 'товари', 'замовлення',
   
   // English - слова про створення/розробку проекту
   'develop', 'create', 'build', 'make', 'order', 'new project',
   'new website', 'new app', 'new design', 'e-commerce', 
   'landing page', 'portal', 'system', 'platform',
   'mobile app', 'web application', 'online store',
-  'redesign', 'rebuild', 'improve', 'update'
+  'redesign', 'rebuild', 'improve', 'update',
+  'cars', 'automobiles', 'buy', 'sell', 'shop', 'catalog'
 ];
 
 const ESTIMATE_KEYWORDS = [
