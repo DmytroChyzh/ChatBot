@@ -604,16 +604,95 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
       if (estimateStep >= 1) {
         // Простий естімейт без складної логіки
         console.log(`Simple estimate: step ${estimateStep}`);
-        // Простий фіксований естімейт
-        const simpleEstimate: ProjectEstimate = {
-          currentRange: { min: 8000, max: 15000 },
-          initialRange: { min: 80, max: 120 },
+        // Динамічний естімейт на основі контенту розмови
+        const conversationText = messages.map(m => m.content).join(' ').toLowerCase();
+        console.log('Conversation text for analysis:', conversationText);
+        
+        // Аналізуємо тип проекту
+        let projectType = 'website';
+        let complexity = 'medium';
+        let basePrice = { min: 8000, max: 15000 };
+        let baseHours = { min: 80, max: 120 };
+        let timeline = '4-8 тижнів';
+        let teamSize = 2;
+        
+        // Визначаємо тип проекту
+        if (conversationText.includes('мобільний') || conversationText.includes('додаток') || conversationText.includes('app')) {
+          projectType = 'mobile';
+          basePrice = { min: 15000, max: 40000 };
+          baseHours = { min: 120, max: 300 };
+          timeline = '6-12 тижнів';
+          teamSize = 3;
+        } else if (conversationText.includes('магазин') || conversationText.includes('e-commerce') || conversationText.includes('продаж')) {
+          projectType = 'ecommerce';
+          basePrice = { min: 12000, max: 30000 };
+          baseHours = { min: 100, max: 250 };
+          timeline = '5-10 тижнів';
+          teamSize = 3;
+        } else if (conversationText.includes('сайт') || conversationText.includes('website')) {
+          projectType = 'website';
+          basePrice = { min: 5000, max: 15000 };
+          baseHours = { min: 60, max: 150 };
+          timeline = '3-6 тижнів';
+          teamSize = 2;
+        }
+        
+        // Аналізуємо складність
+        if (conversationText.includes('простий') || conversationText.includes('базовий')) {
+          complexity = 'simple';
+          basePrice.min = Math.round(basePrice.min * 0.7);
+          basePrice.max = Math.round(basePrice.max * 0.7);
+          baseHours.min = Math.round(baseHours.min * 0.7);
+          baseHours.max = Math.round(baseHours.max * 0.7);
+          timeline = '2-4 тижні';
+          teamSize = 1;
+        } else if (conversationText.includes('складний') || conversationText.includes('enterprise') || conversationText.includes('великий')) {
+          complexity = 'complex';
+          basePrice.min = Math.round(basePrice.min * 1.5);
+          basePrice.max = Math.round(basePrice.max * 1.5);
+          baseHours.min = Math.round(baseHours.min * 1.5);
+          baseHours.max = Math.round(baseHours.max * 1.5);
+          timeline = '8-16 тижнів';
+          teamSize = 4;
+        }
+        
+        // Аналізуємо терміни
+        if (conversationText.includes('3 місяці') || conversationText.includes('3 months')) {
+          timeline = '12 тижнів';
+          basePrice.min = Math.round(basePrice.min * 1.2);
+          basePrice.max = Math.round(basePrice.max * 1.2);
+        } else if (conversationText.includes('швидко') || conversationText.includes('терміново')) {
+          timeline = '2-4 тижні';
+          basePrice.min = Math.round(basePrice.min * 1.3);
+          basePrice.max = Math.round(basePrice.max * 1.3);
+        }
+        
+        // Розраховуємо точність на основі кількості інформації
+        const accuracyPercentage = Math.min(95, 20 + (estimateStep * 15));
+        
+        console.log('Dynamic estimate calculation:', {
+          projectType,
+          complexity,
+          basePrice,
+          baseHours,
+          timeline,
+          teamSize,
+          accuracyPercentage
+        });
+        
+        const dynamicEstimate: ProjectEstimate = {
+          currentRange: basePrice,
+          initialRange: baseHours,
           currency: 'USD',
-          confidence: 'medium',
+          confidence: estimateStep >= 3 ? 'high' : estimateStep >= 2 ? 'medium' : 'low',
           estimatedAt: new Date(),
-          timeline: '4-8 тижнів',
+          timeline: timeline,
           team: {
-            designers: ['UI/UX Designer', 'UX Researcher'],
+            designers: Array(teamSize).fill(0).map((_, i) => 
+              i === 0 ? 'UI/UX Designer' : 
+              i === 1 ? 'UX Researcher' : 
+              i === 2 ? 'Visual Designer' : 'Design Lead'
+            ),
             contactPerson: 'Project Manager',
             contactEmail: 'hello@cieden.com'
           },
@@ -631,11 +710,11 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
             'design-system': language === 'uk' ? 'Дизайн-система' : 'Design System',
             'mobile-adaptive': language === 'uk' ? 'Мобільна адаптація' : 'Mobile Adaptation'
           },
-          accuracyPercentage: 80
+          accuracyPercentage: accuracyPercentage
         };
         
-        setProjectEstimate(simpleEstimate);
-        console.log('Generated simple estimate:', simpleEstimate);
+        setProjectEstimate(dynamicEstimate);
+        console.log('Generated dynamic estimate:', dynamicEstimate);
         console.log('Estimate step:', estimateStep, 'Messages count:', messages.length);
 
         // Видалено складну логіку
