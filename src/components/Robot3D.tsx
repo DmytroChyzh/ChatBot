@@ -22,6 +22,17 @@ const RobotModel: React.FC<{
   const { scene } = useGLTF('/humanoid-robot-ai-realistic/source/model.glb');
   const meshRef = useRef<THREE.Group>(null);
   
+  // Adaptive scale based on screen size
+  const getAdaptiveScale = () => {
+    if (typeof window === 'undefined') return 1.5;
+    
+    const width = window.innerWidth;
+    if (width >= 1920) return 1.8;      // 2K+ screens
+    if (width >= 1440) return 1.5;      // Large desktop
+    if (width >= 1024) return 1.2;      // 13" MacBook
+    return 1.0;                          // Fallback
+  };
+  
   // Animation states
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -57,9 +68,8 @@ const RobotModel: React.FC<{
   // Eye glow effect removed - green sphere was not needed
 
   return (
-    <group ref={meshRef} scale={1.5} position={[0, 0.5, 0]}>
+    <group ref={meshRef} scale={getAdaptiveScale()} position={[0, 0.5, 0]}>
       <primitive object={scene} />
-      {/* Green sphere removed - not needed */}
     </group>
   );
 };
@@ -74,7 +84,11 @@ const Robot3D: React.FC<Robot3DProps> = ({
   if (!isActive) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 w-[300px] h-[400px] z-50 pointer-events-none">
+    <div className="fixed bottom-0 left-0 w-[300px] h-[400px] z-50 pointer-events-none
+                    hidden lg:block
+                    lg:w-[300px] lg:h-[400px]
+                    xl:w-[350px] xl:h-[450px]
+                    2xl:w-[400px] 2xl:h-[500px]">
       <Canvas
         camera={{ position: [0, 1, 5], fov: 35 }}
         style={{ background: 'transparent' }}
