@@ -382,13 +382,14 @@ export async function POST(req: NextRequest) {
     projectType = 'дашборд';
   }
   
-  const projectFeatures = getFeaturesByProjectType(projectType || message.toLowerCase());
-  const featuresContext = projectFeatures.length > 0 ? 
-    `\n\nAvailable features for this project type:\n${projectFeatures.map(f => `• ${f.name} - ${f.description} (${f.priceRange})`).join('\n')}` : '';
+  // НЕ додаємо featuresContext до повідомлення - це порушує логіку сценаріїв
+  // const projectFeatures = getFeaturesByProjectType(projectType || message.toLowerCase());
+  // const featuresContext = projectFeatures.length > 0 ? 
+  //   `\n\nAvailable features for this project type:\n${projectFeatures.map(f => `• ${f.name} - ${f.description} (${f.priceRange})`).join('\n')}` : '';
     
   console.log('Conversation context:', conversationContext);
   console.log('Current message:', message);
-  console.log('Project features found:', projectFeatures.length);
+  // console.log('Project features found:', projectFeatures.length);
 
   let completion;
   
@@ -400,7 +401,7 @@ export async function POST(req: NextRequest) {
         model: "claude-3-haiku-20240307",
         max_tokens: 1000,
         system: SYSTEM_PROMPT(language),
-        messages: conversationContext.concat([{ role: "user", content: message + featuresContext }])
+        messages: conversationContext.concat([{ role: "user", content: message }])
       });
     } catch (error) {
       console.log('Claude failed, falling back to GPT-3.5:', error);
@@ -410,10 +411,10 @@ export async function POST(req: NextRequest) {
         messages: [
           { role: "system", content: SYSTEM_PROMPT(language) },
           ...conversationContext,
-          { role: "user", content: message + featuresContext }
+          { role: "user", content: message }
         ],
         max_tokens: 1000,
-        temperature: 0.7
+        temperature: 0.3
       });
     }
   } else {
@@ -423,7 +424,7 @@ export async function POST(req: NextRequest) {
     messages: [
           { role: "system", content: SYSTEM_PROMPT(language) },
       ...conversationContext,
-          { role: "user", content: message + featuresContext }
+          { role: "user", content: message }
         ],
       max_tokens: 1000,
       temperature: 0.7
