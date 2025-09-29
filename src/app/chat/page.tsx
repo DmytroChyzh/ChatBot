@@ -17,10 +17,6 @@ import ChatWindow from '../../components/ChatWindow';
 import CosmicBackground from '../../components/CosmicBackground';
 
 import { analyzeConversationType, shouldShowProjectCard } from '../../utils/conversationAnalyzer';
-import { searchTeam } from '../../utils/teamSearch';
-import { getRealEstimation } from '../../utils/realEstimations';
-import { calculateRealisticEstimation, generateCompanyBasedPhases } from '../../utils/companyEstimations';
-import { getContactPersonForProject, getContactEmailForProject, getDesignersForProject } from '../../utils/teamUtils';
 
 
 interface ContactInfo {
@@ -202,34 +198,7 @@ export default function ChatPage() {
     return data;
   };
 
-  const triggerWorkers = async () => {
-    if (!sessionId) return;
-
-    try {
-      // Запускаємо всіх воркерів паралельно
-      const workerPromises = [
-        fetch('/api/workers/summarizer', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId })
-        }),
-        fetch('/api/workers/estimator', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId })
-        }),
-        fetch('/api/workers/researcher', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId })
-        })
-      ];
-
-      await Promise.allSettled(workerPromises);
-    } catch (error) {
-      console.error('Error triggering workers:', error);
-    }
-  };
+  // Видалено зайві воркери - тепер простий чатбот
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -717,244 +686,65 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
         return;
       }
 
-      // Показуємо прогресівний естімейт після кожного питання
+      // Простий естімейт
       if (estimateStep >= 1) {
-        // Розраховуємо точність на основі кількості кроків
-        const accuracyPercentage = Math.min(95, 20 + (estimateStep - 2) * 15); // 20% + 15% за кожен крок
-        const rangeReduction = Math.max(0.1, 1 - (estimateStep - 2) * 0.15); // Зменшуємо діапазон на 15% за крок
-        
-        console.log(`Progressive estimate: step ${estimateStep}, accuracy: ${accuracyPercentage}%, range reduction: ${rangeReduction}`);
-        // Створюємо базовий естімейт на основі контексту після збору інформації
-        const projectContext = messages
-          .filter(m => m.role === 'user')
-          .map(m => m.content)
-          .join(' ');
-
-        // Аналізуємо тип проєкту на основі контексту
-        let projectType = 'website';
-        let complexity = 'medium';
-        let features = [];
-        let specialRequirements = [];
-        
-        const context = projectContext.toLowerCase();
-        
-        // Визначаємо тип проекту
-        if (context.includes('e-commerce') || context.includes('інтернет-магазин') || 
-            context.includes('продаж') || context.includes('автомобілі')) {
-          projectType = 'e-commerce';
-          complexity = 'high';
-          features.push('Система продажів', 'Каталог товарів', 'Корзина та оплата');
-        } else if (context.includes('mobile') || context.includes('мобільний') || 
-                   context.includes('апка') || context.includes('додаток')) {
-          projectType = 'mobile-app';
-          complexity = 'high';
-          features.push('Мобільний інтерфейс', 'Push-повідомлення', 'Офлайн режим');
-        } else if (context.includes('landing') || context.includes('лендінг')) {
-          projectType = 'landing';
-          complexity = 'low';
-          features.push('Односторінковий сайт', 'Форма зворотного зв\'язку');
-        } else if (context.includes('редизайн') || context.includes('переробити')) {
-          projectType = 'redesign';
-          complexity = 'medium';
-          features.push('Новий дизайн', 'Покращення UX', 'Адаптивність');
-        }
-
-        // Додаємо AI функції якщо згадується
-        if (context.includes('ai') || context.includes('аі') || context.includes('асистент')) {
-          features.push('AI асистент', 'Розумний пошук', 'Персоналізація');
-          complexity = complexity === 'low' ? 'medium' : 'high';
-        }
-
-        // Перевіряємо спеціальні вимоги
-        if (context.includes('терміново') || context.includes('urgent')) {
-          specialRequirements.push('Терміново');
-        }
-        if (context.includes('преміум') || context.includes('premium')) {
-          specialRequirements.push('Преміум');
-        }
-
-        // Отримуємо реальний естімейт з бази даних компанії
-        console.log('Input parameters:', { projectType, complexity, features, specialRequirements });
-        const companyEstimation = calculateRealisticEstimation(projectType, complexity, features, specialRequirements);
-        console.log('Company estimation result:', companyEstimation);
-        
-        // Також отримуємо старий естімейт для fallback
-        const realEstimation = getRealEstimation(projectType, complexity);
-        
-        if (companyEstimation) {
-          // Використовуємо нові дані з компанії
-          const adjustedPrice = {
-            minHours: companyEstimation.minHours,
-            maxHours: companyEstimation.maxHours,
-            minPrice: companyEstimation.minPrice,
-            maxPrice: companyEstimation.maxPrice
-          };
-          console.log('Adjusted price:', adjustedPrice);
-          
-          // Логіка невизначеності: estimateStep=2 → дуже широкий діапазон, estimateStep=5+ → точний
-          let uncertaintyFactor;
-          if (estimateStep === 2) {
-            // Перша інформація - дуже широкий діапазон ($10k-$50k)
-            uncertaintyFactor = 3.0;
-          } else if (estimateStep === 3) {
-            // Трохи інформації - широкий діапазон
-            uncertaintyFactor = 2.0;
-          } else if (estimateStep === 4) {
-            // Більше інформації - середній діапазон
-            uncertaintyFactor = 1.5;
-          } else {
-            // Багато інформації - точний діапазон
-            uncertaintyFactor = 1.0;
-          }
-          const currentRange = {
-            min: Math.round(adjustedPrice.minPrice * uncertaintyFactor),
-            max: Math.round(adjustedPrice.maxPrice * uncertaintyFactor)
-          };
-          console.log('Current range after uncertainty adjustment:', currentRange, 'uncertainty factor:', uncertaintyFactor, 'estimateStep:', estimateStep);
-
-          // Отримуємо скоригований timeline та розмір команди з урахуванням невизначеності
-          let timeline, teamSize;
-          
-          if (estimateStep === 2) {
-            // Мало інформації - невизначені терміни та команда
-            timeline = language === 'uk' ? '4-12 тижнів' : '4-12 weeks';
-            teamSize = 3; // Більша команда для невизначеності
-          } else if (estimateStep === 3) {
-            // Трохи інформації - менш невизначені
-            timeline = language === 'uk' ? '6-10 тижнів' : '6-10 weeks';
-            teamSize = 2;
-          } else if (estimateStep === 4) {
-            // Більше інформації - більш точні
-            timeline = companyEstimation.timeline;
-            teamSize = companyEstimation.teamSize;
-          } else {
-            // Багато інформації - точні значення
-            timeline = companyEstimation.timeline;
-            teamSize = companyEstimation.teamSize;
-          }
-          
-          console.log('Timeline:', timeline, 'Team size:', teamSize);
-
-          // Визначаємо команду
-          const team = {
-            designers: getDesignersForProject(complexity, projectType),
-            contactPerson: getContactPersonForProject(projectType),
-            contactEmail: getContactEmailForProject(projectType)
-          };
-
-          // Застосовуємо динамічне зменшення діапазону на основі точності
-          const adjustedCurrentRange = {
-            min: Math.round(currentRange.min + (currentRange.max - currentRange.min) * (1 - rangeReduction) / 2),
-            max: Math.round(currentRange.max - (currentRange.max - currentRange.min) * (1 - rangeReduction) / 2)
-          };
-
-          // Визначаємо фази з детальною інформацією на основі даних компанії
-          // Використовуємо скориговані ціни з uncertaintyFactor для фаз
-          const phasesData = generateCompanyBasedPhases(projectType, complexity, adjustedPrice.minHours, adjustedPrice.maxHours, adjustedCurrentRange.min, adjustedCurrentRange.max, language);
-          console.log('Generated phases with uncertainty factor:', phasesData);
-          console.log('Phase costs should sum to approximately:', adjustedCurrentRange.min, '-', adjustedCurrentRange.max);
-          console.log('Accuracy percentage:', accuracyPercentage, 'Range reduction:', rangeReduction);
-          
-          // Створюємо фази з описами для відображення
-          const phases = {
-            'ux-research': phasesData['ux-research'],
-            'ui-design': phasesData['ui-design'],
-            'prototyping': phasesData['prototyping'],
-            'design-system': phasesData['design-system'],
-            'mobile-adaptive': phasesData['mobile-adaptive']
-          };
-
-          // Скоригуємо години роботи з урахуванням невизначеності
-          const adjustedHours = {
-            min: Math.round(adjustedPrice.minHours * uncertaintyFactor),
-            max: Math.round(adjustedPrice.maxHours * uncertaintyFactor)
-          };
-          
-          const estimate: ProjectEstimate = {
-            currentRange: adjustedCurrentRange,
-            initialRange: adjustedHours,
-            currency: 'USD',
-            confidence: estimateStep <= 2 ? 'low' : estimateStep <= 3 ? 'medium' : 'high',
-            estimatedAt: new Date(),
-            timeline,
-            team,
-            phases,
-            phaseDescriptions: phasesData.descriptions,
-            accuracyPercentage: accuracyPercentage // Додаємо точність для відображення
-          };
-
-          console.log('Setting real estimate from database:', estimate);
-          setProjectEstimate(estimate);
-        } else {
-          console.log('No real estimation found for:', projectType, complexity);
-          // Fallback to default estimation if no real data found
-          // Застосовуємо uncertainty factor і для fallback
-          let fallbackUncertaintyFactor;
-          if (estimateStep === 2) {
-            fallbackUncertaintyFactor = 3.0;
-          } else if (estimateStep === 3) {
-            fallbackUncertaintyFactor = 2.0;
-          } else if (estimateStep === 4) {
-            fallbackUncertaintyFactor = 1.5;
-          } else {
-            fallbackUncertaintyFactor = 1.0;
-          }
-          
-          const fallbackBasePrice = { min: 2250, max: 4500 };
-          const fallbackCurrentRange = {
-            min: Math.round(fallbackBasePrice.min * fallbackUncertaintyFactor),
-            max: Math.round(fallbackBasePrice.max * fallbackUncertaintyFactor)
-          };
-          
-          // Скоригуємо fallback timeline та teamSize
-          let fallbackTimeline, fallbackTeamSize;
-          if (estimateStep === 2) {
-            fallbackTimeline = language === 'uk' ? '4-12 тижнів' : '4-12 weeks';
-            fallbackTeamSize = 3;
-          } else if (estimateStep === 3) {
-            fallbackTimeline = language === 'uk' ? '6-10 тижнів' : '6-10 weeks';
-            fallbackTeamSize = 2;
-          } else {
-            fallbackTimeline = language === 'uk' ? '8-12 тижнів' : '8-12 weeks';
-            fallbackTeamSize = 1;
-          }
-          
-          const fallbackEstimate: ProjectEstimate = {
-            currentRange: fallbackCurrentRange,
-            initialRange: { 
-              min: Math.round(100 * fallbackUncertaintyFactor), 
-              max: Math.round(300 * fallbackUncertaintyFactor) 
+        // Простий естімейт без складної логіки
+        console.log(`Simple estimate: step ${estimateStep}`);
+        // Простий фіксований естімейт
+        const simpleEstimate: ProjectEstimate = {
+          id: `estimate-${Date.now()}`,
+          phases: {
+            'ux-research': {
+              phase: 'ux-research',
+              estimatedHours: 20,
+              estimatedCost: 2000,
+              description: language === 'uk' ? 'Дослідження користувачів' : 'User Research',
+              priority: 'high'
             },
-            currency: 'USD',
-            confidence: 'low',
-            estimatedAt: new Date(),
-            timeline: fallbackTimeline,
-            team: {
-              designers: getDesignersForProject(complexity, projectType),
-              contactPerson: getContactPersonForProject(projectType),
-              contactEmail: getContactEmailForProject(projectType)
+            'ui-design': {
+              phase: 'ui-design', 
+              estimatedHours: 40,
+              estimatedCost: 4000,
+              description: language === 'uk' ? 'UI дизайн' : 'UI Design',
+              priority: 'high'
             },
-            phases: (() => {
-              const fallbackPhasesData = generateCompanyBasedPhases(projectType, complexity, 100, 200, fallbackCurrentRange.min, fallbackCurrentRange.max, language);
-              return {
-                'ux-research': fallbackPhasesData['ux-research'],
-                'ui-design': fallbackPhasesData['ui-design'],
-                'prototyping': fallbackPhasesData['prototyping'],
-                'design-system': fallbackPhasesData['design-system'],
-                'mobile-adaptive': fallbackPhasesData['mobile-adaptive']
-              };
-            })(),
-            phaseDescriptions: (() => {
-              const fallbackPhasesData = generateCompanyBasedPhases(projectType, complexity, 100, 200, fallbackCurrentRange.min, fallbackCurrentRange.max, language);
-              return fallbackPhasesData.descriptions;
-            })()
-          };
-          setProjectEstimate(fallbackEstimate);
-        }
+            'prototyping': {
+              phase: 'prototyping',
+              estimatedHours: 15,
+              estimatedCost: 1500,
+              description: language === 'uk' ? 'Прототипування' : 'Prototyping',
+              priority: 'medium'
+            },
+            'design-system': {
+              phase: 'design-system',
+              estimatedHours: 10,
+              estimatedCost: 1000,
+              description: language === 'uk' ? 'Дизайн-система' : 'Design System',
+              priority: 'medium'
+            },
+            'mobile-adaptive': {
+              phase: 'mobile-adaptive',
+              estimatedHours: 15,
+              estimatedCost: 1500,
+              description: language === 'uk' ? 'Мобільна адаптація' : 'Mobile Adaptation',
+              priority: 'low'
+            }
+          },
+          totalHours: 100,
+          totalCost: 10000,
+          currentRange: '$8,000 - $15,000',
+          timeline: '4-8 тижнів',
+          teamSize: 2,
+          currency: 'USD',
+          generatedAt: new Date(),
+          model: 'simple'
+        };
+        
+        setProjectEstimate(simpleEstimate);
+        console.log('Generated simple estimate:', simpleEstimate);
+
+        // Видалено складну логіку
       }
-    } catch (error) {
-      console.error('Error generating estimate:', error);
-    }
   };
 
 
