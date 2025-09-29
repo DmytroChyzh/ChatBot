@@ -750,27 +750,13 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
   useEffect(() => {
     if (session?.messages && (conversationType === 'project' || conversationType === 'estimate')) {
       const newStep = Math.min(Math.ceil(session.messages.length / 2), 5);
+      console.log('Updating estimateStep:', newStep, 'Messages count:', session.messages.length);
       setEstimateStep(newStep);
+      
+      // Генеруємо естімейт одразу після оновлення step
+      generateProjectEstimate(session.messages);
     }
   }, [session?.messages, conversationType]);
-
-  // Generate estimate when conversation type changes
-  useEffect(() => {
-    console.log('conversationType changed to:', conversationType);
-    if (session?.messages && (conversationType === 'project' || conversationType === 'estimate')) {
-      console.log('Setting initial estimate state...');
-      // Генеруємо естімейт для всіх кроків
-      generateProjectEstimate(session.messages);
-    }
-  }, [conversationType]);
-
-  // Update estimate when estimateStep changes
-  useEffect(() => {
-    if (session?.messages && (conversationType === 'project' || conversationType === 'estimate') && estimateStep >= 1) {
-      console.log('Updating estimate for step:', estimateStep);
-      generateProjectEstimate(session.messages);
-    }
-  }, [estimateStep, conversationType]);
 
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
