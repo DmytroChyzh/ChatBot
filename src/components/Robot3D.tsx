@@ -68,8 +68,20 @@ const RobotModel: React.FC<{
 
   // Eye glow effect removed - green sphere was not needed
 
+  // Adaptive position based on screen size
+  const getAdaptivePosition = (): [number, number, number] => {
+    if (typeof window === 'undefined') return [0, 0.5, 0];
+    
+    const width = window.innerWidth;
+    if (width >= 2560) return [0, 0.5, 0];      // 2K+ screens - center
+    if (width >= 1920) return [0, 0.5, 0];      // Full HD - center
+    if (width >= 1440) return [-0.5, 0.5, 0];   // Large desktop - left
+    if (width >= 1024) return [-1, 0.5, 0];     // 13" MacBook - more left
+    return [-1.5, 0.5, 0];                       // Fallback - very left
+  };
+
   return (
-    <group ref={meshRef} scale={getAdaptiveScale()} position={[0, 0.5, 0]}>
+    <group ref={meshRef} scale={getAdaptiveScale()} position={getAdaptivePosition()}>
       <primitive object={scene} />
     </group>
   );
