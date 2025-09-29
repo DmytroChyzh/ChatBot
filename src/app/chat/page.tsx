@@ -565,7 +565,7 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
 
   // Generate project estimate based on conversation
   const generateProjectEstimate = async (messages: Message[]) => {
-    console.log('generateProjectEstimate called with estimateStep:', estimateStep);
+    console.log('🚀 generateProjectEstimate called with estimateStep:', estimateStep, 'Messages:', messages.length);
     try {
       // На початку показуємо нульовий естімейт
       if (estimateStep < 1) {
@@ -830,13 +830,15 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
   const showProjectSidebar = session && shouldShowProjectCard(conversationType) && estimateStep >= 1;
   
   // Додаємо логування для дебагу
-  console.log('Debug EstimateCard:', {
+  console.log('🔍 Debug EstimateCard:', {
     session: !!session,
     conversationType,
     shouldShowProjectCard: shouldShowProjectCard(conversationType),
     showProjectSidebar,
     projectEstimate: !!projectEstimate,
-    estimateStep
+    estimateStep,
+    messagesCount: session?.messages?.length || 0,
+    currentRange: projectEstimate?.currentRange
   });
 
   return (
