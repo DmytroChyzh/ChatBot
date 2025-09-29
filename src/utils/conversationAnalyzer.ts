@@ -102,7 +102,7 @@ export function shouldShowProjectCard(conversationType: ConversationType): boole
 export function shouldShowEstimate(conversationType: ConversationType, estimateStep: number): boolean {
   if (conversationType === 'general') return false;
   if (conversationType === 'estimate') return true;
-  if (conversationType === 'project' && estimateStep >= 2) return true;
+  if (conversationType === 'project' && estimateStep >= 1) return true;
   return false;
 }
 
