@@ -718,7 +718,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
       }
 
       // Показуємо прогресівний естімейт після кожного питання
-      if (estimateStep >= 2) {
+      if (estimateStep >= 1) {
         // Розраховуємо точність на основі кількості кроків
         const accuracyPercentage = Math.min(95, 20 + (estimateStep - 2) * 15); // 20% + 15% за кожен крок
         const rangeReduction = Math.max(0.1, 1 - (estimateStep - 2) * 0.15); // Зменшуємо діапазон на 15% за крок
@@ -981,7 +981,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
 
   // Update estimate when estimateStep changes
   useEffect(() => {
-    if (session?.messages && (conversationType === 'project' || conversationType === 'estimate') && estimateStep >= 2) {
+    if (session?.messages && (conversationType === 'project' || conversationType === 'estimate') && estimateStep >= 1) {
       console.log('Updating estimate for step:', estimateStep);
       generateProjectEstimate(session.messages);
     }
@@ -1056,7 +1056,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
   }
 
   // Determine whether to show card: only for project-related conversations
-  const showProjectSidebar = session && shouldShowProjectCard(conversationType) && estimateStep >= 2;
+  const showProjectSidebar = session && shouldShowProjectCard(conversationType) && estimateStep >= 1;
   
   // Додаємо логування для дебагу
   console.log('Debug EstimateCard:', {
@@ -1104,7 +1104,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
             <div className="w-full flex justify-center px-4 lg:px-0">
               <div style={{ width: '100%', maxWidth: 900 }}>
                 {/* Mobile Estimate Toggle Button */}
-                {showProjectSidebar && projectEstimate && estimateStep >= 2 && (
+                {showProjectSidebar && projectEstimate && estimateStep >= 1 && (
                   <div className="lg:hidden flex justify-center mb-4">
                     <button
                       onClick={() => setShowMobileEstimate(!showMobileEstimate)}
@@ -1138,7 +1138,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
           </div>
         </div>
         {/* Estimate Card Sidebar - Desktop only */}
-        {showProjectSidebar && projectEstimate && estimateStep >= 2 && (
+        {showProjectSidebar && projectEstimate && estimateStep >= 1 && (
           <div className="hidden lg:flex flex-col flex-shrink-0 w-[28rem] pr-8 pt-8 pb-8 relative">
             <EstimateCard
               estimate={projectEstimate}
@@ -1152,7 +1152,7 @@ ${member.linkedin ? `LinkedIn: ${member.linkedin}` : ''}`;
       </div>
 
       {/* Mobile Estimate Modal - Full screen popup */}
-      {showProjectSidebar && projectEstimate && estimateStep >= 2 && showMobileEstimate && (
+      {showProjectSidebar && projectEstimate && estimateStep >= 1 && showMobileEstimate && (
         <div 
           className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
           onClick={() => setShowMobileEstimate(false)}
