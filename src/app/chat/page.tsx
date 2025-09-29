@@ -708,7 +708,7 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
           estimatedAt: new Date(),
           timeline: companyEstimation.timeline,
           team: {
-            designers: Array(companyEstimation.teamSize).fill(0).map((_, i) => 
+            designers: Array(Math.max(1, Math.round(companyEstimation.teamSize))).fill(0).map((_, i) => 
               i === 0 ? 'UI/UX Designer' : 
               i === 1 ? 'UX Researcher' : 
               i === 2 ? 'Visual Designer' : 'Design Lead'
