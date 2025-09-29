@@ -17,6 +17,7 @@ import ChatWindow from '../../components/ChatWindow';
 import CosmicBackground from '../../components/CosmicBackground';
 
 import { analyzeConversationType, shouldShowProjectCard } from '../../utils/conversationAnalyzer';
+import { calculateRealisticEstimation } from '../../utils/companyEstimations';
 
 
 interface ContactInfo {
@@ -604,91 +605,72 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
       if (estimateStep >= 1) {
         // Простий естімейт без складної логіки
         console.log(`Simple estimate: step ${estimateStep}`);
-        // Динамічний естімейт на основі контенту розмови
+        // Використовуємо реальні дані компанії для естімейту
         const conversationText = messages.map(m => m.content).join(' ').toLowerCase();
         console.log('Conversation text for analysis:', conversationText);
         
-        // Аналізуємо тип проекту
+        // Аналізуємо тип проекту з розмови
         let projectType = 'website';
         let complexity = 'medium';
-        let basePrice = { min: 8000, max: 15000 };
-        let baseHours = { min: 80, max: 120 };
-        let timeline = '4-8 тижнів';
-        let teamSize = 2;
+        const features: string[] = [];
+        const specialRequirements: string[] = [];
         
         // Визначаємо тип проекту
         if (conversationText.includes('мобільний') || conversationText.includes('додаток') || conversationText.includes('app')) {
-          projectType = 'mobile';
-          basePrice = { min: 15000, max: 40000 };
-          baseHours = { min: 120, max: 300 };
-          timeline = '6-12 тижнів';
-          teamSize = 3;
+          projectType = 'mobile_app';
+          features.push('Мобільний інтерфейс', 'Push-повідомлення');
         } else if (conversationText.includes('магазин') || conversationText.includes('e-commerce') || conversationText.includes('продаж')) {
-          projectType = 'ecommerce';
-          basePrice = { min: 12000, max: 30000 };
-          baseHours = { min: 100, max: 250 };
-          timeline = '5-10 тижнів';
-          teamSize = 3;
+          projectType = 'webapp';
+          features.push('Каталог товарів', 'Корзина', 'Платежі');
         } else if (conversationText.includes('сайт') || conversationText.includes('website')) {
           projectType = 'website';
-          basePrice = { min: 5000, max: 15000 };
-          baseHours = { min: 60, max: 150 };
-          timeline = '3-6 тижнів';
-          teamSize = 2;
         }
         
-        // Аналізуємо складність
+        // Визначаємо складність
         if (conversationText.includes('простий') || conversationText.includes('базовий')) {
-          complexity = 'simple';
-          basePrice.min = Math.round(basePrice.min * 0.7);
-          basePrice.max = Math.round(basePrice.max * 0.7);
-          baseHours.min = Math.round(baseHours.min * 0.7);
-          baseHours.max = Math.round(baseHours.max * 0.7);
-          timeline = '2-4 тижні';
-          teamSize = 1;
+          complexity = 'low';
         } else if (conversationText.includes('складний') || conversationText.includes('enterprise') || conversationText.includes('великий')) {
-          complexity = 'complex';
-          basePrice.min = Math.round(basePrice.min * 1.5);
-          basePrice.max = Math.round(basePrice.max * 1.5);
-          baseHours.min = Math.round(baseHours.min * 1.5);
-          baseHours.max = Math.round(baseHours.max * 1.5);
-          timeline = '8-16 тижнів';
-          teamSize = 4;
+          complexity = 'high';
+        }
+        
+        // Аналізуємо додаткові функції
+        if (conversationText.includes('чат') || conversationText.includes('chat')) {
+          features.push('Чат/Підтримка');
+        }
+        if (conversationText.includes('пошук') || conversationText.includes('search')) {
+          features.push('Пошук та фільтри');
+        }
+        if (conversationText.includes('авторизація') || conversationText.includes('login')) {
+          features.push('Авторизація');
+        }
+        if (conversationText.includes('ai') || conversationText.includes('аі')) {
+          features.push('AI функції');
+          specialRequirements.push('AI/ML');
         }
         
         // Аналізуємо терміни
-        if (conversationText.includes('3 місяці') || conversationText.includes('3 months')) {
-          timeline = '12 тижнів';
-          basePrice.min = Math.round(basePrice.min * 1.2);
-          basePrice.max = Math.round(basePrice.max * 1.2);
-        } else if (conversationText.includes('швидко') || conversationText.includes('терміново')) {
-          timeline = '2-4 тижні';
-          basePrice.min = Math.round(basePrice.min * 1.3);
-          basePrice.max = Math.round(basePrice.max * 1.3);
+        if (conversationText.includes('швидко') || conversationText.includes('терміново')) {
+          specialRequirements.push('Терміново');
         }
+        
+        console.log('Project analysis:', { projectType, complexity, features, specialRequirements });
+        
+        // Отримуємо реальний естімейт з бази даних компанії
+        const companyEstimation = calculateRealisticEstimation(projectType, complexity, features, specialRequirements);
+        console.log('Company estimation result:', companyEstimation);
         
         // Розраховуємо точність на основі кількості інформації
         const accuracyPercentage = Math.min(95, 20 + (estimateStep * 15));
         
-        console.log('Dynamic estimate calculation:', {
-          projectType,
-          complexity,
-          basePrice,
-          baseHours,
-          timeline,
-          teamSize,
-          accuracyPercentage
-        });
-        
         const dynamicEstimate: ProjectEstimate = {
-          currentRange: basePrice,
-          initialRange: baseHours,
+          currentRange: { min: companyEstimation.minPrice, max: companyEstimation.maxPrice },
+          initialRange: { min: companyEstimation.minHours, max: companyEstimation.maxHours },
           currency: 'USD',
           confidence: estimateStep >= 3 ? 'high' : estimateStep >= 2 ? 'medium' : 'low',
           estimatedAt: new Date(),
-          timeline: timeline,
+          timeline: companyEstimation.timeline,
           team: {
-            designers: Array(teamSize).fill(0).map((_, i) => 
+            designers: Array(companyEstimation.teamSize).fill(0).map((_, i) => 
               i === 0 ? 'UI/UX Designer' : 
               i === 1 ? 'UX Researcher' : 
               i === 2 ? 'Visual Designer' : 'Design Lead'
