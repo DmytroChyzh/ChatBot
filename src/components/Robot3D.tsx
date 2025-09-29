@@ -24,13 +24,14 @@ const RobotModel: React.FC<{
   
   // Adaptive scale based on screen size
   const getAdaptiveScale = () => {
-    if (typeof window === 'undefined') return 1.5;
+    if (typeof window === 'undefined') return 1.0;
     
     const width = window.innerWidth;
-    if (width >= 1920) return 1.8;      // 2K+ screens
-    if (width >= 1440) return 1.5;      // Large desktop
-    if (width >= 1024) return 1.2;      // 13" MacBook
-    return 1.0;                          // Fallback
+    if (width >= 2560) return 1.2;      // 2K+ screens (29" monitors)
+    if (width >= 1920) return 1.0;      // Full HD screens
+    if (width >= 1440) return 0.8;      // Large desktop
+    if (width >= 1024) return 0.6;      // 13" MacBook - much smaller
+    return 0.5;                          // Fallback - very small
   };
   
   // Animation states
@@ -84,11 +85,11 @@ const Robot3D: React.FC<Robot3DProps> = ({
   if (!isActive) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 w-[300px] h-[400px] z-50 pointer-events-none
+    <div className="fixed bottom-0 left-0 z-50 pointer-events-none
                     hidden lg:block
-                    lg:w-[300px] lg:h-[400px]
-                    xl:w-[350px] xl:h-[450px]
-                    2xl:w-[400px] 2xl:h-[500px]">
+                    lg:w-[200px] lg:h-[250px]
+                    xl:w-[250px] xl:h-[300px]
+                    2xl:w-[300px] 2xl:h-[350px]">
       <Canvas
         camera={{ position: [0, 1, 5], fov: 35 }}
         style={{ background: 'transparent' }}
