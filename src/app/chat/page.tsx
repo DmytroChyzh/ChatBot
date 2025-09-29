@@ -567,7 +567,7 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
     console.log('generateProjectEstimate called with estimateStep:', estimateStep);
     try {
       // На початку показуємо нульовий естімейт
-      if (estimateStep <= 1) {
+      if (estimateStep < 1) {
         const initialEstimate: ProjectEstimate = {
           currentRange: { min: 0, max: 0 },
           initialRange: { min: 0, max: 0 },
@@ -636,6 +636,7 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
         
         setProjectEstimate(simpleEstimate);
         console.log('Generated simple estimate:', simpleEstimate);
+        console.log('Estimate step:', estimateStep, 'Messages count:', messages.length);
 
         // Видалено складну логіку
       }
@@ -659,10 +660,8 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
     console.log('conversationType changed to:', conversationType);
     if (session?.messages && (conversationType === 'project' || conversationType === 'estimate')) {
       console.log('Setting initial estimate state...');
-      // Тільки встановлюємо початковий стан, не генеруємо реальний естімейт
-      if (estimateStep <= 1) {
-        generateProjectEstimate(session.messages);
-      }
+      // Генеруємо естімейт для всіх кроків
+      generateProjectEstimate(session.messages);
     }
   }, [conversationType]);
 
