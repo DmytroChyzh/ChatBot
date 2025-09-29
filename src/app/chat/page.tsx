@@ -609,49 +609,87 @@ ${contact.email ? `\nEmail: ${contact.email}` : ''}`
         const conversationText = messages.map(m => m.content).join(' ').toLowerCase();
         console.log('Conversation text for analysis:', conversationText);
         
-        // Аналізуємо тип проекту з розмови
+        // РОЗШИРЕНИЙ АНАЛІЗ ПРОЕКТУ
         let projectType = 'website';
         let complexity = 'medium';
         const features: string[] = [];
         const specialRequirements: string[] = [];
         
-        // Визначаємо тип проекту
-        if (conversationText.includes('мобільний') || conversationText.includes('додаток') || conversationText.includes('app')) {
-          projectType = 'mobile_app';
+        console.log('🔍 Аналізую розмову для естімейту...');
+        
+        // 1. ВИЗНАЧАЄМО ТИП ПРОЕКТУ (більш детально)
+        if (conversationText.includes('мобільний') || conversationText.includes('додаток') || conversationText.includes('app') || conversationText.includes('ios') || conversationText.includes('android')) {
+          projectType = 'web-app';
           features.push('Мобільний інтерфейс', 'Push-повідомлення');
-        } else if (conversationText.includes('магазин') || conversationText.includes('e-commerce') || conversationText.includes('продаж')) {
-          projectType = 'webapp';
-          features.push('Каталог товарів', 'Корзина', 'Платежі');
-        } else if (conversationText.includes('сайт') || conversationText.includes('website')) {
+          
+          // Перевіряємо чи є також веб-частина
+          if (conversationText.includes('веб') || conversationText.includes('web') || conversationText.includes('сайт') || conversationText.includes('адмін') || conversationText.includes('панель')) {
+            features.push('Веб-інтерфейс', 'Responsive дизайн', 'Адмін-панель');
+            complexity = 'high'; // Комбіновані проекти складніші
+          }
+        } else if (conversationText.includes('магазин') || conversationText.includes('e-commerce') || conversationText.includes('продаж') || conversationText.includes('товар') || conversationText.includes('каталог')) {
+          projectType = 'e-commerce';
+          features.push('Каталог товарів', 'Корзина', 'Платежі', 'Особистий кабінет');
+        } else if (conversationText.includes('дашборд') || conversationText.includes('dashboard') || conversationText.includes('аналітика') || conversationText.includes('звіти')) {
+          projectType = 'dashboard';
+          features.push('Графіки', 'Віджети', 'Аналітика', 'Звіти');
+        } else if (conversationText.includes('сайт') || conversationText.includes('website') || conversationText.includes('лендінг')) {
           projectType = 'website';
         }
         
-        // Визначаємо складність
-        if (conversationText.includes('простий') || conversationText.includes('базовий')) {
+        // 2. ВИЗНАЧАЄМО СКЛАДНІСТЬ (більш точно)
+        if (conversationText.includes('простий') || conversationText.includes('базовий') || conversationText.includes('мінімальний')) {
           complexity = 'low';
-        } else if (conversationText.includes('складний') || conversationText.includes('enterprise') || conversationText.includes('великий')) {
+        } else if (conversationText.includes('складний') || conversationText.includes('enterprise') || conversationText.includes('великий') || conversationText.includes('багато') || conversationText.includes('комплексний')) {
           complexity = 'high';
+        } else if (conversationText.includes('середній') || conversationText.includes('стандартний')) {
+          complexity = 'medium';
         }
         
-        // Аналізуємо додаткові функції
-        if (conversationText.includes('чат') || conversationText.includes('chat')) {
+        // 3. АНАЛІЗУЄМО ДОДАТКОВІ ФУНКЦІЇ
+        if (conversationText.includes('чат') || conversationText.includes('chat') || conversationText.includes('повідомлення')) {
           features.push('Чат/Підтримка');
         }
-        if (conversationText.includes('пошук') || conversationText.includes('search')) {
+        if (conversationText.includes('пошук') || conversationText.includes('search') || conversationText.includes('фільтр')) {
           features.push('Пошук та фільтри');
         }
-        if (conversationText.includes('авторизація') || conversationText.includes('login')) {
-          features.push('Авторизація');
+        if (conversationText.includes('авторизація') || conversationText.includes('login') || conversationText.includes('реєстрація')) {
+          features.push('Авторизація', 'Реєстрація');
         }
-        if (conversationText.includes('ai') || conversationText.includes('аі')) {
+        if (conversationText.includes('ai') || conversationText.includes('аі') || conversationText.includes('штучний інтелект')) {
           features.push('AI функції');
           specialRequirements.push('AI/ML');
         }
+        if (conversationText.includes('інтеграція') || conversationText.includes('api') || conversationText.includes('зв\'язок')) {
+          features.push('API інтеграції');
+          specialRequirements.push('Інтеграції');
+        }
+        if (conversationText.includes('багатомовність') || conversationText.includes('локалізація') || conversationText.includes('i18n')) {
+          features.push('Багатомовність');
+          specialRequirements.push('Локалізація');
+        }
         
-        // Аналізуємо терміни
-        if (conversationText.includes('швидко') || conversationText.includes('терміново')) {
+        // 4. АНАЛІЗУЄМО СПЕЦІАЛЬНІ ВИМОГИ
+        if (conversationText.includes('швидко') || conversationText.includes('терміново') || conversationText.includes('urgent')) {
           specialRequirements.push('Терміново');
         }
+        if (conversationText.includes('безпека') || conversationText.includes('security') || conversationText.includes('шифрування')) {
+          specialRequirements.push('Підвищена безпека');
+        }
+        if (conversationText.includes('масштабування') || conversationText.includes('scaling') || conversationText.includes('велика кількість')) {
+          specialRequirements.push('Масштабування');
+        }
+        
+        // 5. АНАЛІЗУЄМО ЦІЛЬОВУ АУДИТОРІЮ (впливає на складність)
+        if (conversationText.includes('b2b') || conversationText.includes('бізнес') || conversationText.includes('корпоративний')) {
+          complexity = complexity === 'low' ? 'medium' : complexity;
+          features.push('B2B функції');
+        }
+        if (conversationText.includes('b2c') || conversationText.includes('споживачі') || conversationText.includes('клієнти')) {
+          features.push('B2C функції');
+        }
+        
+        console.log('📊 Результат аналізу:', { projectType, complexity, features, specialRequirements });
         
         console.log('Project analysis:', { projectType, complexity, features, specialRequirements });
         
